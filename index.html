@@ -13,7 +13,6 @@
             --bg-primary: #08080d;
             --bg-secondary: #0e0e16;
             --bg-card: #14142a;
-            --bg-card-hover: #1c1c3a;
             --bg-input: #0c0c18;
             --accent-1: #7c3aed;
             --accent-2: #ec4899;
@@ -27,7 +26,6 @@
             --border-hover: #333366;
             --success: #10b981;
             --error: #ef4444;
-            --warning: #f59e0b;
             --dev-accent: #f97316;
         }
 
@@ -48,18 +46,9 @@
             filter: blur(100px); opacity: 0.2;
             animation: orbFloat 25s ease-in-out infinite;
         }
-        .bg-anim .orb:nth-child(1) {
-            width: 500px; height: 500px; background: var(--accent-1);
-            top: -150px; left: -100px;
-        }
-        .bg-anim .orb:nth-child(2) {
-            width: 400px; height: 400px; background: var(--accent-2);
-            top: 40%; right: -120px; animation-delay: -8s;
-        }
-        .bg-anim .orb:nth-child(3) {
-            width: 450px; height: 450px; background: var(--accent-3);
-            bottom: -150px; left: 25%; animation-delay: -16s;
-        }
+        .bg-anim .orb:nth-child(1) { width: 500px; height: 500px; background: var(--accent-1); top: -150px; left: -100px; }
+        .bg-anim .orb:nth-child(2) { width: 400px; height: 400px; background: var(--accent-2); top: 40%; right: -120px; animation-delay: -8s; }
+        .bg-anim .orb:nth-child(3) { width: 450px; height: 450px; background: var(--accent-3); bottom: -150px; left: 25%; animation-delay: -16s; }
         @keyframes orbFloat {
             0%,100% { transform: translate(0,0) scale(1); }
             33% { transform: translate(80px,-60px) scale(1.1); }
@@ -68,20 +57,13 @@
 
         .app { position: relative; z-index: 1; }
 
-        /* ── Header ── */
-        .header {
-            text-align: center; padding: 30px 20px 20px;
-        }
-        .logo {
-            display: inline-flex; align-items: center; gap: 14px; margin-bottom: 10px;
-        }
+        .header { text-align: center; padding: 30px 20px 20px; }
+        .logo { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 10px; }
         .logo-icon {
             width: 56px; height: 56px;
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px;
-            box-shadow: 0 0 40px rgba(124,58,237,0.3);
+            border-radius: 16px; display: flex; align-items: center; justify-content: center;
+            font-size: 28px; box-shadow: 0 0 40px rgba(124,58,237,0.3);
             animation: logoPulse 3s ease-in-out infinite;
         }
         @keyframes logoPulse {
@@ -95,96 +77,68 @@
         }
         .header .sub { color: var(--text-secondary); font-size: 1em; }
 
-        /* ── Dev Toggle Button ── */
+        /* Dev Toggle */
         .dev-toggle {
             position: fixed; top: 16px; right: 16px; z-index: 100;
             width: 44px; height: 44px; border-radius: 12px;
-            border: 1px solid var(--border);
-            background: var(--bg-card);
-            color: var(--text-dim); font-size: 1.2em;
-            cursor: pointer; transition: all 0.3s;
-            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border); background: var(--bg-card);
+            color: var(--text-dim); font-size: 1.2em; cursor: pointer;
+            transition: all 0.3s; display: flex; align-items: center; justify-content: center;
         }
         .dev-toggle:hover, .dev-toggle.active {
-            border-color: var(--dev-accent);
-            color: var(--dev-accent);
+            border-color: var(--dev-accent); color: var(--dev-accent);
             box-shadow: 0 0 20px rgba(249,115,22,0.2);
         }
 
-        /* ── Dev Panel (Slide-in) ── */
+        /* Dev Overlay & Panel */
         .dev-overlay {
             position: fixed; inset: 0; z-index: 200;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
         .dev-overlay.open { opacity: 1; pointer-events: auto; }
 
         .dev-panel {
             position: fixed; top: 0; right: -520px;
             width: 500px; max-width: 95vw; height: 100vh;
-            background: var(--bg-secondary);
-            border-left: 1px solid var(--border);
-            z-index: 201;
-            transition: right 0.4s cubic-bezier(0.16,1,0.3,1);
-            overflow-y: auto;
-            box-shadow: -10px 0 60px rgba(0,0,0,0.5);
+            background: var(--bg-secondary); border-left: 1px solid var(--border);
+            z-index: 201; transition: right 0.4s cubic-bezier(0.16,1,0.3,1);
+            overflow-y: auto; box-shadow: -10px 0 60px rgba(0,0,0,0.5);
         }
         .dev-panel.open { right: 0; }
         .dev-panel::-webkit-scrollbar { width: 6px; }
         .dev-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
         .dev-header {
-            padding: 24px; display: flex; align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            position: sticky; top: 0;
+            padding: 24px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border); position: sticky; top: 0;
             background: var(--bg-secondary); z-index: 10;
         }
-        .dev-header h2 {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 1.2em; font-weight: 700;
-        }
-        .dev-header h2 .badge {
-            font-size: 0.55em; padding: 3px 8px;
-            border-radius: 6px;
-            background: var(--dev-accent);
-            color: white; font-weight: 600;
+        .dev-header h2 { display: flex; align-items: center; gap: 10px; font-size: 1.2em; }
+        .dev-header .badge {
+            font-size: 0.55em; padding: 3px 8px; border-radius: 6px;
+            background: var(--dev-accent); color: white; font-weight: 600;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
         .dev-close {
             width: 36px; height: 36px; border-radius: 10px;
-            border: 1px solid var(--border);
-            background: transparent; color: var(--text-secondary);
-            cursor: pointer; font-size: 1.1em;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-secondary); cursor: pointer; font-size: 1.1em;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
         .dev-close:hover { border-color: var(--error); color: var(--error); }
 
         .dev-body { padding: 20px 24px 40px; }
 
-        .dev-section {
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            overflow: hidden;
-        }
+        .dev-section { margin-bottom: 24px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
         .dev-section-header {
-            padding: 14px 18px;
-            background: rgba(255,255,255,0.02);
+            padding: 14px 18px; background: rgba(255,255,255,0.02);
             border-bottom: 1px solid var(--border);
             display: flex; align-items: center; gap: 10px;
-            font-weight: 600; font-size: 0.95em;
-            cursor: pointer; user-select: none;
-            transition: background 0.2s;
+            font-weight: 600; font-size: 0.95em; cursor: pointer; user-select: none; transition: background 0.2s;
         }
         .dev-section-header:hover { background: rgba(255,255,255,0.04); }
-        .dev-section-header .arrow {
-            margin-left: auto; transition: transform 0.3s;
-            font-size: 0.8em;
-        }
+        .dev-section-header .arrow { margin-left: auto; transition: transform 0.3s; font-size: 0.8em; }
         .dev-section-header.collapsed .arrow { transform: rotate(-90deg); }
         .dev-section-body { padding: 16px 18px; }
         .dev-section-body.collapsed { display: none; }
@@ -193,290 +147,169 @@
         .dev-field:last-child { margin-bottom: 0; }
         .dev-field label {
             display: flex; align-items: center; gap: 6px;
-            font-size: 0.8em; font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            text-transform: uppercase; letter-spacing: 0.5px;
+            font-size: 0.8em; font-weight: 600; color: var(--text-secondary);
+            margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .dev-field label .hint {
-            font-weight: 400; text-transform: none;
-            color: var(--text-dim); font-size: 0.9em;
-            letter-spacing: 0;
-        }
+        .dev-field label .hint { font-weight: 400; text-transform: none; color: var(--text-dim); font-size: 0.9em; letter-spacing: 0; }
 
         .dev-field input[type="text"],
         .dev-field input[type="number"],
         .dev-field textarea,
         .dev-field select {
-            width: 100%; padding: 10px 14px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85em;
-            transition: border-color 0.2s;
-            outline: none;
+            width: 100%; padding: 10px 14px; background: var(--bg-input);
+            border: 1px solid var(--border); border-radius: 10px;
+            color: var(--text-primary); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em; transition: border-color 0.2s; outline: none;
         }
-        .dev-field input:focus,
-        .dev-field textarea:focus,
-        .dev-field select:focus {
-            border-color: var(--dev-accent);
-        }
-        .dev-field textarea {
-            min-height: 120px; resize: vertical;
-            line-height: 1.6;
-        }
+        .dev-field input:focus, .dev-field textarea:focus, .dev-field select:focus { border-color: var(--dev-accent); }
+        .dev-field textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
         .dev-field select option { background: var(--bg-secondary); }
 
-        .dev-field .range-row {
-            display: flex; align-items: center; gap: 12px;
-        }
+        .dev-field .range-row { display: flex; align-items: center; gap: 12px; }
         .dev-field input[type="range"] {
-            flex: 1; -webkit-appearance: none;
-            height: 4px; border-radius: 2px;
+            flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px;
             background: var(--border); outline: none;
         }
         .dev-field input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px; height: 16px;
-            border-radius: 50%;
-            background: var(--dev-accent);
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+            -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+            background: var(--dev-accent); cursor: pointer; box-shadow: 0 2px 8px rgba(249,115,22,0.3);
         }
         .dev-field .range-val {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85em; color: var(--dev-accent);
-            min-width: 40px; text-align: right;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+            color: var(--dev-accent); min-width: 40px; text-align: right;
         }
 
-        /* Toggle switch */
-        .toggle-row {
-            display: flex; align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-        }
+        .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
         .toggle-row span { font-size: 0.9em; }
         .toggle-switch {
-            width: 44px; height: 24px;
-            border-radius: 12px;
-            background: var(--border);
-            position: relative; cursor: pointer;
-            transition: background 0.3s;
+            width: 44px; height: 24px; border-radius: 12px; background: var(--border);
+            position: relative; cursor: pointer; transition: background 0.3s;
         }
         .toggle-switch.on { background: var(--dev-accent); }
         .toggle-switch::after {
-            content: ''; position: absolute;
-            width: 18px; height: 18px;
-            border-radius: 50%; background: white;
-            top: 3px; left: 3px;
-            transition: transform 0.3s;
+            content: ''; position: absolute; width: 18px; height: 18px;
+            border-radius: 50%; background: white; top: 3px; left: 3px; transition: transform 0.3s;
         }
         .toggle-switch.on::after { transform: translateX(20px); }
 
-        /* Model search */
         .model-search-container { position: relative; }
         .model-search {
-            width: 100%; padding: 10px 14px 10px 36px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85em; outline: none;
-            transition: border-color 0.2s;
+            width: 100%; padding: 10px 14px 10px 36px; background: var(--bg-input);
+            border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85em; outline: none; transition: border-color 0.2s;
         }
         .model-search:focus { border-color: var(--dev-accent); }
-        .model-search-icon {
-            position: absolute; left: 12px; top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.9em; color: var(--text-dim);
-        }
+        .model-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.9em; color: var(--text-dim); }
+
         .model-dropdown {
-            position: absolute; top: calc(100% + 4px);
-            left: 0; right: 0;
-            max-height: 260px; overflow-y: auto;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            z-index: 50; display: none;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+            max-height: 260px; overflow-y: auto; background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: 10px; z-index: 50;
+            display: none; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
         .model-dropdown.open { display: block; }
         .model-dropdown::-webkit-scrollbar { width: 5px; }
         .model-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
         .model-category {
-            padding: 8px 14px; font-size: 0.7em;
-            color: var(--dev-accent); font-weight: 700;
+            padding: 8px 14px; font-size: 0.7em; color: var(--dev-accent); font-weight: 700;
             text-transform: uppercase; letter-spacing: 1px;
             border-bottom: 1px solid rgba(255,255,255,0.03);
-            position: sticky; top: 0;
-            background: var(--bg-card);
+            position: sticky; top: 0; background: var(--bg-card);
         }
         .model-option {
-            padding: 10px 14px;
-            cursor: pointer; transition: background 0.15s;
+            padding: 10px 14px; cursor: pointer; transition: background 0.15s;
             display: flex; align-items: center; gap: 10px;
             border-bottom: 1px solid rgba(255,255,255,0.02);
         }
         .model-option:hover { background: rgba(249,115,22,0.08); }
         .model-option.selected { background: rgba(249,115,22,0.12); }
-        .model-option .model-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85em; font-weight: 500;
-        }
-        .model-option .model-provider {
-            font-size: 0.7em; color: var(--text-dim);
-            margin-left: auto;
-        }
-        .model-option .model-badge {
-            font-size: 0.6em; padding: 2px 6px;
-            border-radius: 4px; font-weight: 600;
-        }
+        .model-option .model-name { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; font-weight: 500; }
+        .model-option .model-provider { font-size: 0.7em; color: var(--text-dim); margin-left: auto; }
+        .model-option .model-badge { font-size: 0.6em; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
         .model-badge.free { background: rgba(16,185,129,0.15); color: var(--success); }
         .model-badge.popular { background: rgba(124,58,237,0.15); color: var(--accent-1); }
         .model-badge.new { background: rgba(236,72,153,0.15); color: var(--accent-2); }
 
         .current-model {
             margin-top: 8px; padding: 8px 12px;
-            background: rgba(249,115,22,0.08);
-            border: 1px solid rgba(249,115,22,0.2);
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
+            background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 8px; font-family: 'JetBrains Mono', monospace;
             font-size: 0.8em; color: var(--dev-accent);
             display: flex; align-items: center; gap: 8px;
         }
-        .current-model .dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 6px var(--success);
-        }
+        .current-model .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px var(--success); }
 
-        /* Dev buttons */
         .dev-btn-row { display: flex; gap: 8px; margin-top: 12px; }
         .dev-btn {
-            flex: 1; padding: 10px;
-            border-radius: 10px; border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-secondary);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.82em; font-weight: 500;
+            flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+            background: transparent; color: var(--text-secondary);
+            font-family: 'Inter', sans-serif; font-size: 0.82em; font-weight: 500;
             cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center;
-            justify-content: center; gap: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
-        .dev-btn:hover {
-            border-color: var(--dev-accent);
-            color: var(--dev-accent);
-            background: rgba(249,115,22,0.05);
-        }
-        .dev-btn.danger:hover {
-            border-color: var(--error); color: var(--error);
-            background: rgba(239,68,68,0.05);
-        }
+        .dev-btn:hover { border-color: var(--dev-accent); color: var(--dev-accent); background: rgba(249,115,22,0.05); }
+        .dev-btn.danger:hover { border-color: var(--error); color: var(--error); background: rgba(239,68,68,0.05); }
 
-        /* Console log */
         .console-log {
-            background: #000;
-            border-radius: 10px;
-            padding: 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75em;
-            max-height: 200px;
-            overflow-y: auto;
-            line-height: 1.6;
-            border: 1px solid #222;
+            background: #000; border-radius: 10px; padding: 12px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75em;
+            max-height: 200px; overflow-y: auto; line-height: 1.6; border: 1px solid #222;
         }
         .console-log::-webkit-scrollbar { width: 4px; }
         .console-log::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-        .console-line { padding: 1px 0; }
+        .console-line { padding: 1px 0; word-break: break-all; }
         .console-line.info { color: #60a5fa; }
         .console-line.success { color: #34d399; }
         .console-line.error { color: #f87171; }
         .console-line.warn { color: #fbbf24; }
         .console-line .ts { color: #555; }
 
-        /* ── Main Container ── */
-        .container {
-            max-width: 1200px; margin: 0 auto; padding: 0 20px 40px;
-        }
-
-        .main-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 24px; margin-top: 20px;
-        }
-        @media (max-width: 900px) {
-            .main-grid { grid-template-columns: 1fr; }
-        }
+        /* Main */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
 
         .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 26px;
-            backdrop-filter: blur(8px);
-            transition: border-color 0.3s;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 18px; padding: 26px; backdrop-filter: blur(8px); transition: border-color 0.3s;
         }
         .card:hover { border-color: var(--border-hover); }
-
-        .card-title {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 1.2em; font-weight: 700;
-            margin-bottom: 20px;
-        }
+        .card-title { display: flex; align-items: center; gap: 10px; font-size: 1.2em; font-weight: 700; margin-bottom: 20px; }
 
         .form-group { margin-bottom: 16px; }
         .form-group label {
-            display: block; font-size: 0.82em; font-weight: 600;
-            color: var(--text-secondary); margin-bottom: 7px;
-            text-transform: uppercase; letter-spacing: 0.5px;
+            display: block; font-size: 0.82em; font-weight: 600; color: var(--text-secondary);
+            margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.5px;
         }
         .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 12px 16px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 11px;
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.92em;
-            transition: all 0.2s; outline: none;
+            width: 100%; padding: 12px 16px; background: var(--bg-input);
+            border: 1px solid var(--border); border-radius: 11px; color: var(--text-primary);
+            font-family: 'Inter', sans-serif; font-size: 0.92em; transition: all 0.2s; outline: none;
         }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            border-color: var(--accent-1);
-            box-shadow: 0 0 20px rgba(124,58,237,0.12);
+            border-color: var(--accent-1); box-shadow: 0 0 20px rgba(124,58,237,0.12);
         }
         .form-group textarea { resize: vertical; min-height: 90px; }
         .form-group select option { background: var(--bg-secondary); }
 
-        /* Genre chips */
         .chip-grid { display: flex; flex-wrap: wrap; gap: 7px; }
         .chip {
-            padding: 7px 14px; border-radius: 18px;
-            border: 1px solid var(--border);
-            background: var(--bg-input);
-            color: var(--text-secondary);
-            font-size: 0.82em; font-weight: 500;
-            cursor: pointer; transition: all 0.2s;
-            user-select: none;
+            padding: 7px 14px; border-radius: 18px; border: 1px solid var(--border);
+            background: var(--bg-input); color: var(--text-secondary);
+            font-size: 0.82em; font-weight: 500; cursor: pointer; transition: all 0.2s; user-select: none;
         }
         .chip:hover { border-color: var(--accent-1); color: var(--text-primary); }
         .chip.active {
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            border-color: transparent; color: #fff;
-            box-shadow: 0 4px 14px rgba(124,58,237,0.25);
+            border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(124,58,237,0.25);
         }
 
-        /* Mood grid */
         .mood-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
         .mood-btn {
-            padding: 9px 6px; border-radius: 11px;
-            border: 1px solid var(--border);
-            background: var(--bg-input);
-            color: var(--text-secondary);
-            font-size: 0.75em; cursor: pointer;
-            transition: all 0.2s; text-align: center;
+            padding: 9px 6px; border-radius: 11px; border: 1px solid var(--border);
+            background: var(--bg-input); color: var(--text-secondary);
+            font-size: 0.75em; cursor: pointer; transition: all 0.2s; text-align: center;
         }
         .mood-btn:hover { border-color: var(--accent-3); }
         .mood-btn.active {
@@ -485,73 +318,45 @@
         }
         .mood-btn .me { font-size: 1.4em; display: block; margin-bottom: 3px; }
 
-        /* Generate button */
         .btn-gen {
-            width: 100%; padding: 16px;
-            border: none; border-radius: 13px;
+            width: 100%; padding: 16px; border: none; border-radius: 13px;
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            color: #fff; font-family: 'Inter', sans-serif;
-            font-size: 1.05em; font-weight: 700;
-            cursor: pointer; transition: all 0.3s;
-            position: relative; overflow: hidden;
-            text-transform: uppercase; letter-spacing: 1px;
-            margin-top: 8px;
+            color: #fff; font-family: 'Inter', sans-serif; font-size: 1.05em; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+            text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;
         }
-        .btn-gen:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(124,58,237,0.4);
-        }
+        .btn-gen:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(124,58,237,0.4); }
         .btn-gen:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-gen .shim {
-            position: absolute; top: 0; left: -100%;
-            width: 100%; height: 100%;
+            position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
             animation: shimmer 2.5s infinite;
         }
         @keyframes shimmer { to { left: 100%; } }
 
-        /* Active model indicator */
         .model-indicator {
-            display: flex; align-items: center; gap: 8px;
-            padding: 8px 14px; margin-bottom: 16px;
-            background: rgba(249,115,22,0.06);
-            border: 1px solid rgba(249,115,22,0.15);
-            border-radius: 10px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.78em; color: var(--dev-accent);
+            display: flex; align-items: center; gap: 8px; padding: 8px 14px; margin-bottom: 16px;
+            background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.15);
+            border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.78em; color: var(--dev-accent);
         }
         .model-indicator .dot {
-            width: 7px; height: 7px; border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 6px var(--success);
-            animation: dotBlink 2s infinite;
+            width: 7px; height: 7px; border-radius: 50%; background: var(--success);
+            box-shadow: 0 0 6px var(--success); animation: dotBlink 2s infinite;
         }
-        @keyframes dotBlink {
-            0%,100% { opacity: 1; } 50% { opacity: 0.4; }
-        }
+        @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* Result area */
         .result-area { min-height: 420px; display: flex; flex-direction: column; }
-
         .placeholder {
-            flex: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: var(--text-dim); text-align: center; padding: 40px;
         }
         .placeholder .big { font-size: 3.5em; margin-bottom: 14px; opacity: 0.5; }
 
-        /* Loading */
         .loading-wrap {
-            flex: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 40px;
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;
         }
-        .loading-bars {
-            display: flex; gap: 5px; align-items: end; height: 55px; margin-bottom: 18px;
-        }
-        .lbar {
-            width: 7px; border-radius: 4px;
-            animation: lbarBounce 1.2s ease-in-out infinite;
-        }
+        .loading-bars { display: flex; gap: 5px; align-items: end; height: 55px; margin-bottom: 18px; }
+        .lbar { width: 7px; border-radius: 4px; animation: lbarBounce 1.2s ease-in-out infinite; }
         .lbar:nth-child(1) { background: var(--accent-1); animation-delay: 0s; }
         .lbar:nth-child(2) { background: var(--accent-2); animation-delay: .1s; }
         .lbar:nth-child(3) { background: var(--accent-3); animation-delay: .2s; }
@@ -559,30 +364,17 @@
         .lbar:nth-child(5) { background: var(--accent-1); animation-delay: .4s; }
         .lbar:nth-child(6) { background: var(--accent-2); animation-delay: .5s; }
         .lbar:nth-child(7) { background: var(--accent-3); animation-delay: .6s; }
-        @keyframes lbarBounce {
-            0%,100% { height: 8px; } 50% { height: 50px; }
-        }
+        @keyframes lbarBounce { 0%,100% { height: 8px; } 50% { height: 50px; } }
         .loading-txt { color: var(--text-secondary); }
-        .loading-step {
-            color: var(--accent-3); font-size: 0.88em; margin-top: 6px;
-            animation: fadeIO 2s ease-in-out infinite;
-        }
+        .loading-step { color: var(--accent-3); font-size: 0.88em; margin-top: 6px; animation: fadeIO 2s ease-in-out infinite; }
         @keyframes fadeIO { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
 
-        /* Song result */
-        .song-result {
-            flex: 1; display: flex; flex-direction: column;
-            animation: slideUp .5s ease;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(18px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .song-result { flex: 1; display: flex; flex-direction: column; animation: slideUp .5s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
         .song-hdr {
-            display: flex; align-items: center; gap: 14px;
-            margin-bottom: 18px; padding-bottom: 18px;
-            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+            padding-bottom: 18px; border-bottom: 1px solid var(--border);
         }
         .song-cover {
             width: 72px; height: 72px; border-radius: 14px;
@@ -591,66 +383,40 @@
         }
         .song-info h3 { font-size: 1.15em; font-weight: 700; margin-bottom: 5px; }
         .song-meta { display: flex; gap: 8px; flex-wrap: wrap; }
-        .song-tag {
-            font-size: 0.72em; padding: 3px 9px; border-radius: 8px;
-            font-weight: 500;
-        }
+        .song-tag { font-size: 0.72em; padding: 3px 9px; border-radius: 8px; font-weight: 500; }
         .song-tag.g { background: rgba(124,58,237,.12); color: var(--accent-1); }
         .song-tag.m { background: rgba(6,182,212,.12); color: var(--accent-3); }
-        .song-tag.model {
-            background: rgba(249,115,22,.12); color: var(--dev-accent);
-            font-family: 'JetBrains Mono', monospace;
-        }
+        .song-tag.model { background: rgba(249,115,22,.12); color: var(--dev-accent); font-family: 'JetBrains Mono', monospace; }
 
         .lyrics-box {
-            flex: 1; background: var(--bg-input);
-            border-radius: 12px; padding: 18px;
-            max-height: 300px; overflow-y: auto;
-            border: 1px solid var(--border);
-            margin-bottom: 14px;
+            flex: 1; background: var(--bg-input); border-radius: 12px; padding: 18px;
+            max-height: 300px; overflow-y: auto; border: 1px solid var(--border); margin-bottom: 14px;
         }
         .lyrics-box::-webkit-scrollbar { width: 5px; }
         .lyrics-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
         .lyrics-sec {
-            color: var(--accent-2); font-weight: 700;
-            font-size: 0.82em; text-transform: uppercase;
-            letter-spacing: .5px; margin: 16px 0 6px;
+            color: var(--accent-2); font-weight: 700; font-size: 0.82em;
+            text-transform: uppercase; letter-spacing: .5px; margin: 16px 0 6px;
         }
         .lyrics-sec:first-child { margin-top: 0; }
         .lyrics-ln { line-height: 1.8; font-size: 0.92em; }
         .lyrics-ln.hl { color: var(--accent-3); font-weight: 500; }
 
-        /* Visualizer */
         .viz-canvas { width: 100%; height: 55px; border-radius: 10px; margin-bottom: 10px; }
 
-        /* Player */
         .player-sec {
-            background: var(--bg-input);
-            border-radius: 12px; padding: 18px;
-            border: 1px solid var(--border);
+            background: var(--bg-input); border-radius: 12px; padding: 18px; border: 1px solid var(--border);
         }
-        .prog-bg {
-            width: 100%; height: 5px; background: var(--border);
-            border-radius: 3px; cursor: pointer; position: relative;
-        }
+        .prog-bg { width: 100%; height: 5px; background: var(--border); border-radius: 3px; cursor: pointer; }
         .prog-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            height: 100%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
             border-radius: 3px; width: 0%; transition: width .3s linear;
         }
-        .time-labels {
-            display: flex; justify-content: space-between;
-            font-size: .72em; color: var(--text-dim); margin-top: 5px;
-        }
-        .p-ctrls {
-            display: flex; align-items: center;
-            justify-content: center; gap: 14px; margin-top: 12px;
-        }
+        .time-labels { display: flex; justify-content: space-between; font-size: .72em; color: var(--text-dim); margin-top: 5px; }
+        .p-ctrls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 12px; }
         .cbtn {
-            width: 42px; height: 42px; border-radius: 50%;
-            border: none; background: transparent;
-            color: var(--text-secondary); font-size: 1.1em;
-            cursor: pointer; transition: all .2s;
+            width: 42px; height: 42px; border-radius: 50%; border: none; background: transparent;
+            color: var(--text-secondary); font-size: 1.1em; cursor: pointer; transition: all .2s;
             display: flex; align-items: center; justify-content: center;
         }
         .cbtn:hover { color: var(--text-primary); background: rgba(255,255,255,.04); }
@@ -659,169 +425,105 @@
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
             color: #fff; font-size: 1.3em;
         }
-        .cbtn.play:hover {
-            transform: scale(1.1);
-            box-shadow: 0 5px 25px rgba(124,58,237,.4);
-        }
-        .vol-sec {
-            display: flex; align-items: center; gap: 8px;
-            justify-content: center; margin-top: 10px;
-        }
+        .cbtn.play:hover { transform: scale(1.1); box-shadow: 0 5px 25px rgba(124,58,237,.4); }
+        .vol-sec { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 10px; }
         .vol-sl {
-            -webkit-appearance: none; width: 100px; height: 4px;
-            border-radius: 2px; background: var(--border); outline: none;
+            -webkit-appearance: none; width: 100px; height: 4px; border-radius: 2px;
+            background: var(--border); outline: none;
         }
         .vol-sl::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 14px; height: 14px;
-            border-radius: 50%; background: var(--accent-1); cursor: pointer;
+            -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+            background: var(--accent-1); cursor: pointer;
         }
-        .speech-st {
-            text-align: center; font-size: .78em;
-            color: var(--accent-3); margin-top: 6px; min-height: 18px;
-        }
+        .speech-st { text-align: center; font-size: .78em; color: var(--accent-3); margin-top: 6px; min-height: 18px; }
 
-        /* Action btns */
         .act-btns { display: flex; gap: 8px; margin-top: 12px; }
         .act-btn {
-            flex: 1; padding: 10px; border-radius: 10px;
-            border: 1px solid var(--border);
-            background: var(--bg-input);
-            color: var(--text-secondary);
-            font-family: 'Inter', sans-serif;
-            font-size: .82em; font-weight: 500;
-            cursor: pointer; transition: all .2s;
-            display: flex; align-items: center;
-            justify-content: center; gap: 5px;
+            flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+            background: var(--bg-input); color: var(--text-secondary);
+            font-family: 'Inter', sans-serif; font-size: .82em; font-weight: 500;
+            cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 5px;
         }
-        .act-btn:hover {
-            border-color: var(--accent-1);
-            color: var(--text-primary);
-        }
+        .act-btn:hover { border-color: var(--accent-1); color: var(--text-primary); }
 
-        /* History */
         .hist-sec { grid-column: 1/-1; margin-top: 10px; }
-        .hist-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-            gap: 12px; margin-top: 14px;
-        }
+        .hist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; margin-top: 14px; }
         .hist-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 13px; padding: 16px;
-            cursor: pointer; transition: all .3s;
-            animation: slideUp .4s ease;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 13px;
+            padding: 16px; cursor: pointer; transition: all .3s; animation: slideUp .4s ease;
         }
-        .hist-card:hover {
-            border-color: var(--accent-1);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0,0,0,.3);
-        }
+        .hist-card:hover { border-color: var(--accent-1); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.3); }
         .hist-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .hist-cover {
             width: 42px; height: 42px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4em; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 1.4em; flex-shrink: 0;
         }
         .hist-hdr h4 { font-size: .9em; }
         .hist-hdr .hist-genre { font-size: .72em; color: var(--text-dim); }
-        .hist-preview {
-            font-size: .78em; color: var(--text-secondary);
-            line-height: 1.5; display: -webkit-box;
-            -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-        }
+        .hist-preview { font-size: .78em; color: var(--text-secondary); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .hist-date { font-size: .68em; color: var(--text-dim); margin-top: 6px; }
-        .hist-model {
-            font-size: .65em; color: var(--dev-accent);
-            font-family: 'JetBrains Mono', monospace;
-        }
+        .hist-model { font-size: .65em; color: var(--dev-accent); font-family: 'JetBrains Mono', monospace; }
 
-        /* Error */
         .err-box {
-            background: rgba(239,68,68,.08);
-            border: 1px solid rgba(239,68,68,.25);
-            border-radius: 12px; padding: 20px;
-            text-align: center; color: var(--error);
+            background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.25);
+            border-radius: 12px; padding: 20px; text-align: center; color: var(--error);
         }
         .err-box .ei { font-size: 2em; margin-bottom: 8px; }
         .retry-btn {
-            margin-top: 10px; padding: 8px 22px;
-            border-radius: 8px; border: 1px solid var(--error);
-            background: transparent; color: var(--error);
-            font-family: 'Inter', sans-serif; cursor: pointer;
-            transition: all .2s;
+            margin-top: 10px; padding: 8px 22px; border-radius: 8px; border: 1px solid var(--error);
+            background: transparent; color: var(--error); font-family: 'Inter', sans-serif; cursor: pointer; transition: all .2s;
         }
         .retry-btn:hover { background: var(--error); color: #fff; }
 
-        /* Toast */
         .toast {
             position: fixed; bottom: 28px; left: 50%;
             transform: translateX(-50%) translateY(90px);
-            padding: 12px 24px; border-radius: 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--accent-1);
-            color: var(--text-primary); font-size: .88em;
-            z-index: 300; transition: transform .4s ease;
-            box-shadow: 0 10px 40px rgba(0,0,0,.5);
+            padding: 12px 24px; border-radius: 12px; background: var(--bg-card);
+            border: 1px solid var(--accent-1); color: var(--text-primary); font-size: .88em;
+            z-index: 300; transition: transform .4s ease; box-shadow: 0 10px 40px rgba(0,0,0,.5);
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        .footer {
-            text-align: center; padding: 30px 0;
-            color: var(--text-dim); font-size: .78em;
-            grid-column: 1/-1;
-        }
-
-        /* Token counter */
-        .token-info {
-            display: flex; gap: 12px; margin-top: 8px;
-            flex-wrap: wrap;
-        }
+        .token-info { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
         .token-pill {
-            padding: 4px 10px; border-radius: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72em;
-            background: rgba(255,255,255,.03);
-            border: 1px solid var(--border);
-            color: var(--text-dim);
+            padding: 4px 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72em; background: rgba(255,255,255,.03); border: 1px solid var(--border); color: var(--text-dim);
         }
         .token-pill .val { color: var(--accent-3); font-weight: 600; }
+
+        .footer { text-align: center; padding: 30px 0; color: var(--text-dim); font-size: .78em; grid-column: 1/-1; }
+
+        /* Raw response viewer */
+        .raw-response {
+            margin-top: 10px; padding: 10px; background: #000; border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.7em;
+            max-height: 150px; overflow-y: auto; border: 1px solid #222;
+            color: #888; word-break: break-all; display: none;
+        }
+        .raw-response.visible { display: block; }
     </style>
 </head>
 <body>
-    <div class="bg-anim">
-        <div class="orb"></div>
-        <div class="orb"></div>
-        <div class="orb"></div>
-    </div>
+    <div class="bg-anim"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
 
-    <!-- Dev Toggle -->
     <button class="dev-toggle" id="devToggle" title="Настройки разработчика">⚙️</button>
-
-    <!-- Dev Overlay -->
     <div class="dev-overlay" id="devOverlay"></div>
 
-    <!-- Dev Panel -->
     <div class="dev-panel" id="devPanel">
         <div class="dev-header">
             <h2>⚙️ Developer Settings <span class="badge">DEV</span></h2>
             <button class="dev-close" id="devClose">✕</button>
         </div>
         <div class="dev-body">
-
-            <!-- Model Selection -->
+            <!-- Model -->
             <div class="dev-section">
-                <div class="dev-section-header" data-section="model">
-                    🤖 Модель ИИ
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="dev-section-header" data-section="model">🤖 Модель ИИ <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="model">
                     <div class="dev-field">
                         <label>Поиск и выбор модели</label>
                         <div class="model-search-container">
                             <span class="model-search-icon">🔍</span>
-                            <input type="text" class="model-search" id="modelSearch"
-                                   placeholder="Поиск модели..." autocomplete="off">
+                            <input type="text" class="model-search" id="modelSearch" placeholder="Поиск модели..." autocomplete="off">
                             <div class="model-dropdown" id="modelDropdown"></div>
                         </div>
                         <div class="current-model" id="currentModelDisplay">
@@ -830,24 +532,18 @@
                         </div>
                     </div>
                     <div class="dev-field">
-                        <label>Или введите вручную</label>
-                        <input type="text" id="customModelInput" placeholder="e.g. gpt-4o-mini"
-                               value="">
+                        <label>Или введите ID вручную</label>
+                        <input type="text" id="customModelInput" placeholder="e.g. my-custom-model">
                     </div>
                     <div class="dev-btn-row">
-                        <button class="dev-btn" onclick="applyCustomModel()">
-                            ✅ Применить
-                        </button>
+                        <button class="dev-btn" onclick="applyCustomModel()">✅ Применить</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Generation Parameters -->
+            <!-- Params -->
             <div class="dev-section">
-                <div class="dev-section-header" data-section="params">
-                    🎛️ Параметры генерации
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="dev-section-header" data-section="params">🎛️ Параметры генерации <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="params">
                     <div class="dev-field">
                         <label>Temperature <span class="hint">(креативность)</span></label>
@@ -857,7 +553,7 @@
                         </div>
                     </div>
                     <div class="dev-field">
-                        <label>Top P <span class="hint">(nucleus sampling)</span></label>
+                        <label>Top P</label>
                         <div class="range-row">
                             <input type="range" id="topP" min="0" max="1" step="0.05" value="0.95">
                             <span class="range-val" id="topPVal">0.95</span>
@@ -886,13 +582,9 @@
 
             <!-- System Prompt -->
             <div class="dev-section">
-                <div class="dev-section-header" data-section="prompt">
-                    📝 System Prompt
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="dev-section-header" data-section="prompt">📝 System Prompt <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="prompt">
                     <div class="dev-field">
-                        <label>Системный промпт <span class="hint">(предустановка)</span></label>
                         <textarea id="systemPrompt">Ты — профессиональный автор песен мирового уровня. Ты создаёшь уникальные, поэтичные тексты песен с рифмами, метафорами и эмоциональной глубиной. Всегда следуй заданному формату.</textarea>
                     </div>
                     <div class="dev-btn-row">
@@ -904,40 +596,33 @@
 
             <!-- Advanced -->
             <div class="dev-section">
-                <div class="dev-section-header" data-section="advanced">
-                    🔬 Расширенные
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="dev-section-header" data-section="advanced">🔬 Расширенные <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="advanced">
-                    <div class="toggle-row">
-                        <span>🔄 Streaming режим</span>
-                        <div class="toggle-switch" id="toggleStream" data-on="false"></div>
-                    </div>
                     <div class="toggle-row">
                         <span>📊 Показывать токены</span>
                         <div class="toggle-switch on" id="toggleTokens" data-on="true"></div>
                     </div>
                     <div class="toggle-row">
                         <span>🪲 Debug логи</span>
-                        <div class="toggle-switch" id="toggleDebug" data-on="false"></div>
+                        <div class="toggle-switch on" id="toggleDebug" data-on="true"></div>
                     </div>
                     <div class="toggle-row">
                         <span>💾 Авто-сохранение</span>
                         <div class="toggle-switch on" id="toggleAutoSave" data-on="true"></div>
+                    </div>
+                    <div class="toggle-row">
+                        <span>📄 Показать сырой ответ</span>
+                        <div class="toggle-switch" id="toggleRaw" data-on="false"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Console -->
             <div class="dev-section">
-                <div class="dev-section-header" data-section="console">
-                    🖥️ Консоль
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="dev-section-header" data-section="console">🖥️ Консоль <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="console">
                     <div class="console-log" id="consoleLog">
-                        <div class="console-line info"><span class="ts">[init]</span> SongForge AI Pro загружен</div>
-                        <div class="console-line info"><span class="ts">[init]</span> Модель: gpt-4.1</div>
+                        <div class="console-line info"><span class="ts">[init]</span> SongForge AI Pro v2.0</div>
                     </div>
                     <div class="dev-btn-row">
                         <button class="dev-btn" onclick="clearConsole()">🧹 Очистить</button>
@@ -949,32 +634,19 @@
 
             <!-- Presets -->
             <div class="dev-section">
-                <div class="dev-section-header" data-section="presets">
-                    💎 Пресеты
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="dev-section-header" data-section="presets">💎 Пресеты <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="presets">
                     <div class="dev-btn-row" style="flex-wrap:wrap">
-                        <button class="dev-btn" onclick="loadPreset('creative')" style="flex:1 1 45%">
-                            🎨 Креативный
-                        </button>
-                        <button class="dev-btn" onclick="loadPreset('precise')" style="flex:1 1 45%">
-                            🎯 Точный
-                        </button>
-                        <button class="dev-btn" onclick="loadPreset('balanced')" style="flex:1 1 45%">
-                            ⚖️ Баланс
-                        </button>
-                        <button class="dev-btn" onclick="loadPreset('wild')" style="flex:1 1 45%">
-                            🌪️ Безумный
-                        </button>
+                        <button class="dev-btn" onclick="loadPreset('creative')" style="flex:1 1 45%">🎨 Креативный</button>
+                        <button class="dev-btn" onclick="loadPreset('precise')" style="flex:1 1 45%">🎯 Точный</button>
+                        <button class="dev-btn" onclick="loadPreset('balanced')" style="flex:1 1 45%">⚖️ Баланс</button>
+                        <button class="dev-btn" onclick="loadPreset('wild')" style="flex:1 1 45%">🌪️ Безумный</button>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- Main App -->
     <div class="app">
         <div class="container">
             <header class="header">
@@ -986,11 +658,8 @@
             </header>
 
             <div class="main-grid">
-                <!-- Left -->
                 <div class="card">
                     <div class="card-title">✨ Создать песню</div>
-
-                    <!-- Model indicator -->
                     <div class="model-indicator" id="modelIndicator">
                         <span class="dot"></span>
                         Модель: <strong id="activeModelLabel">gpt-4.1</strong>
@@ -1000,7 +669,6 @@
                         <label>Тема / Описание</label>
                         <textarea id="songTopic" placeholder="О чём ваша песня?...">Летняя ночь в большом городе, огни и мечты</textarea>
                     </div>
-
                     <div class="form-group">
                         <label>Жанр</label>
                         <div class="chip-grid" id="genreGrid">
@@ -1018,7 +686,6 @@
                             <div class="chip" data-v="K-Pop">🇰🇷 K-Pop</div>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label>Настроение</label>
                         <div class="mood-grid" id="moodGrid">
@@ -1032,7 +699,6 @@
                             <div class="mood-btn" data-v="Ностальгия"><span class="me">🌅</span>Ностальгия</div>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label>Язык</label>
                         <select id="songLang">
@@ -1042,16 +708,12 @@
                             <option value="французский">🇫🇷 Французский</option>
                             <option value="японский">🇯🇵 Японский</option>
                             <option value="корейский">🇰🇷 Корейский</option>
-                            <option value="немецкий">🇩🇪 Немецкий</option>
-                            <option value="итальянский">🇮🇹 Итальянский</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label>Голос</label>
                         <select id="voiceSelect"></select>
                     </div>
-
                     <div class="form-group">
                         <label>Темп речи</label>
                         <select id="speechRate">
@@ -1064,8 +726,7 @@
                     </div>
 
                     <button class="btn-gen" id="genBtn" onclick="generateSong()">
-                        <span class="shim"></span>
-                        🎵 Сгенерировать песню
+                        <span class="shim"></span>🎵 Сгенерировать песню
                     </button>
 
                     <div class="token-info" id="tokenInfo" style="display:none">
@@ -1073,9 +734,9 @@
                         <div class="token-pill">Ответ: <span class="val" id="responseTokens">0</span> tok</div>
                         <div class="token-pill">Время: <span class="val" id="genTime">0</span>s</div>
                     </div>
+                    <div class="raw-response" id="rawResponse"></div>
                 </div>
 
-                <!-- Right -->
                 <div class="card result-area" id="resultArea">
                     <div class="card-title">🎶 Результат</div>
                     <div class="placeholder" id="ph">
@@ -1084,14 +745,12 @@
                     </div>
                 </div>
 
-                <!-- History -->
                 <div class="card hist-sec" id="histSec" style="display:none">
-                    <div class="card-title">📚 История песен</div>
+                    <div class="card-title">📚 История</div>
                     <div class="hist-grid" id="histGrid"></div>
                 </div>
             </div>
-
-            <div class="footer">SongForge AI Pro — GPT4Free + Web Speech API</div>
+            <div class="footer">SongForge AI Pro v2.0 — GPT4Free + Web Speech API</div>
         </div>
     </div>
 
@@ -1099,12 +758,11 @@
 
     <script type="module">
         import Client from 'https://g4f.dev/dist/js/client.js';
-
         const client = new Client();
 
-        // ═══════════════════════════════════
-        //  ALL AVAILABLE MODELS
-        // ═══════════════════════════════════
+        // ══════════════════════════════════
+        //  MODELS DATABASE
+        // ══════════════════════════════════
         const ALL_MODELS = {
             'OpenAI': [
                 { id: 'gpt-4.1', badge: 'popular', label: 'GPT-4.1' },
@@ -1117,7 +775,6 @@
                 { id: 'gpt-3.5-turbo', badge: 'free', label: 'GPT-3.5 Turbo' },
                 { id: 'o1', badge: '', label: 'O1' },
                 { id: 'o1-mini', badge: '', label: 'O1 Mini' },
-                { id: 'o1-preview', badge: '', label: 'O1 Preview' },
                 { id: 'o3-mini', badge: 'new', label: 'O3 Mini' },
                 { id: 'o4-mini', badge: 'new', label: 'O4 Mini' },
             ],
@@ -1135,7 +792,6 @@
                 { id: 'deepseek-v3', badge: 'popular', label: 'DeepSeek V3' },
                 { id: 'deepseek-r1', badge: 'popular', label: 'DeepSeek R1' },
                 { id: 'deepseek-chat', badge: 'free', label: 'DeepSeek Chat' },
-                { id: 'deepseek-r1-distill-llama-70b', badge: '', label: 'R1 Distill Llama 70B' },
             ],
             'Google': [
                 { id: 'gemini-2.5-pro', badge: 'new', label: 'Gemini 2.5 Pro' },
@@ -1149,47 +805,34 @@
                 { id: 'claude-3.7-sonnet', badge: 'new', label: 'Claude 3.7 Sonnet' },
                 { id: 'claude-3.5-sonnet', badge: 'popular', label: 'Claude 3.5 Sonnet' },
                 { id: 'claude-3-opus', badge: '', label: 'Claude 3 Opus' },
-                { id: 'claude-3-sonnet', badge: '', label: 'Claude 3 Sonnet' },
                 { id: 'claude-3-haiku', badge: 'free', label: 'Claude 3 Haiku' },
                 { id: 'claude-sonnet-4', badge: 'new', label: 'Claude Sonnet 4' },
             ],
             'Qwen': [
                 { id: 'qwen-2.5-72b', badge: 'popular', label: 'Qwen 2.5 72B' },
                 { id: 'qwen-2.5-coder-32b', badge: '', label: 'Qwen 2.5 Coder 32B' },
-                { id: 'qwen-qwq-32b', badge: '', label: 'Qwen QwQ 32B' },
-                { id: 'qwen-turbo', badge: 'free', label: 'Qwen Turbo' },
                 { id: 'qwen3-235b', badge: 'new', label: 'Qwen3 235B' },
                 { id: 'qwen3-32b', badge: 'new', label: 'Qwen3 32B' },
-                { id: 'qwen3-30b', badge: 'new', label: 'Qwen3 30B' },
                 { id: 'qwq-32b', badge: 'popular', label: 'QwQ 32B' },
             ],
             'Mistral': [
                 { id: 'mistral-large', badge: 'popular', label: 'Mistral Large' },
                 { id: 'mistral-small', badge: 'free', label: 'Mistral Small' },
                 { id: 'mixtral-8x7b', badge: 'free', label: 'Mixtral 8x7B' },
-                { id: 'mistral-nemo', badge: '', label: 'Mistral Nemo' },
-            ],
-            'Microsoft': [
-                { id: 'phi-4', badge: 'new', label: 'Phi-4' },
-                { id: 'phi-3.5-mini', badge: 'free', label: 'Phi 3.5 Mini' },
-                { id: 'mai-ds-r1', badge: 'new', label: 'MAI DS R1' },
             ],
             'xAI': [
                 { id: 'grok-3', badge: 'new', label: 'Grok 3' },
                 { id: 'grok-3-mini', badge: 'new', label: 'Grok 3 Mini' },
                 { id: 'grok-2', badge: 'popular', label: 'Grok 2' },
-                { id: 'grok-beta', badge: '', label: 'Grok Beta' },
             ],
-            'Nvidia': [
-                { id: 'nemotron-70b', badge: '', label: 'Nemotron 70B' },
-                { id: 'llama-3.1-nemotron-70b', badge: '', label: 'Llama 3.1 Nemotron 70B' },
+            'Microsoft': [
+                { id: 'phi-4', badge: 'new', label: 'Phi-4' },
+                { id: 'phi-3.5-mini', badge: 'free', label: 'Phi 3.5 Mini' },
             ],
             'Other': [
                 { id: 'command-r-plus', badge: '', label: 'Command R+' },
                 { id: 'command-r', badge: 'free', label: 'Command R' },
-                { id: 'dbrx-instruct', badge: '', label: 'DBRX Instruct' },
-                { id: 'sparkdesk-v5.5', badge: '', label: 'SparkDesk V5.5' },
-                { id: 'yi-34b', badge: 'free', label: 'Yi 34B' },
+                { id: 'nemotron-70b', badge: '', label: 'Nemotron 70B' },
                 { id: 'sonar-pro', badge: 'new', label: 'Sonar Pro' },
                 { id: 'sonar', badge: '', label: 'Sonar' },
                 { id: 'glm-4', badge: '', label: 'GLM-4' },
@@ -1207,41 +850,215 @@
         const DEFAULT_SYSTEM = `Ты — профессиональный автор песен мирового уровня. Ты создаёшь уникальные, поэтичные тексты песен с рифмами, метафорами и эмоциональной глубиной. Всегда следуй заданному формату.`;
 
         const genreCovers = {
-            'Pop': { bg: 'linear-gradient(135deg,#ec4899,#f59e0b)', e: '🎤' },
-            'Rock': { bg: 'linear-gradient(135deg,#ef4444,#7c3aed)', e: '🎸' },
-            'Hip-Hop': { bg: 'linear-gradient(135deg,#f59e0b,#ef4444)', e: '🎧' },
-            'R&B': { bg: 'linear-gradient(135deg,#8b5cf6,#ec4899)', e: '🎹' },
-            'Electronic': { bg: 'linear-gradient(135deg,#06b6d4,#7c3aed)', e: '⚡' },
-            'Jazz': { bg: 'linear-gradient(135deg,#f59e0b,#78350f)', e: '🎷' },
-            'Country': { bg: 'linear-gradient(135deg,#d97706,#65a30d)', e: '🤠' },
-            'Indie': { bg: 'linear-gradient(135deg,#10b981,#06b6d4)', e: '🌿' },
-            'Metal': { bg: 'linear-gradient(135deg,#374151,#ef4444)', e: '🤘' },
-            'Lo-Fi': { bg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', e: '🌙' },
-            'Reggaeton': { bg: 'linear-gradient(135deg,#ef4444,#f59e0b)', e: '💃' },
-            'K-Pop': { bg: 'linear-gradient(135deg,#ec4899,#06b6d4)', e: '🇰🇷' },
+            'Pop': { bg:'linear-gradient(135deg,#ec4899,#f59e0b)', e:'🎤' },
+            'Rock': { bg:'linear-gradient(135deg,#ef4444,#7c3aed)', e:'🎸' },
+            'Hip-Hop': { bg:'linear-gradient(135deg,#f59e0b,#ef4444)', e:'🎧' },
+            'R&B': { bg:'linear-gradient(135deg,#8b5cf6,#ec4899)', e:'🎹' },
+            'Electronic': { bg:'linear-gradient(135deg,#06b6d4,#7c3aed)', e:'⚡' },
+            'Jazz': { bg:'linear-gradient(135deg,#f59e0b,#78350f)', e:'🎷' },
+            'Country': { bg:'linear-gradient(135deg,#d97706,#65a30d)', e:'🤠' },
+            'Indie': { bg:'linear-gradient(135deg,#10b981,#06b6d4)', e:'🌿' },
+            'Metal': { bg:'linear-gradient(135deg,#374151,#ef4444)', e:'🤘' },
+            'Lo-Fi': { bg:'linear-gradient(135deg,#6366f1,#8b5cf6)', e:'🌙' },
+            'Reggaeton': { bg:'linear-gradient(135deg,#ef4444,#f59e0b)', e:'💃' },
+            'K-Pop': { bg:'linear-gradient(135deg,#ec4899,#06b6d4)', e:'🇰🇷' },
         };
 
-        // ═══ DEV PANEL LOGIC ═══
+        // ══════════════════════════════════
+        //  ROBUST API CALL WITH FALLBACKS
+        // ══════════════════════════════════
+        async function callAI(messages, params = {}) {
+            const requestParams = {
+                model: currentModel,
+                messages,
+                ...params
+            };
+
+            forceLog('info', `API запрос → ${currentModel}`);
+            forceLog('info', `Параметры: temp=${params.temperature || '?'}, topP=${params.top_p || '?'}`);
+
+            try {
+                const result = await client.chat.completions.create(requestParams);
+
+                // Case 1: Normal structured response
+                if (result && result.choices && result.choices[0] && result.choices[0].message) {
+                    const text = result.choices[0].message.content;
+                    forceLog('success', `✅ Структурированный ответ (${text.length} символов)`);
+                    return text;
+                }
+
+                // Case 2: Result is a string directly
+                if (typeof result === 'string') {
+                    forceLog('warn', `⚠️ Ответ как строка (${result.length} символов)`);
+                    return result;
+                }
+
+                // Case 3: Result has some other structure
+                if (result && typeof result === 'object') {
+                    // Try different possible paths
+                    const possiblePaths = [
+                        result.content,
+                        result.text,
+                        result.message?.content,
+                        result.response,
+                        result.data?.choices?.[0]?.message?.content,
+                        result.data?.content,
+                    ];
+                    for (const val of possiblePaths) {
+                        if (typeof val === 'string' && val.length > 10) {
+                            forceLog('warn', `⚠️ Ответ найден в нестандартном поле (${val.length} символов)`);
+                            return val;
+                        }
+                    }
+
+                    // Last resort: stringify
+                    const str = JSON.stringify(result);
+                    forceLog('warn', `⚠️ Не найден текст, JSON: ${str.substring(0, 200)}`);
+                    throw new Error('Неизвестный формат ответа от API');
+                }
+
+                throw new Error('Пустой ответ от API');
+
+            } catch (err) {
+                // ═══ CRITICAL FIX: Handle raw text responses ═══
+                // Some models return raw text that the client tries to parse as JSON
+                const errMsg = err.message || '';
+
+                if (errMsg.includes('is not valid JSON') || errMsg.includes('Unexpected token')) {
+                    forceLog('warn', `⚠️ Получен сырой текст (не JSON). Извлекаю...`);
+
+                    // Extract the raw text from the error message
+                    // Error format: 'Unexpected token 'X', "ACTUAL TEXT..."... is not valid JSON'
+                    let rawText = '';
+
+                    // Method 1: Try to extract from error message quotes
+                    const quoteMatch = errMsg.match(/"(.+?)"\.\.\./);
+                    if (quoteMatch) {
+                        rawText = quoteMatch[1];
+                    }
+
+                    // Method 2: Direct fetch to get the raw response
+                    if (!rawText || rawText.length < 30) {
+                        forceLog('info', `Повторный запрос с ручным fetch...`);
+                        try {
+                            rawText = await fetchRawResponse(messages, params);
+                        } catch (fetchErr) {
+                            forceLog('error', `Ручной fetch ошибка: ${fetchErr.message}`);
+                        }
+                    }
+
+                    if (rawText && rawText.length > 30) {
+                        forceLog('success', `✅ Извлечён сырой текст (${rawText.length} символов)`);
+                        return rawText;
+                    }
+                }
+
+                throw err;
+            }
+        }
+
+        // Direct fetch fallback for raw text responses
+        async function fetchRawResponse(messages, params) {
+            const endpoints = [
+                'https://api.g4f.dev/chat/completions',
+                'https://g4f.dev/api/chat/completions',
+            ];
+
+            const body = {
+                model: currentModel,
+                messages,
+                temperature: params.temperature || 0.9,
+                top_p: params.top_p || 0.95,
+                max_tokens: params.max_tokens || 2048,
+            };
+
+            for (const url of endpoints) {
+                try {
+                    forceLog('info', `Fetch → ${url}`);
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+
+                    const contentType = resp.headers.get('content-type') || '';
+                    let text;
+
+                    if (contentType.includes('application/json')) {
+                        const json = await resp.json();
+                        text = json?.choices?.[0]?.message?.content
+                            || json?.content
+                            || json?.response
+                            || JSON.stringify(json);
+                    } else {
+                        // Raw text response
+                        text = await resp.text();
+                    }
+
+                    // Clean up potential SSE/streaming artifacts
+                    text = cleanStreamingText(text);
+
+                    if (text && text.length > 30) {
+                        forceLog('success', `✅ Fetch успех: ${text.length} символов`);
+                        return text;
+                    }
+                } catch (e) {
+                    forceLog('warn', `Fetch ${url} ошибка: ${e.message}`);
+                }
+            }
+
+            throw new Error('Все endpoints недоступны');
+        }
+
+        // Clean up SSE/streaming text artifacts
+        function cleanStreamingText(text) {
+            if (!text) return '';
+
+            // Remove SSE data: prefixes
+            text = text.replace(/^data:\s*/gm, '');
+
+            // Remove [DONE] markers
+            text = text.replace(/\[DONE\]/g, '');
+
+            // Try to extract content from JSON chunks
+            const contentParts = [];
+            const jsonChunks = text.split('\n').filter(l => l.trim().startsWith('{'));
+
+            if (jsonChunks.length > 0) {
+                for (const chunk of jsonChunks) {
+                    try {
+                        const parsed = JSON.parse(chunk);
+                        const content = parsed?.choices?.[0]?.delta?.content
+                            || parsed?.choices?.[0]?.message?.content
+                            || '';
+                        if (content) contentParts.push(content);
+                    } catch (e) {
+                        // Not JSON, skip
+                    }
+                }
+                if (contentParts.length > 0) {
+                    return contentParts.join('');
+                }
+            }
+
+            // If no JSON found, return cleaned text
+            return text.trim();
+        }
+
+        // ══════════════════════════════════
+        //  DEV PANEL
+        // ══════════════════════════════════
         const devToggle = document.getElementById('devToggle');
         const devPanel = document.getElementById('devPanel');
         const devOverlay = document.getElementById('devOverlay');
         const devClose = document.getElementById('devClose');
 
-        function openDev() {
-            devPanel.classList.add('open');
-            devOverlay.classList.add('open');
-            devToggle.classList.add('active');
-        }
-        function closeDev() {
-            devPanel.classList.remove('open');
-            devOverlay.classList.remove('open');
-            devToggle.classList.remove('active');
-        }
+        function openDev() { devPanel.classList.add('open'); devOverlay.classList.add('open'); devToggle.classList.add('active'); }
+        function closeDev() { devPanel.classList.remove('open'); devOverlay.classList.remove('open'); devToggle.classList.remove('active'); }
         devToggle.onclick = () => devPanel.classList.contains('open') ? closeDev() : openDev();
         devClose.onclick = closeDev;
         devOverlay.onclick = closeDev;
 
-        // Section collapse
         document.querySelectorAll('.dev-section-header').forEach(h => {
             h.addEventListener('click', () => {
                 const sec = h.dataset.section;
@@ -1251,28 +1068,22 @@
             });
         });
 
-        // Toggle switches
         document.querySelectorAll('.toggle-switch').forEach(sw => {
             sw.addEventListener('click', () => {
                 const isOn = sw.dataset.on === 'true';
                 sw.dataset.on = (!isOn).toString();
                 sw.classList.toggle('on', !isOn);
-                devLog('info', `${sw.id}: ${!isOn}`);
+                forceLog('info', `${sw.id}: ${!isOn}`);
             });
         });
 
-        // Range sliders
-        ['temperature', 'topP', 'freqPenalty', 'presPenalty'].forEach(id => {
+        ['temperature','topP','freqPenalty','presPenalty'].forEach(id => {
             const el = document.getElementById(id);
-            const valMap = { temperature: 'tempVal', topP: 'topPVal', freqPenalty: 'freqVal', presPenalty: 'presVal' };
-            if (el) {
-                el.addEventListener('input', () => {
-                    document.getElementById(valMap[id]).textContent = el.value;
-                });
-            }
+            const valMap = { temperature:'tempVal', topP:'topPVal', freqPenalty:'freqVal', presPenalty:'presVal' };
+            if (el) el.addEventListener('input', () => { document.getElementById(valMap[id]).textContent = el.value; });
         });
 
-        // ═══ MODEL SEARCH & SELECT ═══
+        // Model search
         const modelSearch = document.getElementById('modelSearch');
         const modelDropdown = document.getElementById('modelDropdown');
 
@@ -1280,56 +1091,34 @@
             modelDropdown.innerHTML = '';
             const f = filter.toLowerCase();
             let hasResults = false;
-
             for (const [category, models] of Object.entries(ALL_MODELS)) {
                 const filtered = models.filter(m =>
-                    m.id.toLowerCase().includes(f) ||
-                    m.label.toLowerCase().includes(f) ||
-                    category.toLowerCase().includes(f)
+                    m.id.toLowerCase().includes(f) || m.label.toLowerCase().includes(f) || category.toLowerCase().includes(f)
                 );
-                if (filtered.length === 0) continue;
+                if (!filtered.length) continue;
                 hasResults = true;
-
                 const catDiv = document.createElement('div');
-                catDiv.className = 'model-category';
-                catDiv.textContent = category;
+                catDiv.className = 'model-category'; catDiv.textContent = category;
                 modelDropdown.appendChild(catDiv);
-
                 filtered.forEach(m => {
                     const opt = document.createElement('div');
                     opt.className = 'model-option' + (m.id === currentModel ? ' selected' : '');
-                    opt.innerHTML = `
-                        <span class="model-name">${m.label}</span>
+                    opt.innerHTML = `<span class="model-name">${m.label}</span>
                         ${m.badge ? `<span class="model-badge ${m.badge}">${m.badge}</span>` : ''}
-                        <span class="model-provider">${m.id}</span>
-                    `;
+                        <span class="model-provider">${m.id}</span>`;
                     opt.addEventListener('click', () => selectModel(m.id));
                     modelDropdown.appendChild(opt);
                 });
             }
-
             if (!hasResults) {
-                modelDropdown.innerHTML = `
-                    <div style="padding:20px;text-align:center;color:var(--text-dim);font-size:0.85em">
-                        Модель не найдена. Введите ID вручную ниже.
-                    </div>
-                `;
+                modelDropdown.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:0.85em">
+                    Не найдено. Введите ID вручную ниже.</div>`;
             }
         }
 
-        modelSearch.addEventListener('focus', () => {
-            renderModelDropdown(modelSearch.value);
-            modelDropdown.classList.add('open');
-        });
-        modelSearch.addEventListener('input', () => {
-            renderModelDropdown(modelSearch.value);
-            modelDropdown.classList.add('open');
-        });
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.model-search-container')) {
-                modelDropdown.classList.remove('open');
-            }
-        });
+        modelSearch.addEventListener('focus', () => { renderModelDropdown(modelSearch.value); modelDropdown.classList.add('open'); });
+        modelSearch.addEventListener('input', () => { renderModelDropdown(modelSearch.value); modelDropdown.classList.add('open'); });
+        document.addEventListener('click', e => { if (!e.target.closest('.model-search-container')) modelDropdown.classList.remove('open'); });
 
         function selectModel(modelId) {
             currentModel = modelId;
@@ -1339,51 +1128,32 @@
             document.getElementById('customModelInput').value = '';
             modelSearch.value = '';
             modelDropdown.classList.remove('open');
-            devLog('success', `Модель: ${modelId}`);
+            forceLog('success', `Модель: ${modelId}`);
             showToast(`🤖 Модель: ${modelId}`);
         }
 
         window.applyCustomModel = function () {
             const v = document.getElementById('customModelInput').value.trim();
-            if (v) {
-                selectModel(v);
-            }
+            if (v) selectModel(v);
         };
 
-        // ═══ PRESETS ═══
         window.loadPreset = function (name) {
             const presets = {
-                creative: { temp: 1.4, topP: 0.95, freq: 0.5, pres: 0.4 },
-                precise: { temp: 0.3, topP: 0.8, freq: 0.1, pres: 0.1 },
-                balanced: { temp: 0.9, topP: 0.95, freq: 0.3, pres: 0.2 },
-                wild: { temp: 2.0, topP: 1.0, freq: 0.7, pres: 0.6 }
+                creative: { temp:1.4, topP:0.95, freq:0.5, pres:0.4 },
+                precise: { temp:0.3, topP:0.8, freq:0.1, pres:0.1 },
+                balanced: { temp:0.9, topP:0.95, freq:0.3, pres:0.2 },
+                wild: { temp:2.0, topP:1.0, freq:0.7, pres:0.6 }
             };
-            const p = presets[name];
-            if (!p) return;
-            document.getElementById('temperature').value = p.temp;
-            document.getElementById('tempVal').textContent = p.temp;
-            document.getElementById('topP').value = p.topP;
-            document.getElementById('topPVal').textContent = p.topP;
-            document.getElementById('freqPenalty').value = p.freq;
-            document.getElementById('freqVal').textContent = p.freq;
-            document.getElementById('presPenalty').value = p.pres;
-            document.getElementById('presVal').textContent = p.pres;
-            devLog('info', `Пресет: ${name}`);
-            showToast(`💎 Пресет "${name}" применён`);
+            const p = presets[name]; if (!p) return;
+            document.getElementById('temperature').value = p.temp; document.getElementById('tempVal').textContent = p.temp;
+            document.getElementById('topP').value = p.topP; document.getElementById('topPVal').textContent = p.topP;
+            document.getElementById('freqPenalty').value = p.freq; document.getElementById('freqVal').textContent = p.freq;
+            document.getElementById('presPenalty').value = p.pres; document.getElementById('presVal').textContent = p.pres;
+            forceLog('info', `Пресет: ${name}`);
+            showToast(`💎 Пресет "${name}"`);
         };
 
-        // ═══ CONSOLE ═══
-        function devLog(type, msg) {
-            if (document.getElementById('toggleDebug').dataset.on === 'false' && type !== 'success' && type !== 'error') return;
-            const log = document.getElementById('consoleLog');
-            const ts = new Date().toLocaleTimeString();
-            const line = document.createElement('div');
-            line.className = `console-line ${type}`;
-            line.innerHTML = `<span class="ts">[${ts}]</span> ${msg}`;
-            log.appendChild(line);
-            log.scrollTop = log.scrollHeight;
-        }
-        // Always log important
+        // Console
         function forceLog(type, msg) {
             const log = document.getElementById('consoleLog');
             const ts = new Date().toLocaleTimeString();
@@ -1402,12 +1172,8 @@
         window.testConnection = async function () {
             forceLog('info', `Тест: ${currentModel}...`);
             try {
-                const r = await client.chat.completions.create({
-                    model: currentModel,
-                    messages: [{ role: 'user', content: 'Say "OK" in one word.' }]
-                });
-                const resp = r.choices?.[0]?.message?.content || 'empty';
-                forceLog('success', `✅ Ответ: "${resp.substring(0, 50)}"`);
+                const text = await callAI([{ role: 'user', content: 'Say "OK" in one word.' }], { temperature: 0.1 });
+                forceLog('success', `✅ Ответ: "${text.substring(0, 80)}"`);
                 showToast('✅ API работает!');
             } catch (e) {
                 forceLog('error', `❌ ${e.message}`);
@@ -1417,67 +1183,52 @@
 
         window.clearAllData = function () {
             if (confirm('Удалить всю историю и настройки?')) {
-                localStorage.clear();
-                songHistory = [];
-                renderHistory();
-                forceLog('warn', 'Все данные удалены');
-                showToast('🗑️ Данные очищены');
+                localStorage.clear(); songHistory = []; renderHistory();
+                forceLog('warn', 'Все данные удалены'); showToast('🗑️ Данные очищены');
             }
         };
 
         window.resetSystemPrompt = function () {
-            document.getElementById('systemPrompt').value = DEFAULT_SYSTEM;
-            showToast('🔄 Промпт сброшен');
+            document.getElementById('systemPrompt').value = DEFAULT_SYSTEM; showToast('🔄 Сброшено');
         };
         window.copySystemPrompt = function () {
-            navigator.clipboard.writeText(document.getElementById('systemPrompt').value);
-            showToast('📋 Скопировано');
+            navigator.clipboard.writeText(document.getElementById('systemPrompt').value); showToast('📋 Скопировано');
         };
 
-        // ═══ VOICES ═══
+        // Voices
         const synth = window.speechSynthesis;
         function populateVoices() {
             const sel = document.getElementById('voiceSelect');
-            const voices = synth.getVoices();
-            sel.innerHTML = '';
+            const voices = synth.getVoices(); sel.innerHTML = '';
             const groups = { ru: [], en: [], other: [] };
             voices.forEach((v, i) => {
                 const key = v.lang.startsWith('ru') ? 'ru' : v.lang.startsWith('en') ? 'en' : 'other';
                 groups[key].push({ v, i });
             });
-            function addGroup(arr, label) {
+            function addG(arr, label) {
                 if (!arr.length) return;
-                const g = document.createElement('optgroup');
-                g.label = label;
-                arr.forEach(({ v, i }) => {
-                    const o = document.createElement('option');
-                    o.value = i; o.textContent = `${v.name} (${v.lang})`;
-                    g.appendChild(o);
-                });
+                const g = document.createElement('optgroup'); g.label = label;
+                arr.forEach(({ v, i }) => { const o = document.createElement('option'); o.value = i; o.textContent = `${v.name} (${v.lang})`; g.appendChild(o); });
                 sel.appendChild(g);
             }
-            addGroup(groups.ru, '🇷🇺 Русский');
-            addGroup(groups.en, '🇬🇧 English');
-            addGroup(groups.other, '🌍 Other');
+            addG(groups.ru, '🇷🇺 Русский'); addG(groups.en, '🇬🇧 English'); addG(groups.other, '🌍 Other');
         }
         synth.onvoiceschanged = populateVoices;
         populateVoices();
 
-        // ═══ CHIP & MOOD SELECTION ═══
+        // Chip & Mood
         document.getElementById('genreGrid').addEventListener('click', e => {
-            const c = e.target.closest('.chip');
-            if (!c) return;
-            document.querySelectorAll('#genreGrid .chip').forEach(x => x.classList.remove('active'));
-            c.classList.add('active');
+            const c = e.target.closest('.chip'); if (!c) return;
+            document.querySelectorAll('#genreGrid .chip').forEach(x => x.classList.remove('active')); c.classList.add('active');
         });
         document.getElementById('moodGrid').addEventListener('click', e => {
-            const b = e.target.closest('.mood-btn');
-            if (!b) return;
-            document.querySelectorAll('#moodGrid .mood-btn').forEach(x => x.classList.remove('active'));
-            b.classList.add('active');
+            const b = e.target.closest('.mood-btn'); if (!b) return;
+            document.querySelectorAll('#moodGrid .mood-btn').forEach(x => x.classList.remove('active')); b.classList.add('active');
         });
 
-        // ═══ GENERATE SONG ═══
+        // ══════════════════════════════════
+        //  GENERATE SONG (FIXED!)
+        // ══════════════════════════════════
         window.generateSong = async function () {
             const topic = document.getElementById('songTopic').value.trim();
             const genre = document.querySelector('#genreGrid .chip.active')?.dataset.v || 'Pop';
@@ -1487,10 +1238,8 @@
             if (!topic) { showToast('❌ Введите тему!'); return; }
 
             const btn = document.getElementById('genBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳ Генерация...';
-            stopPlay();
-            showLoading();
+            btn.disabled = true; btn.textContent = '⏳ Генерация...';
+            stopPlay(); showLoading();
 
             const temperature = parseFloat(document.getElementById('temperature').value);
             const topP = parseFloat(document.getElementById('topP').value);
@@ -1532,9 +1281,8 @@ TITLE: [Название]
 - Запоминающийся припев
 - Стиль: ${genre}, настроение: ${mood}
 - ТОЛЬКО ${lang} язык
-- БЕЗ пояснений`;
+- БЕЗ пояснений, ТОЛЬКО текст песни`;
 
-            forceLog('info', `Генерация: model=${currentModel}, temp=${temperature}, topP=${topP}`);
             const t0 = performance.now();
 
             try {
@@ -1542,28 +1290,30 @@ TITLE: [Название]
                 if (sysPrompt) messages.push({ role: 'system', content: sysPrompt });
                 messages.push({ role: 'user', content: userPrompt });
 
-                const params = {
-                    model: currentModel,
-                    messages,
+                // ═══ USE THE ROBUST callAI FUNCTION ═══
+                const text = await callAI(messages, {
                     temperature,
                     top_p: topP,
                     max_tokens: maxTokens,
                     frequency_penalty: freqPenalty,
                     presence_penalty: presPenalty,
-                };
+                });
 
-                forceLog('info', `Запрос к ${currentModel}...`);
-
-                const result = await client.chat.completions.create(params);
                 const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
-                const text = result.choices[0].message.content;
+                forceLog('success', `✅ Ответ за ${elapsed}s, ${text.length} символов`);
 
-                forceLog('success', `✅ Ответ за ${elapsed}s, ~${text.length} символов`);
+                // Show raw response if enabled
+                const rawEl = document.getElementById('rawResponse');
+                if (document.getElementById('toggleRaw').dataset.on === 'true') {
+                    rawEl.textContent = text.substring(0, 1000) + (text.length > 1000 ? '...' : '');
+                    rawEl.classList.add('visible');
+                } else {
+                    rawEl.classList.remove('visible');
+                }
 
                 // Token info
                 if (document.getElementById('toggleTokens').dataset.on === 'true') {
-                    const ti = document.getElementById('tokenInfo');
-                    ti.style.display = 'flex';
+                    const ti = document.getElementById('tokenInfo'); ti.style.display = 'flex';
                     document.getElementById('promptTokens').textContent = Math.round(userPrompt.length / 4);
                     document.getElementById('responseTokens').textContent = Math.round(text.length / 4);
                     document.getElementById('genTime').textContent = elapsed;
@@ -1588,13 +1338,44 @@ TITLE: [Название]
 
         function parseSong(text, genre, mood) {
             let title = 'Без названия', lyrics = text;
-            const tm = text.match(/TITLE:\s*(.+)/i);
-            if (tm) {
-                title = tm[1].trim().replace(/[\[\]"*]/g, '');
-                const idx = text.indexOf('---');
-                lyrics = idx > -1 ? text.substring(idx + 3).trim() : text.substring(tm.index + tm[0].length).trim();
+
+            // Try multiple title formats
+            const titlePatterns = [
+                /TITLE:\s*(.+)/i,
+                /^#\s*(.+)/m,
+                /^Название:\s*(.+)/im,
+                /^\*\*(.+?)\*\*/m,
+            ];
+
+            for (const pattern of titlePatterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    title = match[1].trim().replace(/[\[\]"*#]/g, '');
+                    break;
+                }
             }
-            lyrics = lyrics.replace(/^---\s*/gm, '').trim();
+
+            // Extract lyrics (after --- or after TITLE line)
+            const dashIdx = text.indexOf('---');
+            const titleMatch = text.match(/TITLE:\s*.+/i);
+
+            if (dashIdx > -1) {
+                lyrics = text.substring(dashIdx + 3).trim();
+            } else if (titleMatch) {
+                lyrics = text.substring(titleMatch.index + titleMatch[0].length).trim();
+            }
+
+            // Clean up
+            lyrics = lyrics
+                .replace(/^---\s*/gm, '')
+                .replace(/^\*\*.+\*\*\s*$/gm, '') // remove bold markdown titles
+                .trim();
+
+            // If lyrics is too short, use full text
+            if (lyrics.length < 50) {
+                lyrics = text;
+            }
+
             return {
                 title, lyrics, genre, mood,
                 model: currentModel,
@@ -1605,102 +1386,62 @@ TITLE: [Название]
 
         function showLoading() {
             const area = document.getElementById('resultArea');
-            const t = area.querySelector('.card-title');
-            area.innerHTML = ''; area.appendChild(t);
-            const steps = ['🎼 Подбираю аккорды...', '✍️ Пишу текст...', '🎵 Ищу рифмы...', '🎤 Настраиваю голос...', '✨ Финальные штрихи...'];
-            const d = document.createElement('div');
-            d.className = 'loading-wrap';
-            d.innerHTML = `
-                <div class="loading-bars"><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div></div>
+            const t = area.querySelector('.card-title'); area.innerHTML = ''; area.appendChild(t);
+            const steps = ['🎼 Подбираю аккорды...','✍️ Пишу текст...','🎵 Ищу рифмы...','🎤 Настраиваю голос...','✨ Финальные штрихи...'];
+            const d = document.createElement('div'); d.className = 'loading-wrap';
+            d.innerHTML = `<div class="loading-bars"><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div></div>
                 <div class="loading-txt">Создаю песню через ${currentModel}...</div>
                 <div class="loading-step" id="lstep">${steps[0]}</div>`;
             area.appendChild(d);
             let si = 0;
-            area._si = setInterval(() => {
-                si = (si + 1) % steps.length;
-                const el = document.getElementById('lstep');
-                if (el) el.textContent = steps[si]; else clearInterval(area._si);
-            }, 2500);
+            area._si = setInterval(() => { si = (si+1)%steps.length; const el = document.getElementById('lstep'); if(el) el.textContent = steps[si]; else clearInterval(area._si); }, 2500);
         }
 
         function showError(msg) {
             const area = document.getElementById('resultArea');
             if (area._si) clearInterval(area._si);
-            const t = area.querySelector('.card-title');
-            area.innerHTML = ''; area.appendChild(t);
-            const d = document.createElement('div');
-            d.className = 'err-box';
+            const t = area.querySelector('.card-title'); area.innerHTML = ''; area.appendChild(t);
+            const d = document.createElement('div'); d.className = 'err-box';
             d.innerHTML = `<div class="ei">😔</div><p>Ошибка генерации</p><p style="font-size:.82em;opacity:.7">${msg}</p>
-            <button class="retry-btn" onclick="generateSong()">🔄 Повторить</button>`;
+                <button class="retry-btn" onclick="generateSong()">🔄 Повторить</button>`;
             area.appendChild(d);
         }
 
         function displaySong(song) {
             const area = document.getElementById('resultArea');
             if (area._si) clearInterval(area._si);
-            const t = area.querySelector('.card-title');
-            area.innerHTML = ''; area.appendChild(t);
+            const t = area.querySelector('.card-title'); area.innerHTML = ''; area.appendChild(t);
 
-            const r = document.createElement('div');
-            r.className = 'song-result';
-
-            // Header
-            r.innerHTML = `
-            <div class="song-hdr">
+            const r = document.createElement('div'); r.className = 'song-result';
+            r.innerHTML = `<div class="song-hdr">
                 <div class="song-cover" style="background:${song.cover.bg}">${song.cover.e}</div>
-                <div class="song-info">
-                    <h3>${song.title}</h3>
-                    <div class="song-meta">
-                        <span class="song-tag g">${song.genre}</span>
-                        <span class="song-tag m">${song.mood}</span>
-                        <span class="song-tag model">🤖 ${song.model}</span>
-                    </div>
-                </div>
-            </div>`;
+                <div class="song-info"><h3>${song.title}</h3>
+                <div class="song-meta"><span class="song-tag g">${song.genre}</span><span class="song-tag m">${song.mood}</span><span class="song-tag model">🤖 ${song.model}</span></div></div></div>`;
 
-            // Lyrics
-            const lb = document.createElement('div');
-            lb.className = 'lyrics-box'; lb.id = 'lyricsBox';
+            const lb = document.createElement('div'); lb.className = 'lyrics-box'; lb.id = 'lyricsBox';
             song.lyrics.split('\n').forEach(line => {
                 if (line.match(/^\[.+\]$/)) {
-                    const d = document.createElement('div');
-                    d.className = 'lyrics-sec'; d.textContent = line; lb.appendChild(d);
+                    const d = document.createElement('div'); d.className = 'lyrics-sec'; d.textContent = line; lb.appendChild(d);
                 } else if (line.trim()) {
-                    const d = document.createElement('div');
-                    d.className = 'lyrics-ln'; d.textContent = line; lb.appendChild(d);
+                    const d = document.createElement('div'); d.className = 'lyrics-ln'; d.textContent = line; lb.appendChild(d);
                 }
             });
             r.appendChild(lb);
 
-            // Visualizer
-            const cv = document.createElement('canvas');
-            cv.className = 'viz-canvas'; cv.id = 'vizCanvas';
-            r.appendChild(cv);
+            const cv = document.createElement('canvas'); cv.className = 'viz-canvas'; cv.id = 'vizCanvas'; r.appendChild(cv);
 
-            // Player
-            const pl = document.createElement('div');
-            pl.className = 'player-sec';
-            pl.innerHTML = `
-                <div class="prog-bg" id="progBar"><div class="prog-fill" id="progFill"></div></div>
+            const pl = document.createElement('div'); pl.className = 'player-sec';
+            pl.innerHTML = `<div class="prog-bg"><div class="prog-fill" id="progFill"></div></div>
                 <div class="time-labels"><span id="curTime">0:00</span><span id="totTime">0:00</span></div>
-                <div class="p-ctrls">
-                    <button class="cbtn" onclick="window.restartSong()">⏮️</button>
-                    <button class="cbtn play" id="playBtn" onclick="window.togglePlay()">▶️</button>
-                    <button class="cbtn" onclick="window.stopPlay()">⏹️</button>
-                </div>
-                <div class="vol-sec">
-                    <span>🔈</span>
-                    <input type="range" class="vol-sl" id="volSl" min="0" max="1" step="0.05" value="0.8">
-                    <span>🔊</span>
-                </div>
+                <div class="p-ctrls"><button class="cbtn" onclick="window.restartSong()">⏮️</button>
+                <button class="cbtn play" id="playBtn" onclick="window.togglePlay()">▶️</button>
+                <button class="cbtn" onclick="window.stopPlay()">⏹️</button></div>
+                <div class="vol-sec"><span>🔈</span><input type="range" class="vol-sl" id="volSl" min="0" max="1" step="0.05" value="0.8"><span>🔊</span></div>
                 <div class="speech-st" id="speechSt"></div>`;
             r.appendChild(pl);
 
-            // Actions
-            const ab = document.createElement('div');
-            ab.className = 'act-btns';
-            ab.innerHTML = `
-                <button class="act-btn" onclick="window.copyLyrics()">📋 Копировать</button>
+            const ab = document.createElement('div'); ab.className = 'act-btns';
+            ab.innerHTML = `<button class="act-btn" onclick="window.copyLyrics()">📋 Копировать</button>
                 <button class="act-btn" onclick="window.downloadLyrics()">💾 Скачать</button>
                 <button class="act-btn" onclick="window.shareSong()">🔗 Поделиться</button>`;
             r.appendChild(ab);
@@ -1708,10 +1449,10 @@ TITLE: [Название]
             initViz();
         }
 
-        // ═══ PLAYBACK ═══
+        // ══════ PLAYBACK ══════
         window.togglePlay = function () {
-            if (synth.paused) { synth.resume(); isPlaying = true; updPlayBtn(); setSt('🎤 Воспроизведение...'); startVizAnim(); return; }
-            if (isPlaying) { synth.pause(); isPlaying = false; updPlayBtn(); setSt('⏸️ Пауза'); stopVizAnim(); return; }
+            if (synth.paused) { synth.resume(); isPlaying = true; updPB(); setSt('🎤 Воспроизведение...'); startVA(); return; }
+            if (isPlaying) { synth.pause(); isPlaying = false; updPB(); setSt('⏸️ Пауза'); stopVA(); return; }
             playSong();
         };
 
@@ -1724,203 +1465,122 @@ TITLE: [Название]
             const vol = parseFloat(document.getElementById('volSl')?.value || 0.8);
 
             const clean = currentSong.lyrics.replace(/\[.+?\]/g, '... ').replace(/\n{2,}/g, '... ').replace(/\n/g, '. ').trim();
-
             currentUtterance = new SpeechSynthesisUtterance(clean);
             if (voices[vi]) currentUtterance.voice = voices[vi];
-            currentUtterance.rate = rate;
-            currentUtterance.pitch = 1.05;
-            currentUtterance.volume = vol;
+            currentUtterance.rate = rate; currentUtterance.pitch = 1.05; currentUtterance.volume = vol;
 
-            const words = clean.split(/\s+/).length;
-            const dur = (words / 2.5) / rate;
-            const totEl = document.getElementById('totTime');
-            if (totEl) totEl.textContent = fmtTime(dur);
+            const dur = (clean.split(/\s+/).length / 2.5) / rate;
+            const totEl = document.getElementById('totTime'); if (totEl) totEl.textContent = fmtT(dur);
 
-            const t0 = Date.now();
-            let pi;
-
+            const t0 = Date.now(); let pi;
             currentUtterance.onstart = () => {
-                isPlaying = true; updPlayBtn(); setSt('🎤 Воспроизведение...'); startVizAnim();
+                isPlaying = true; updPB(); setSt('🎤 Воспроизведение...'); startVA();
                 pi = setInterval(() => {
-                    const el = (Date.now() - t0) / 1000;
-                    const pct = Math.min((el / dur) * 100, 100);
-                    const f = document.getElementById('progFill');
-                    const c = document.getElementById('curTime');
-                    if (f) f.style.width = pct + '%';
-                    if (c) c.textContent = fmtTime(el);
+                    const el = (Date.now()-t0)/1000;
+                    const f = document.getElementById('progFill'); if(f) f.style.width = Math.min((el/dur)*100,100)+'%';
+                    const c = document.getElementById('curTime'); if(c) c.textContent = fmtT(el);
                 }, 200);
             };
-            currentUtterance.onboundary = (e) => hlLyrics(e.charIndex, clean);
-            currentUtterance.onend = () => {
-                isPlaying = false; updPlayBtn(); setSt('✅ Завершено'); stopVizAnim(); clearInterval(pi);
-                const f = document.getElementById('progFill'); if (f) f.style.width = '100%';
-            };
-            currentUtterance.onerror = () => {
-                isPlaying = false; updPlayBtn(); setSt('❌ Ошибка'); stopVizAnim(); clearInterval(pi);
-            };
+            currentUtterance.onboundary = e => hlLyr(e.charIndex, clean);
+            currentUtterance.onend = () => { isPlaying = false; updPB(); setSt('✅ Завершено'); stopVA(); clearInterval(pi); const f=document.getElementById('progFill'); if(f)f.style.width='100%'; };
+            currentUtterance.onerror = () => { isPlaying = false; updPB(); setSt('❌ Ошибка'); stopVA(); clearInterval(pi); };
             synth.speak(currentUtterance);
         }
 
         window.stopPlay = function () { stopPlay(); };
         function stopPlay() {
-            synth.cancel(); isPlaying = false; updPlayBtn(); setSt(''); stopVizAnim();
-            const f = document.getElementById('progFill'); if (f) f.style.width = '0%';
-            const c = document.getElementById('curTime'); if (c) c.textContent = '0:00';
-            document.querySelectorAll('.lyrics-ln.hl').forEach(e => e.classList.remove('hl'));
+            synth.cancel(); isPlaying = false; updPB(); setSt(''); stopVA();
+            const f=document.getElementById('progFill'); if(f) f.style.width='0%';
+            const c=document.getElementById('curTime'); if(c) c.textContent='0:00';
+            document.querySelectorAll('.lyrics-ln.hl').forEach(e=>e.classList.remove('hl'));
         }
         window.restartSong = function () { stopPlay(); setTimeout(playSong, 100); };
 
-        function updPlayBtn() {
-            const b = document.getElementById('playBtn');
-            if (b) b.textContent = isPlaying ? '⏸️' : '▶️';
-        }
-        function setSt(t) { const e = document.getElementById('speechSt'); if (e) e.textContent = t; }
-        function fmtTime(s) { return `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`; }
+        function updPB() { const b=document.getElementById('playBtn'); if(b) b.textContent = isPlaying?'⏸️':'▶️'; }
+        function setSt(t) { const e=document.getElementById('speechSt'); if(e) e.textContent=t; }
+        function fmtT(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
-        function hlLyrics(ci, full) {
-            const lines = document.querySelectorAll('.lyrics-ln');
-            if (!lines.length) return;
-            const before = full.substring(0, ci);
-            const sc = (before.match(/\.\s|\.\.\.\s/g) || []).length;
-            const idx = Math.min(sc, lines.length - 1);
-            lines.forEach((l, i) => {
-                if (i === idx) { l.classList.add('hl'); l.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-                else l.classList.remove('hl');
-            });
+        function hlLyr(ci, full) {
+            const lines = document.querySelectorAll('.lyrics-ln'); if(!lines.length) return;
+            const before = full.substring(0,ci);
+            const sc = (before.match(/\.\s|\.\.\.\s/g)||[]).length;
+            const idx = Math.min(sc, lines.length-1);
+            lines.forEach((l,i) => { if(i===idx){l.classList.add('hl');l.scrollIntoView({behavior:'smooth',block:'center'});}else l.classList.remove('hl'); });
         }
 
-        // ═══ VISUALIZER ═══
+        // ══════ VISUALIZER ══════
         function initViz() {
-            const c = document.getElementById('vizCanvas');
-            if (!c) return;
-            const ctx = c.getContext('2d');
-            c.width = c.offsetWidth * 2; c.height = c.offsetHeight * 2;
-            ctx.scale(2, 2);
-            drawIdle(ctx, c);
+            const c=document.getElementById('vizCanvas'); if(!c) return;
+            const ctx=c.getContext('2d'); c.width=c.offsetWidth*2; c.height=c.offsetHeight*2; ctx.scale(2,2);
+            drawIdle(ctx,c);
         }
-        function drawIdle(ctx, c) {
-            const w = c.width / 2, h = c.height / 2;
-            ctx.clearRect(0, 0, w, h);
-            for (let i = 0; i < 50; i++) {
-                const bh = 3 + Math.random() * 3;
-                ctx.fillStyle = `hsla(${(i / 50) * 200 + 240},70%,60%,0.3)`;
-                ctx.fillRect(i * (w / 50) + 1, h / 2 - bh / 2, w / 50 - 2, bh);
-            }
+        function drawIdle(ctx,c) {
+            const w=c.width/2,h=c.height/2; ctx.clearRect(0,0,w,h);
+            for(let i=0;i<50;i++){const bh=3+Math.random()*3;ctx.fillStyle=`hsla(${(i/50)*200+240},70%,60%,0.3)`;ctx.fillRect(i*(w/50)+1,h/2-bh/2,w/50-2,bh);}
         }
-        function startVizAnim() {
-            const c = document.getElementById('vizCanvas');
-            if (!c) return;
-            const ctx = c.getContext('2d');
-            const w = c.width / 2, h = c.height / 2;
-            let ph = 0;
-            function draw() {
-                ctx.clearRect(0, 0, w, h); ph += 0.05;
-                for (let i = 0; i < 50; i++) {
-                    const v = (Math.sin(ph + i * .3) * .4 + Math.sin(ph * 1.5 + i * .2) * .35 + Math.sin(ph * .7 + i * .5) * .25 + 1) / 2;
-                    let bh = Math.max(v * h * .8 + Math.random() * 5, 3);
-                    const hue = (i / 50) * 120 + 240 + ph * 10;
-                    const g = ctx.createLinearGradient(0, h / 2 - bh / 2, 0, h / 2 + bh / 2);
-                    g.addColorStop(0, `hsla(${hue},80%,65%,0.9)`);
-                    g.addColorStop(1, `hsla(${hue + 40},80%,50%,0.6)`);
-                    ctx.fillStyle = g;
-                    ctx.beginPath();
-                    const bw = w / 50;
-                    ctx.roundRect(i * bw + 1, h / 2 - bh / 2, bw - 2, bh, 2);
-                    ctx.fill();
+        function startVA() {
+            const c=document.getElementById('vizCanvas'); if(!c) return;
+            const ctx=c.getContext('2d'); const w=c.width/2,h=c.height/2; let ph=0;
+            function draw(){
+                ctx.clearRect(0,0,w,h);ph+=0.05;
+                for(let i=0;i<50;i++){
+                    const v=(Math.sin(ph+i*.3)*.4+Math.sin(ph*1.5+i*.2)*.35+Math.sin(ph*.7+i*.5)*.25+1)/2;
+                    let bh=Math.max(v*h*.8+Math.random()*5,3);const hue=(i/50)*120+240+ph*10;
+                    const g=ctx.createLinearGradient(0,h/2-bh/2,0,h/2+bh/2);g.addColorStop(0,`hsla(${hue},80%,65%,0.9)`);g.addColorStop(1,`hsla(${hue+40},80%,50%,0.6)`);
+                    ctx.fillStyle=g;ctx.beginPath();const bw=w/50;ctx.roundRect(i*bw+1,h/2-bh/2,bw-2,bh,2);ctx.fill();
                 }
-                animFrame = requestAnimationFrame(draw);
+                animFrame=requestAnimationFrame(draw);
             }
             draw();
         }
-        function stopVizAnim() {
-            if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
-            const c = document.getElementById('vizCanvas');
-            if (c) drawIdle(c.getContext('2d'), c);
-        }
+        function stopVA(){if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}const c=document.getElementById('vizCanvas');if(c)drawIdle(c.getContext('2d'),c);}
 
-        // ═══ ACTIONS ═══
-        window.copyLyrics = function () {
-            if (!currentSong) return;
-            navigator.clipboard.writeText(`${currentSong.title}\n\n${currentSong.lyrics}`);
-            showToast('📋 Скопировано!');
-        };
+        // ══════ ACTIONS ══════
+        window.copyLyrics = function () { if(!currentSong) return; navigator.clipboard.writeText(`${currentSong.title}\n\n${currentSong.lyrics}`); showToast('📋 Скопировано!'); };
         window.downloadLyrics = function () {
-            if (!currentSong) return;
-            const t = `${currentSong.title}\nЖанр: ${currentSong.genre} | Настроение: ${currentSong.mood} | Модель: ${currentSong.model}\n${'='.repeat(40)}\n\n${currentSong.lyrics}`;
-            const b = new Blob([t], { type: 'text/plain;charset=utf-8' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(b);
-            a.download = `${currentSong.title.replace(/[^a-zA-Zа-яА-Я0-9]/g, '_')}.txt`;
-            a.click(); URL.revokeObjectURL(a.href);
-            showToast('💾 Сохранено!');
+            if(!currentSong) return;
+            const t=`${currentSong.title}\nЖанр: ${currentSong.genre} | Настроение: ${currentSong.mood} | Модель: ${currentSong.model}\n${'='.repeat(40)}\n\n${currentSong.lyrics}`;
+            const b=new Blob([t],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);
+            a.download=`${currentSong.title.replace(/[^a-zA-Zа-яА-Я0-9]/g,'_')}.txt`;a.click();URL.revokeObjectURL(a.href);showToast('💾 Сохранено!');
         };
         window.shareSong = function () {
-            if (!currentSong) return;
-            const t = `🎵 ${currentSong.title}\n\n${currentSong.lyrics}\n\n— SongForge AI (${currentSong.model})`;
-            if (navigator.share) navigator.share({ title: currentSong.title, text: t }).catch(() => { });
-            else { navigator.clipboard.writeText(t); showToast('🔗 Скопировано!'); }
+            if(!currentSong) return;
+            const t=`🎵 ${currentSong.title}\n\n${currentSong.lyrics}\n\n— SongForge AI (${currentSong.model})`;
+            if(navigator.share)navigator.share({title:currentSong.title,text:t}).catch(()=>{});
+            else{navigator.clipboard.writeText(t);showToast('🔗 Скопировано!');}
         };
 
-        // ═══ HISTORY ═══
-        function saveSong(song) {
-            songHistory.unshift({ ...song });
-            songHistory = songHistory.slice(0, 30);
-            localStorage.setItem('sf_history', JSON.stringify(songHistory));
-            renderHistory();
-        }
-        function renderHistory() {
-            const sec = document.getElementById('histSec');
-            const grid = document.getElementById('histGrid');
-            if (!songHistory.length) { sec.style.display = 'none'; return; }
-            sec.style.display = 'block';
-            grid.innerHTML = '';
-            songHistory.forEach((s, i) => {
-                const c = document.createElement('div');
-                c.className = 'hist-card';
-                c.onclick = () => loadHist(i);
-                const d = new Date(s.timestamp).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-                const prev = s.lyrics.replace(/\[.+?\]/g, '').replace(/\n+/g, ' ').trim().substring(0, 100);
-                c.innerHTML = `
-                    <div class="hist-hdr">
-                        <div class="hist-cover" style="background:${s.cover?.bg || 'linear-gradient(135deg,#7c3aed,#ec4899)'}">${s.cover?.e || '🎵'}</div>
-                        <div><h4>${s.title}</h4><span class="hist-genre">${s.genre} • ${s.mood}</span></div>
-                    </div>
-                    <div class="hist-preview">${prev}...</div>
-                    <div class="hist-date">${d} <span class="hist-model">| ${s.model || '?'}</span></div>`;
+        // ══════ HISTORY ══════
+        function saveSong(song){songHistory.unshift({...song});songHistory=songHistory.slice(0,30);localStorage.setItem('sf_history',JSON.stringify(songHistory));renderHistory();}
+        function renderHistory(){
+            const sec=document.getElementById('histSec'),grid=document.getElementById('histGrid');
+            if(!songHistory.length){sec.style.display='none';return;}
+            sec.style.display='block';grid.innerHTML='';
+            songHistory.forEach((s,i)=>{
+                const c=document.createElement('div');c.className='hist-card';c.onclick=()=>loadHist(i);
+                const d=new Date(s.timestamp).toLocaleDateString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+                const prev=s.lyrics.replace(/\[.+?\]/g,'').replace(/\n+/g,' ').trim().substring(0,100);
+                c.innerHTML=`<div class="hist-hdr"><div class="hist-cover" style="background:${s.cover?.bg||'linear-gradient(135deg,#7c3aed,#ec4899)'}">${s.cover?.e||'🎵'}</div>
+                    <div><h4>${s.title}</h4><span class="hist-genre">${s.genre} • ${s.mood}</span></div></div>
+                    <div class="hist-preview">${prev}...</div><div class="hist-date">${d} <span class="hist-model">| ${s.model||'?'}</span></div>`;
                 grid.appendChild(c);
             });
         }
-        function loadHist(i) {
-            const s = songHistory[i]; if (!s) return;
-            currentSong = s; stopPlay(); displaySong(s);
-            document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
-            showToast('📂 Загружено из истории');
-        }
+        function loadHist(i){const s=songHistory[i];if(!s)return;currentSong=s;stopPlay();displaySong(s);document.getElementById('resultArea').scrollIntoView({behavior:'smooth'});showToast('📂 Загружено');}
         renderHistory();
 
-        // ═══ TOAST ═══
-        function showToast(m) {
-            const t = document.getElementById('toast');
-            t.textContent = m; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
+        // ══════ TOAST ══════
+        function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-        // ═══ INIT ═══
+        // Init
         document.getElementById('currentModelName').textContent = currentModel;
         document.getElementById('activeModelLabel').textContent = currentModel;
         forceLog('info', `Модель: ${currentModel}`);
+        forceLog('success', 'Готов к работе! JSON-fallback включён ✅');
 
         // roundRect polyfill
-        if (!CanvasRenderingContext2D.prototype.roundRect) {
-            CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-                if (w < 2 * r) r = w / 2; if (h < 2 * r) r = h / 2;
-                this.moveTo(x + r, y);
-                this.arcTo(x + w, y, x + w, y + h, r);
-                this.arcTo(x + w, y + h, x, y + h, r);
-                this.arcTo(x, y + h, x, y, r);
-                this.arcTo(x, y, x + w, y, r);
-                this.closePath(); return this;
-            };
+        if(!CanvasRenderingContext2D.prototype.roundRect){
+            CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){if(w<2*r)r=w/2;if(h<2*r)r=h/2;this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this;};
         }
     </script>
 </body>
