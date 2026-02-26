@@ -1,3 +1,2 @@
 # freeai
-free ai
-ai
+free ai hosted by songforge
