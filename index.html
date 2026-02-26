@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎵 SongForge AI Pro v4</title>
+    <title>🎵 SongForge AI Pro v5</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
         *{margin:0;padding:0;box-sizing:border-box}
@@ -15,38 +15,27 @@
             --ok:#10b981;--err:#ef4444;--warn:#f59e0b;--dev:#f97316;
         }
         body{font-family:'Inter',sans-serif;background:var(--bg0);color:var(--t1);min-height:100vh;overflow-x:hidden}
-
-        /* BG */
         .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
         .bg .o{position:absolute;border-radius:50%;filter:blur(100px);opacity:.15;animation:of 25s ease-in-out infinite}
         .bg .o:nth-child(1){width:500px;height:500px;background:var(--a1);top:-150px;left:-100px}
         .bg .o:nth-child(2){width:400px;height:400px;background:var(--a2);top:40%;right:-120px;animation-delay:-8s}
         .bg .o:nth-child(3){width:450px;height:450px;background:var(--a3);bottom:-150px;left:25%;animation-delay:-16s}
         @keyframes of{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,-60px) scale(1.1)}66%{transform:translate(-60px,80px) scale(.9)}}
-
         .app{position:relative;z-index:1}
-
-        /* Header */
         .hdr{text-align:center;padding:25px 20px 15px}
         .logo{display:inline-flex;align-items:center;gap:12px;margin-bottom:8px}
         .logo-i{width:52px;height:52px;background:linear-gradient(135deg,var(--a1),var(--a2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 35px rgba(124,58,237,.3);animation:lp 3s ease-in-out infinite}
         @keyframes lp{0%,100%{box-shadow:0 0 25px rgba(124,58,237,.3)}50%{box-shadow:0 0 55px rgba(124,58,237,.5)}}
         .logo h1{font-size:2em;font-weight:900;background:linear-gradient(135deg,var(--a1),var(--a2),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
         .hdr .sub{color:var(--t2);font-size:.92em}
-
-        /* Dev Toggle */
         .devt{position:fixed;top:14px;right:14px;z-index:100;width:42px;height:42px;border-radius:11px;border:1px solid var(--brd);background:var(--bg2);color:var(--t3);font-size:1.1em;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
         .devt:hover,.devt.on{border-color:var(--dev);color:var(--dev);box-shadow:0 0 18px rgba(249,115,22,.2)}
-
-        /* STOP button */
         .stop-btn{position:fixed;top:14px;right:66px;z-index:100;width:42px;height:42px;border-radius:11px;border:1px solid var(--err);background:rgba(239,68,68,.1);color:var(--err);font-size:1.1em;cursor:pointer;transition:all .3s;display:none;align-items:center;justify-content:center}
         .stop-btn.visible{display:flex}
         .stop-btn:hover{background:var(--err);color:#fff;box-shadow:0 0 20px rgba(239,68,68,.4)}
-
-        /* Dev Panel */
         .dov{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
         .dov.open{opacity:1;pointer-events:auto}
-        .dp{position:fixed;top:0;right:-520px;width:500px;max-width:95vw;height:100vh;background:var(--bg1);border-left:1px solid var(--brd);z-index:201;transition:right .4s cubic-bezier(.16,1,.3,1);overflow-y:auto;box-shadow:-10px 0 60px rgba(0,0,0,.5)}
+        .dp{position:fixed;top:0;right:-540px;width:520px;max-width:95vw;height:100vh;background:var(--bg1);border-left:1px solid var(--brd);z-index:201;transition:right .4s cubic-bezier(.16,1,.3,1);overflow-y:auto;box-shadow:-10px 0 60px rgba(0,0,0,.5)}
         .dp.open{right:0}
         .dp::-webkit-scrollbar{width:5px}.dp::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
         .dph{padding:20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--brd);position:sticky;top:0;background:var(--bg1);z-index:10}
@@ -55,18 +44,16 @@
         .dpc{width:34px;height:34px;border-radius:9px;border:1px solid var(--brd);background:transparent;color:var(--t2);cursor:pointer;font-size:1em;display:flex;align-items:center;justify-content:center;transition:all .2s}
         .dpc:hover{border-color:var(--err);color:var(--err)}
         .dpb{padding:16px 20px 36px}
-
         .ds{margin-bottom:20px;border:1px solid var(--brd);border-radius:12px;overflow:hidden}
         .dsh{padding:12px 16px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:8px;font-weight:600;font-size:.88em;cursor:pointer;user-select:none;transition:background .2s}
         .dsh:hover{background:rgba(255,255,255,.04)}
         .dsh .ar{margin-left:auto;transition:transform .3s;font-size:.75em}
         .dsh.col .ar{transform:rotate(-90deg)}
         .dsb{padding:14px 16px}.dsb.col{display:none}
-
         .df{margin-bottom:14px}.df:last-child{margin-bottom:0}
         .df label{display:flex;align-items:center;gap:5px;font-size:.75em;font-weight:600;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
         .df label .h{font-weight:400;text-transform:none;color:var(--t3);font-size:.9em;letter-spacing:0}
-        .df input[type="text"],.df input[type="number"],.df textarea,.df select{width:100%;padding:9px 12px;background:var(--bg3);border:1px solid var(--brd);border-radius:9px;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.82em;transition:border-color .2s;outline:none}
+        .df input[type="text"],.df input[type="number"],.df input[type="password"],.df textarea,.df select{width:100%;padding:9px 12px;background:var(--bg3);border:1px solid var(--brd);border-radius:9px;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.82em;transition:border-color .2s;outline:none}
         .df input:focus,.df textarea:focus,.df select:focus{border-color:var(--dev)}
         .df textarea{min-height:100px;resize:vertical;line-height:1.5}
         .df select option{background:var(--bg1)}
@@ -74,13 +61,22 @@
         .df input[type="range"]{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--brd);outline:none}
         .df input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--dev);cursor:pointer}
         .df .rv{font-family:'JetBrains Mono',monospace;font-size:.82em;color:var(--dev);min-width:36px;text-align:right}
-
         .tr{display:flex;align-items:center;justify-content:space-between;padding:6px 0}.tr span{font-size:.85em}
         .ts{width:42px;height:22px;border-radius:11px;background:var(--brd);position:relative;cursor:pointer;transition:background .3s}
         .ts.on{background:var(--dev)}
         .ts::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .3s}
         .ts.on::after{transform:translateX(20px)}
-
+        .api-status{margin-top:6px;padding:6px 10px;border-radius:7px;font-size:.75em;display:flex;align-items:center;gap:6px}
+        .api-status.ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:var(--ok)}
+        .api-status.no{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.2);color:var(--warn)}
+        .api-status .dot{width:6px;height:6px;border-radius:50%}
+        .api-status.ok .dot{background:var(--ok);box-shadow:0 0 5px var(--ok)}
+        .api-status.no .dot{background:var(--warn);box-shadow:0 0 5px var(--warn)}
+        .provider-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+        .prov-btn{padding:8px 6px;border-radius:8px;border:1px solid var(--brd);background:var(--bg3);color:var(--t2);font-size:.72em;cursor:pointer;transition:all .2s;text-align:center}
+        .prov-btn:hover{border-color:var(--a3);color:var(--t1)}
+        .prov-btn.on{background:linear-gradient(135deg,var(--a1),var(--a2));border-color:transparent;color:#fff}
+        .prov-btn .pe{font-size:1.2em;display:block;margin-bottom:2px}
         .msc{position:relative}
         .ms{width:100%;padding:9px 12px 9px 32px;background:var(--bg3);border:1px solid var(--brd);border-radius:9px;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.82em;outline:none;transition:border-color .2s}
         .ms:focus{border-color:var(--dev)}
@@ -100,19 +96,15 @@
         .mb.new{background:rgba(236,72,153,.15);color:var(--a2)}
         .cm{margin-top:6px;padding:7px 10px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:.78em;color:var(--dev);display:flex;align-items:center;gap:6px}
         .cm .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 5px var(--ok)}
-
         .dbr{display:flex;gap:6px;margin-top:10px}
         .db{flex:1;padding:8px;border-radius:9px;border:1px solid var(--brd);background:transparent;color:var(--t2);font-family:'Inter',sans-serif;font-size:.78em;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px}
         .db:hover{border-color:var(--dev);color:var(--dev);background:rgba(249,115,22,.04)}
         .db.danger:hover{border-color:var(--err);color:var(--err)}
-
         .cl{background:#000;border-radius:9px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:.68em;max-height:220px;overflow-y:auto;line-height:1.5;border:1px solid #1a1a1a}
         .cl::-webkit-scrollbar{width:3px}.cl::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
         .cll{padding:1px 0;word-break:break-all}
         .cll.info{color:#60a5fa}.cll.success{color:#34d399}.cll.error{color:#f87171}.cll.warn{color:#fbbf24}.cll.agent{color:#c084fc}
         .cll .cts{color:#444}
-
-        /* Agent status panel */
         .agent-status{margin-top:10px;padding:10px;background:var(--bg3);border:1px solid var(--brd);border-radius:9px;display:none}
         .agent-status.visible{display:block}
         .agent-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:.78em}
@@ -125,47 +117,39 @@
         .agent-row .agent-state.fail{color:var(--err)}
         .agent-row .agent-state.stopped{color:var(--t3)}
         @keyframes blinker{0%,100%{opacity:1}50%{opacity:.4}}
-
-        /* Main */
         .ctn{max-width:1200px;margin:0 auto;padding:0 18px 36px}
         .mg{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:16px}
         @media(max-width:900px){.mg{grid-template-columns:1fr}}
         .card{background:var(--bg2);border:1px solid var(--brd);border-radius:16px;padding:24px;transition:border-color .3s}
         .card:hover{border-color:var(--brd2)}
         .ct{display:flex;align-items:center;gap:8px;font-size:1.1em;font-weight:700;margin-bottom:18px}
-
         .fg{margin-bottom:14px}
         .fg label{display:block;font-size:.78em;font-weight:600;color:var(--t2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
         .fg input,.fg textarea,.fg select{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--brd);border-radius:10px;color:var(--t1);font-family:'Inter',sans-serif;font-size:.9em;transition:all .2s;outline:none}
         .fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--a1);box-shadow:0 0 16px rgba(124,58,237,.1)}
         .fg textarea{resize:vertical;min-height:80px}
         .fg select option{background:var(--bg1)}
-
         .cg{display:flex;flex-wrap:wrap;gap:6px}
         .ch{padding:6px 12px;border-radius:16px;border:1px solid var(--brd);background:var(--bg3);color:var(--t2);font-size:.78em;font-weight:500;cursor:pointer;transition:all .2s;user-select:none}
         .ch:hover{border-color:var(--a1);color:var(--t1)}
         .ch.on{background:linear-gradient(135deg,var(--a1),var(--a2));border-color:transparent;color:#fff;box-shadow:0 3px 12px rgba(124,58,237,.25)}
-
         .mog{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
         .mob{padding:8px 4px;border-radius:10px;border:1px solid var(--brd);background:var(--bg3);color:var(--t2);font-size:.7em;cursor:pointer;transition:all .2s;text-align:center}
         .mob:hover{border-color:var(--a3)}
         .mob.on{background:linear-gradient(135deg,var(--a3),#0891b2);border-color:transparent;color:#fff}
         .mob .me{font-size:1.3em;display:block;margin-bottom:2px}
-
         .bgen{width:100%;padding:15px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;font-family:'Inter',sans-serif;font-size:1em;font-weight:700;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;text-transform:uppercase;letter-spacing:.8px;margin-top:6px}
         .bgen:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 35px rgba(124,58,237,.4)}
         .bgen:disabled{opacity:.5;cursor:not-allowed}
         .bgen .shim{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);animation:sh 2.5s infinite}
         @keyframes sh{to{left:100%}}
-
-        .mi{display:flex;align-items:center;gap:7px;padding:7px 12px;margin-bottom:14px;background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.12);border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.74em;color:var(--dev)}
+        .mi{display:flex;align-items:center;gap:7px;padding:7px 12px;margin-bottom:14px;background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.12);border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.72em;color:var(--dev);flex-wrap:wrap}
         .mi .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 5px var(--ok);animation:db 2s infinite}
         @keyframes db{0%,100%{opacity:1}50%{opacity:.3}}
-
+        .mi .sep{color:var(--t3);margin:0 4px}
         .ra{min-height:400px;display:flex;flex-direction:column}
         .ph{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--t3);text-align:center;padding:35px}
         .ph .bi{font-size:3em;margin-bottom:12px;opacity:.4}
-
         .lw{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:35px}
         .lbs{display:flex;gap:4px;align-items:end;height:50px;margin-bottom:15px}
         .lb{width:6px;border-radius:3px;animation:lbb 1.2s ease-in-out infinite}
@@ -180,7 +164,6 @@
         .lt{color:var(--t2);font-size:.9em}
         .ls{color:var(--a3);font-size:.82em;margin-top:5px;animation:fio 2s ease-in-out infinite}
         @keyframes fio{0%,100%{opacity:.4}50%{opacity:1}}
-
         .sr{flex:1;display:flex;flex-direction:column;animation:su .5s ease}
         @keyframes su{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
         .sh{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--brd)}
@@ -191,14 +174,13 @@
         .st.g{background:rgba(124,58,237,.1);color:var(--a1)}
         .st.m{background:rgba(6,182,212,.1);color:var(--a3)}
         .st.mdl{background:rgba(249,115,22,.1);color:var(--dev);font-family:'JetBrains Mono',monospace}
-
+        .st.prov{background:rgba(16,185,129,.1);color:var(--ok);font-family:'JetBrains Mono',monospace}
         .lbx{flex:1;background:var(--bg3);border-radius:11px;padding:16px;max-height:280px;overflow-y:auto;border:1px solid var(--brd);margin-bottom:12px}
         .lbx::-webkit-scrollbar{width:4px}.lbx::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
         .lsc{color:var(--a2);font-weight:700;font-size:.78em;text-transform:uppercase;letter-spacing:.4px;margin:14px 0 5px}
         .lsc:first-child{margin-top:0}
         .ll{line-height:1.7;font-size:.88em}
         .ll.hl{color:var(--a3);font-weight:500}
-
         .vc{width:100%;height:50px;border-radius:9px;margin-bottom:8px}
         .ps{background:var(--bg3);border-radius:11px;padding:16px;border:1px solid var(--brd)}
         .pb{width:100%;height:4px;background:var(--brd);border-radius:2px;cursor:pointer}
@@ -213,11 +195,9 @@
         .vsl{-webkit-appearance:none;width:90px;height:3px;border-radius:2px;background:var(--brd);outline:none}
         .vsl::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--a1);cursor:pointer}
         .sst{text-align:center;font-size:.74em;color:var(--a3);margin-top:5px;min-height:16px}
-
         .ab{display:flex;gap:6px;margin-top:10px}
         .abtn{flex:1;padding:8px;border-radius:9px;border:1px solid var(--brd);background:var(--bg3);color:var(--t2);font-family:'Inter',sans-serif;font-size:.78em;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px}
         .abtn:hover{border-color:var(--a1);color:var(--t1)}
-
         .hsec{grid-column:1/-1;margin-top:8px}
         .hg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:12px}
         .hc{background:var(--bg2);border:1px solid var(--brd);border-radius:12px;padding:14px;cursor:pointer;transition:all .3s;animation:su .4s ease}
@@ -229,50 +209,88 @@
         .hpr{font-size:.74em;color:var(--t2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
         .hdt{font-size:.64em;color:var(--t3);margin-top:5px}
         .hml{font-size:.6em;color:var(--dev);font-family:'JetBrains Mono',monospace}
-
         .eb{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:11px;padding:18px;text-align:center;color:var(--err)}
         .eb .ei{font-size:1.8em;margin-bottom:6px}
         .rbtn{margin-top:8px;padding:7px 20px;border-radius:7px;border:1px solid var(--err);background:transparent;color:var(--err);font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
         .rbtn:hover{background:var(--err);color:#fff}
-
         .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);padding:10px 22px;border-radius:11px;background:var(--bg2);border:1px solid var(--a1);color:var(--t1);font-size:.84em;z-index:300;transition:transform .4s ease;box-shadow:0 8px 35px rgba(0,0,0,.5)}
         .toast.show{transform:translateX(-50%) translateY(0)}
-
         .ti{display:flex;gap:10px;margin-top:7px;flex-wrap:wrap}
         .tp{padding:3px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:.68em;background:rgba(255,255,255,.03);border:1px solid var(--brd);color:var(--t3)}
         .tp .v{color:var(--a3);font-weight:600}
-
         .ft{text-align:center;padding:25px 0;color:var(--t3);font-size:.74em;grid-column:1/-1}
     </style>
 </head>
 <body>
     <div class="bg"><div class="o"></div><div class="o"></div><div class="o"></div></div>
-
-    <button class="stop-btn" id="stopBtn" title="СТОП — остановить всё">⏹️</button>
+    <button class="stop-btn" id="stopBtn" title="СТОП">⏹️</button>
     <button class="devt" id="devToggle" title="Dev Settings">⚙️</button>
     <div class="dov" id="devOverlay"></div>
 
     <div class="dp" id="devPanel">
         <div class="dph">
-            <h2>⚙️ Dev Settings <span class="badge">v4</span></h2>
+            <h2>⚙️ Settings <span class="badge">v5</span></h2>
             <button class="dpc" id="devClose">✕</button>
         </div>
         <div class="dpb">
+            <!-- Provider & API Key -->
+            <div class="ds">
+                <div class="dsh" data-s="provider">🔌 Провайдер & API <span class="ar">▼</span></div>
+                <div class="dsb" data-s="provider">
+                    <div class="df">
+                        <label>Провайдер</label>
+                        <div class="provider-grid" id="providerGrid">
+                            <div class="prov-btn on" data-p="auto"><span class="pe">🌐</span>Auto</div>
+                            <div class="prov-btn" data-p="pollinations"><span class="pe">🌸</span>Pollinations</div>
+                            <div class="prov-btn" data-p="deepinfra"><span class="pe">🔥</span>DeepInfra</div>
+                            <div class="prov-btn" data-p="together"><span class="pe">🤝</span>Together</div>
+                            <div class="prov-btn" data-p="huggingface"><span class="pe">🤗</span>HuggingFace</div>
+                            <div class="prov-btn" data-p="puter"><span class="pe">💻</span>Puter</div>
+                        </div>
+                    </div>
+                    <div class="df">
+                        <label>API Key <span class="h">(опционально для некоторых)</span></label>
+                        <input type="password" id="apiKey" placeholder="sk-... или hf_...">
+                        <div class="api-status no" id="apiStatus">
+                            <span class="dot"></span>
+                            <span id="apiStatusText">Без ключа (бесплатный режим)</span>
+                        </div>
+                    </div>
+                    <div class="df">
+                        <label>Custom Base URL <span class="h">(для своего сервера)</span></label>
+                        <input type="text" id="customUrl" placeholder="http://localhost:8080/v1">
+                    </div>
+                    <div class="dbr">
+                        <button class="db" onclick="saveApiSettings()">💾 Сохранить</button>
+                        <button class="db" onclick="testApiKey()">🔌 Тест</button>
+                        <button class="db danger" onclick="clearApiKey()">🗑️ Очистить</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model -->
             <div class="ds">
                 <div class="dsh" data-s="model">🤖 Модель <span class="ar">▼</span></div>
                 <div class="dsb" data-s="model">
-                    <div class="df"><label>Поиск</label><div class="msc"><span class="msi">🔍</span><input type="text" class="ms" id="modelSearch" placeholder="Поиск..." autocomplete="off"><div class="md" id="modelDropdown"></div></div><div class="cm"><span class="dot"></span><span id="cmn">gpt-4.1</span></div></div>
+                    <div class="df">
+                        <label>Поиск</label>
+                        <div class="msc"><span class="msi">🔍</span><input type="text" class="ms" id="modelSearch" placeholder="Поиск..." autocomplete="off"><div class="md" id="modelDropdown"></div></div>
+                        <div class="cm"><span class="dot"></span><span id="cmn">gpt-4.1</span></div>
+                    </div>
                     <div class="df"><label>ID вручную</label><input type="text" id="customModel" placeholder="model-id"></div>
-                    <div class="dbr"><button class="db" onclick="applyCustomModel()">✅ Применить</button></div>
+                    <div class="dbr"><button class="db" onclick="applyCustomModel()">✅ Применить</button><button class="db" onclick="fetchProviderModels()">📋 Загрузить список</button></div>
                 </div>
             </div>
+
+            <!-- Agents -->
             <div class="ds">
-                <div class="dsh" data-s="agents">🤖 Агенты <span class="ar">▼</span></div>
+                <div class="dsh" data-s="agents">🤖 Агенты & Retry <span class="ar">▼</span></div>
                 <div class="dsb" data-s="agents">
-                    <div class="df"><label>Макс. попыток (retry)</label><input type="number" id="maxRetries" value="3" min="1" max="10"></div>
-                    <div class="df"><label>Таймаут (сек)</label><input type="number" id="agentTimeout" value="60" min="10" max="300"></div>
-                    <div class="tr"><span>🔄 Авто-смена модели при ошибке</span><div class="ts on" id="toggleFallback" data-on="true"></div></div>
+                    <div class="df"><label>Макс. попыток</label><input type="number" id="maxRetries" value="3" min="1" max="10"></div>
+                    <div class="df"><label>Таймаут (сек)</label><input type="number" id="agentTimeout" value="90" min="10" max="300"></div>
+                    <div class="tr"><span>🔄 Авто-смена модели</span><div class="ts on" id="toggleFallback" data-on="true"></div></div>
                     <div class="tr"><span>🤖 Параллельные агенты</span><div class="ts on" id="toggleParallel" data-on="true"></div></div>
+                    <div class="tr"><span>⏰ Anti-Cache (время в промпте)</span><div class="ts on" id="toggleAntiCache" data-on="true"></div></div>
                     <div class="agent-status" id="agentStatus">
                         <div class="agent-row"><span class="agent-icon">🎯</span><span class="agent-name">Основной</span><span class="agent-state idle" id="agent1state">ожидание</span></div>
                         <div class="agent-row"><span class="agent-icon">🔄</span><span class="agent-name">Фоллбэк</span><span class="agent-state idle" id="agent2state">ожидание</span></div>
@@ -280,6 +298,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Params -->
             <div class="ds">
                 <div class="dsh" data-s="params">🎛️ Параметры <span class="ar">▼</span></div>
                 <div class="dsb" data-s="params">
@@ -288,27 +308,35 @@
                     <div class="df"><label>Max Tokens</label><input type="number" id="maxTokens" value="2048" min="256" max="16384" step="256"></div>
                 </div>
             </div>
+
+            <!-- System Prompt -->
             <div class="ds">
                 <div class="dsh" data-s="prompt">📝 System Prompt <span class="ar">▼</span></div>
                 <div class="dsb" data-s="prompt">
-                    <div class="df"><textarea id="systemPrompt">You are a world-class professional songwriter. You MUST respond ONLY with valid JSON. Never include anything outside the JSON object.</textarea></div>
+                    <div class="df"><textarea id="systemPrompt">You are a world-class professional songwriter. You MUST respond ONLY with valid JSON. Never include anything outside the JSON object. No markdown code blocks.</textarea></div>
                     <div class="dbr"><button class="db" onclick="resetSys()">🔄</button><button class="db" onclick="copySys()">📋</button></div>
                 </div>
             </div>
+
+            <!-- Advanced -->
             <div class="ds">
                 <div class="dsh" data-s="adv">🔬 Расширенные <span class="ar">▼</span></div>
                 <div class="dsb" data-s="adv">
-                    <div class="tr"><span>📊 Токены</span><div class="ts on" id="toggleTokens" data-on="true"></div></div>
+                    <div class="tr"><span>📊 Показывать инфо</span><div class="ts on" id="toggleTokens" data-on="true"></div></div>
                     <div class="tr"><span>💾 Авто-сохранение</span><div class="ts on" id="toggleAutoSave" data-on="true"></div></div>
                 </div>
             </div>
+
+            <!-- Console -->
             <div class="ds">
                 <div class="dsh" data-s="console">🖥️ Консоль <span class="ar">▼</span></div>
                 <div class="dsb" data-s="console">
-                    <div class="cl" id="clog"><div class="cll info"><span class="cts">[init]</span> SongForge v4 — Multi-Agent JSON</div></div>
+                    <div class="cl" id="clog"><div class="cll info"><span class="cts">[init]</span> SongForge v5 — Multi-Provider + Anti-Cache</div></div>
                     <div class="dbr"><button class="db" onclick="clrLog()">🧹</button><button class="db" onclick="testAPI()">🔌 Тест</button><button class="db danger" onclick="clrAll()">🗑️</button></div>
                 </div>
             </div>
+
+            <!-- Presets -->
             <div class="ds">
                 <div class="dsh" data-s="presets">💎 Пресеты <span class="ar">▼</span></div>
                 <div class="dsb" data-s="presets">
@@ -320,19 +348,31 @@
 
     <div class="app">
         <div class="ctn">
-            <header class="hdr"><div class="logo"><div class="logo-i">🎵</div><h1>SongForge AI</h1></div><p class="sub">Multi-Agent • JSON Output • Auto-Retry</p></header>
+            <header class="hdr"><div class="logo"><div class="logo-i">🎵</div><h1>SongForge AI</h1></div><p class="sub">Multi-Provider • API Keys • Anti-Cache • Auto-Retry</p></header>
             <div class="mg">
                 <div class="card">
                     <div class="ct">✨ Создать</div>
-                    <div class="mi"><span class="dot"></span>Модель: <strong id="aml">gpt-4.1</strong></div>
-                    <div class="fg"><label>Тема</label><textarea id="topic" placeholder="О чём?...">Летняя ночь в городе, огни и мечты</textarea></div>
+                    <div class="mi">
+                        <span class="dot"></span>
+                        <span id="provLabel">Auto</span>
+                        <span class="sep">|</span>
+                        <strong id="aml">gpt-4.1</strong>
+                        <span class="sep" id="apiSep" style="display:none">|</span>
+                        <span id="apiLabel" style="display:none">🔑 API</span>
+                    </div>
+                    <div class="fg"><label>Тема</label><textarea id="topic" placeholder="О чём песня?...">Летняя ночь в городе, огни и мечты</textarea></div>
                     <div class="fg"><label>Жанр</label><div class="cg" id="gG"><div class="ch on" data-v="Pop">🎤 Pop</div><div class="ch" data-v="Rock">🎸 Rock</div><div class="ch" data-v="Hip-Hop">🎧 Hip-Hop</div><div class="ch" data-v="R&B">🎹 R&B</div><div class="ch" data-v="Electronic">⚡ Electronic</div><div class="ch" data-v="Jazz">🎷 Jazz</div><div class="ch" data-v="Indie">🌿 Indie</div><div class="ch" data-v="Lo-Fi">🌙 Lo-Fi</div><div class="ch" data-v="Metal">🤘 Metal</div><div class="ch" data-v="K-Pop">🇰🇷 K-Pop</div></div></div>
                     <div class="fg"><label>Настроение</label><div class="mog" id="mG"><div class="mob on" data-v="Весёлое"><span class="me">😊</span>Весёлое</div><div class="mob" data-v="Грустное"><span class="me">😢</span>Грустное</div><div class="mob" data-v="Романтичное"><span class="me">❤️</span>Романтика</div><div class="mob" data-v="Энергичное"><span class="me">⚡</span>Энергия</div><div class="mob" data-v="Мечтательное"><span class="me">✨</span>Мечты</div><div class="mob" data-v="Агрессивное"><span class="me">🔥</span>Агрессия</div><div class="mob" data-v="Спокойное"><span class="me">🌊</span>Спокойно</div><div class="mob" data-v="Ностальгия"><span class="me">🌅</span>Ностальгия</div></div></div>
                     <div class="fg"><label>Язык</label><select id="lang"><option value="русский">🇷🇺 Русский</option><option value="английский">🇬🇧 English</option><option value="испанский">🇪🇸 Español</option><option value="японский">🇯🇵 日本語</option></select></div>
                     <div class="fg"><label>Голос</label><select id="voiceSel"></select></div>
                     <div class="fg"><label>Темп</label><select id="rate"><option value="0.7">🐢 Медленно</option><option value="1" selected>🏃 Норм</option><option value="1.3">🚀 Быстро</option></select></div>
                     <button class="bgen" id="genBtn"><span class="shim"></span>🎵 Сгенерировать</button>
-                    <div class="ti" id="ti" style="display:none"><div class="tp">Агенты: <span class="v" id="agCnt">0</span></div><div class="tp">Попыток: <span class="v" id="retCnt">0</span></div><div class="tp">Время: <span class="v" id="genT">0</span>s</div></div>
+                    <div class="ti" id="ti" style="display:none">
+                        <div class="tp">Агент: <span class="v" id="agCnt">0</span></div>
+                        <div class="tp">Retry: <span class="v" id="retCnt">0</span></div>
+                        <div class="tp">Время: <span class="v" id="genT">0</span>s</div>
+                        <div class="tp">Провайдер: <span class="v" id="usedProv">-</span></div>
+                    </div>
                 </div>
                 <div class="card ra" id="rArea">
                     <div class="ct">🎶 Результат</div>
@@ -340,15 +380,21 @@
                 </div>
                 <div class="card hsec" id="hSec" style="display:none"><div class="ct">📚 История</div><div class="hg" id="hGrid"></div></div>
             </div>
-            <div class="ft">SongForge AI v4 — Multi-Agent JSON System</div>
+            <div class="ft">SongForge AI v5 — Multi-Provider + Anti-Cache + JSON Output</div>
         </div>
     </div>
     <div class="toast" id="toast"></div>
 
     <script type="module">
-        import Client from 'https://g4f.dev/dist/js/client.js';
+        // ═══════════════════════════════════════════════
+        //  IMPORTS — All providers from GPT4Free.js
+        // ═══════════════════════════════════════════════
+        import { Client, PollinationsAI, DeepInfra, Together, Puter, HuggingFace } from 'https://g4f.dev/dist/js/client.js';
 
-        const MODELS={
+        // ═══════════════════════════════════════════════
+        //  MODELS DATABASE
+        // ═══════════════════════════════════════════════
+        const MODELS = {
             'OpenAI':[{id:'gpt-4.1',b:'popular'},{id:'gpt-4.1-mini',b:'new'},{id:'gpt-4.1-nano',b:'new'},{id:'gpt-4o',b:'popular'},{id:'gpt-4o-mini',b:'free'},{id:'gpt-4',b:''},{id:'gpt-3.5-turbo',b:'free'},{id:'o3-mini',b:'new'},{id:'o4-mini',b:'new'}],
             'Meta':[{id:'llama-3.3-70b',b:'popular'},{id:'llama-3.1-70b',b:'free'},{id:'llama-3.1-8b',b:'free'},{id:'llama-4-scout',b:'new'},{id:'llama-4-maverick',b:'new'}],
             'DeepSeek':[{id:'deepseek-v3',b:'popular'},{id:'deepseek-r1',b:'popular'},{id:'deepseek-chat',b:'free'}],
@@ -362,29 +408,96 @@
 
         const FALLBACK_MODELS = ['gpt-4o-mini','gpt-4.1-mini','gpt-3.5-turbo','deepseek-chat','llama-3.1-70b','gemini-2.0-flash'];
 
-        const GC={
+        const GC = {
             Pop:{bg:'linear-gradient(135deg,#ec4899,#f59e0b)',e:'🎤'},Rock:{bg:'linear-gradient(135deg,#ef4444,#7c3aed)',e:'🎸'},'Hip-Hop':{bg:'linear-gradient(135deg,#f59e0b,#ef4444)',e:'🎧'},'R&B':{bg:'linear-gradient(135deg,#8b5cf6,#ec4899)',e:'🎹'},Electronic:{bg:'linear-gradient(135deg,#06b6d4,#7c3aed)',e:'⚡'},Jazz:{bg:'linear-gradient(135deg,#f59e0b,#78350f)',e:'🎷'},Indie:{bg:'linear-gradient(135deg,#10b981,#06b6d4)',e:'🌿'},'Lo-Fi':{bg:'linear-gradient(135deg,#6366f1,#8b5cf6)',e:'🌙'},Metal:{bg:'linear-gradient(135deg,#374151,#ef4444)',e:'🤘'},'K-Pop':{bg:'linear-gradient(135deg,#ec4899,#06b6d4)',e:'🇰🇷'}
         };
 
-        // ═══ STATE ═══
+        // ═══════════════════════════════════════════════
+        //  STATE
+        // ═══════════════════════════════════════════════
+        let curProvider = localStorage.getItem('sf_prov') || 'auto';
+        let curApiKey = localStorage.getItem('sf_apikey') || '';
+        let curBaseUrl = localStorage.getItem('sf_baseurl') || '';
         let curModel = localStorage.getItem('sf_m') || 'gpt-4.1';
         let curSong = null;
         let hist = JSON.parse(localStorage.getItem('sf_h') || '[]');
         let isPlaying = false;
         let curUtt = null;
         let aFrame = null;
-        let ABORT = false; // ← GLOBAL STOP FLAG
+        let ABORT = false;
 
-        const DSYS = `You are a world-class professional songwriter. You MUST respond ONLY with valid JSON. Never include anything outside the JSON object.`;
+        const DSYS = `You are a world-class professional songwriter. You MUST respond ONLY with valid JSON. Never include anything outside the JSON object. No markdown code blocks.`;
 
-        // ══════════════════════════════════════
+        // ═══════════════════════════════════════════════
+        //  CLIENT FACTORY — Creates client based on provider
+        // ═══════════════════════════════════════════════
+        function createClient(providerOverride = null) {
+            const prov = providerOverride || curProvider;
+            const apiKey = curApiKey || undefined;
+            const baseUrl = curBaseUrl || undefined;
+
+            log('info', `Создаю клиент: ${prov}${apiKey ? ' + API Key' : ''}`);
+
+            switch(prov) {
+                case 'pollinations':
+                    return new PollinationsAI({ apiKey });
+                case 'deepinfra':
+                    return new DeepInfra({ apiKey });
+                case 'together':
+                    return new Together({ apiKey });
+                case 'huggingface':
+                    return new HuggingFace({ apiKey });
+                case 'puter':
+                    return new Puter();
+                case 'custom':
+                    if (!baseUrl) throw new Error('Custom URL не указан');
+                    return new Client({ baseUrl, apiKey });
+                case 'auto':
+                default:
+                    // Auto = default Client (g4f.dev)
+                    if (baseUrl) {
+                        return new Client({ baseUrl, apiKey });
+                    }
+                    return new Client({ apiKey });
+            }
+        }
+
+        // ═══════════════════════════════════════════════
+        //  ANTI-CACHE: Add timestamp to prompt
+        // ═══════════════════════════════════════════════
+        function getAntiCacheString() {
+            const now = new Date();
+            return `[Request ID: ${now.toISOString()}-${Math.random().toString(36).substr(2,9)}]`;
+        }
+
+        // ═══════════════════════════════════════════════
+        //  BUILD PROMPT WITH JSON FORMAT
+        // ═══════════════════════════════════════════════
+        function buildPrompt(topic, genre, mood, lang) {
+            const useAntiCache = document.getElementById('toggleAntiCache').dataset.on === 'true';
+            const antiCache = useAntiCache ? `\n\n${getAntiCacheString()}` : '';
+
+            return `Write a complete song about: "${topic}"
+Genre: ${genre}, Mood: ${mood}, Language: ${lang}
+
+RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
+{"title":"song title here","sections":[{"tag":"Verse 1","lines":["line1","line2","line3","line4"]},{"tag":"Chorus","lines":["line1","line2","line3","line4"]},{"tag":"Verse 2","lines":["line1","line2","line3","line4"]},{"tag":"Chorus","lines":["line1","line2","line3","line4"]},{"tag":"Bridge","lines":["line1","line2"]},{"tag":"Outro","lines":["line1","line2"]}]}
+
+Rules:
+- Poetic text with rhymes in ${lang}
+- Style matching ${genre} and ${mood}
+- Each section has 2-6 lines
+- ONLY the JSON object, nothing else${antiCache}`;
+        }
+
+        // ═══════════════════════════════════════════════
         //  🛑 GLOBAL STOP
-        // ══════════════════════════════════════
+        // ═══════════════════════════════════════════════
         const stopBtn = document.getElementById('stopBtn');
         stopBtn.onclick = () => {
             ABORT = true;
             stopPlay();
-            log('error', '🛑 СТОП — все процессы остановлены');
+            log('error', '🛑 СТОП — всё остановлено');
             setAgentState(1, 'stopped', 'остановлен');
             setAgentState(2, 'stopped', 'остановлен');
             setAgentState(3, 'stopped', 'остановлен');
@@ -395,32 +508,19 @@
             toast('🛑 Остановлено');
         };
 
-        // ══════════════════════════════════════
+        // ═══════════════════════════════════════════════
         //  🤖 MULTI-AGENT SYSTEM
-        // ══════════════════════════════════════
-        function buildPrompt(topic, genre, mood, lang) {
-            return `Write a complete song about: "${topic}"
-Genre: ${genre}, Mood: ${mood}, Language: ${lang}
-
-You MUST respond with ONLY this JSON (no markdown, no backticks, no extra text):
-{"title":"song title here","sections":[{"tag":"Verse 1","lines":["line1","line2","line3","line4"]},{"tag":"Chorus","lines":["line1","line2","line3","line4"]},{"tag":"Verse 2","lines":["line1","line2","line3","line4"]},{"tag":"Chorus","lines":["line1","line2","line3","line4"]},{"tag":"Bridge","lines":["line1","line2"]},{"tag":"Outro","lines":["line1","line2"]}]}
-
-Rules:
-- Poetic text with rhymes in ${lang}
-- Style matching ${genre} and ${mood}
-- Each section has 2-6 lines
-- ONLY the JSON object, nothing else
-- Do NOT wrap in markdown code blocks`;
-        }
-
-        async function agentCall(model, messages, agentNum, params = {}) {
+        // ═══════════════════════════════════════════════
+        async function agentCall(model, messages, agentNum, params = {}, providerOverride = null) {
             if (ABORT) throw new Error('STOPPED');
-            setAgentState(agentNum, 'working', `${model}...`);
-            log('agent', `🤖 Агент ${agentNum}: ${model}`);
+            
+            const prov = providerOverride || curProvider;
+            setAgentState(agentNum, 'working', `${model}@${prov}...`);
+            log('agent', `🤖 Агент ${agentNum}: ${model} via ${prov}`);
 
-            const timeout = parseInt(document.getElementById('agentTimeout').value) * 1000 || 60000;
+            const timeout = parseInt(document.getElementById('agentTimeout').value) * 1000 || 90000;
 
-            const client = new Client();
+            const client = createClient(providerOverride);
 
             const raceResult = await Promise.race([
                 client.chat.completions.create({ model, messages, ...params }),
@@ -434,7 +534,6 @@ Rules:
 
             if (ABORT) throw new Error('STOPPED');
 
-            // Extract text from response
             let text = '';
             if (raceResult?.choices?.[0]?.message?.content) {
                 text = raceResult.choices[0].message.content;
@@ -444,68 +543,63 @@ Rules:
                 throw new Error('Empty response');
             }
 
-            log('info', `Агент ${agentNum}: получено ${text.length} символов`);
+            log('info', `Агент ${agentNum}: ${text.length} символов`);
 
-            // Parse JSON from response
             const song = extractJSON(text);
             if (!song) {
                 throw new Error(`Невалидный JSON от ${model}`);
             }
 
-            setAgentState(agentNum, 'done', '✅ готово');
-            return song;
+            setAgentState(agentNum, 'done', '✅');
+            return { song, provider: prov };
         }
 
         function extractJSON(text) {
-            // Clean common issues
             let clean = text.trim();
-
-            // Remove markdown code blocks
             clean = clean.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
             clean = clean.trim();
 
-            // Try direct parse
             try {
                 const obj = JSON.parse(clean);
                 if (obj.title && obj.sections) {
-                    log('success', `JSON парсинг: прямой ✅`);
+                    log('success', `JSON: прямой парсинг ✅`);
                     return obj;
                 }
             } catch(e) {}
 
-            // Try to find JSON object in text
             const jsonMatch = clean.match(/\{[\s\S]*"title"[\s\S]*"sections"[\s\S]*\}/);
             if (jsonMatch) {
                 try {
                     const obj = JSON.parse(jsonMatch[0]);
                     if (obj.title && obj.sections) {
-                        log('success', `JSON парсинг: regex extract ✅`);
+                        log('success', `JSON: regex ✅`);
                         return obj;
                     }
                 } catch(e) {}
             }
 
-            // Try bracket matching
             const firstBrace = clean.indexOf('{');
             if (firstBrace >= 0) {
                 let depth = 0;
                 for (let i = firstBrace; i < clean.length; i++) {
                     if (clean[i] === '{') depth++;
-                    else if (clean[i] === '}') { depth--; if (depth === 0) {
-                        try {
-                            const obj = JSON.parse(clean.substring(firstBrace, i + 1));
-                            if (obj.title) {
-                                log('success', `JSON парсинг: bracket match ✅`);
-                                return obj;
-                            }
-                        } catch(e) {}
-                        break;
-                    }}
+                    else if (clean[i] === '}') { 
+                        depth--; 
+                        if (depth === 0) {
+                            try {
+                                const obj = JSON.parse(clean.substring(firstBrace, i + 1));
+                                if (obj.title) {
+                                    log('success', `JSON: bracket match ✅`);
+                                    return obj;
+                                }
+                            } catch(e) {}
+                            break;
+                        }
+                    }
                 }
             }
 
-            // Last resort: try to build from plain text
-            log('warn', `JSON не найден, пробуем plain text...`);
+            log('warn', `JSON не найден, plain text...`);
             return parsePlainText(clean);
         }
 
@@ -526,7 +620,6 @@ Rules:
             }
 
             if (sections.length === 0) {
-                // No sections found, split by paragraphs
                 const lines = text.split('\n').filter(l => l.trim() && !l.match(/^(TITLE|#|\*\*)/i));
                 if (lines.length > 0) {
                     sections.push({ tag: 'Song', lines });
@@ -534,7 +627,7 @@ Rules:
             }
 
             if (sections.length > 0) {
-                log('warn', `Построено из plain text: ${sections.length} секций`);
+                log('warn', `Plain text: ${sections.length} секций`);
                 return { title, sections };
             }
 
@@ -564,8 +657,9 @@ Rules:
 
             let totalAttempts = 0;
             let lastError = null;
+            let usedProvider = curProvider;
 
-            // Build model queue
+            // Model queue
             const modelQueue = [curModel];
             if (useFallback) {
                 for (const fm of FALLBACK_MODELS) {
@@ -573,63 +667,67 @@ Rules:
                 }
             }
 
-            log('info', `Очередь моделей: ${modelQueue.join(', ')}`);
+            // Provider queue for fallback
+            const providerQueue = curProvider === 'auto' 
+                ? ['auto', 'pollinations', 'deepinfra'] 
+                : [curProvider];
 
-            for (const model of modelQueue) {
-                if (ABORT) throw new Error('STOPPED');
+            log('info', `Модели: ${modelQueue.slice(0,4).join(', ')}...`);
+            log('info', `Провайдеры: ${providerQueue.join(', ')}`);
 
-                for (let retry = 0; retry < maxRetries; retry++) {
+            for (const prov of providerQueue) {
+                for (const model of modelQueue) {
                     if (ABORT) throw new Error('STOPPED');
-                    totalAttempts++;
 
-                    const agentNum = retry === 0 ? 1 : retry === 1 ? 2 : 3;
+                    for (let retry = 0; retry < maxRetries; retry++) {
+                        if (ABORT) throw new Error('STOPPED');
+                        totalAttempts++;
 
-                    try {
-                        log('info', `Попытка ${totalAttempts}: ${model} (retry ${retry + 1}/${maxRetries})`);
-                        updateLoadingStep(`🤖 ${model} — попытка ${retry + 1}`);
+                        const agentNum = retry === 0 ? 1 : retry === 1 ? 2 : 3;
 
-                        // If parallel agents enabled and first attempt failed, try 2 at once
-                        if (useParallel && retry > 0) {
-                            const altModel = modelQueue.find(m => m !== model) || model;
-                            log('info', `Параллельно: ${model} + ${altModel}`);
+                        try {
+                            log('info', `Попытка ${totalAttempts}: ${model}@${prov} (${retry + 1}/${maxRetries})`);
+                            updateLoadingStep(`🤖 ${model} via ${prov}`);
 
-                            setAgentState(2, 'working', `${altModel}...`);
+                            if (useParallel && retry > 0 && modelQueue.length > 1) {
+                                const altModel = modelQueue.find(m => m !== model) || model;
+                                log('info', `Параллельно: ${model} + ${altModel}`);
+                                setAgentState(2, 'working', `${altModel}...`);
 
-                            const result = await Promise.any([
-                                agentCall(model, messages, agentNum, params),
-                                agentCall(altModel, messages, 2, params),
-                            ]).catch(err => {
-                                if (err instanceof AggregateError) {
-                                    throw err.errors[0];
-                                }
-                                throw err;
-                            });
+                                const result = await Promise.any([
+                                    agentCall(model, messages, agentNum, params, prov),
+                                    agentCall(altModel, messages, 2, params, prov),
+                                ]).catch(err => {
+                                    if (err instanceof AggregateError) throw err.errors[0];
+                                    throw err;
+                                });
 
+                                document.getElementById('agCnt').textContent = totalAttempts;
+                                document.getElementById('retCnt').textContent = retry + 1;
+                                document.getElementById('usedProv').textContent = result.provider;
+                                return result;
+                            }
+
+                            const result = await agentCall(model, messages, agentNum, params, prov);
                             document.getElementById('agCnt').textContent = totalAttempts;
                             document.getElementById('retCnt').textContent = retry + 1;
+                            document.getElementById('usedProv').textContent = result.provider;
                             return result;
+
+                        } catch (err) {
+                            if (err.message === 'STOPPED') throw err;
+                            lastError = err;
+                            setAgentState(agentNum, 'fail', `❌ ${err.message.substring(0, 25)}`);
+                            log('warn', `Ошибка: ${err.message.substring(0, 80)}`);
+                            await new Promise(r => setTimeout(r, 1000 + retry * 500));
                         }
-
-                        const result = await agentCall(model, messages, agentNum, params);
-                        document.getElementById('agCnt').textContent = totalAttempts;
-                        document.getElementById('retCnt').textContent = retry + 1;
-                        return result;
-
-                    } catch (err) {
-                        if (err.message === 'STOPPED') throw err;
-                        lastError = err;
-                        setAgentState(agentNum, 'fail', `❌ ${err.message.substring(0, 30)}`);
-                        log('warn', `Агент ${agentNum} ошибка: ${err.message.substring(0, 80)}`);
-
-                        // Wait before retry
-                        await new Promise(r => setTimeout(r, 1000 + retry * 500));
                     }
-                }
 
-                log('warn', `Модель ${model} исчерпана, следующая...`);
+                    log('warn', `${model}@${prov} исчерпан`);
+                }
             }
 
-            throw lastError || new Error('Все агенты и модели исчерпаны');
+            throw lastError || new Error('Все агенты исчерпаны');
         }
 
         function setAgentState(num, state, text) {
@@ -644,9 +742,9 @@ Rules:
             if (el) el.textContent = text;
         }
 
-        // ══════════════════════════════════════
+        // ═══════════════════════════════════════════════
         //  GENERATE
-        // ══════════════════════════════════════
+        // ═══════════════════════════════════════════════
         document.getElementById('genBtn').onclick = async () => {
             const topic = document.getElementById('topic').value.trim();
             const genre = document.querySelector('#gG .ch.on')?.dataset.v || 'Pop';
@@ -661,10 +759,10 @@ Rules:
             const t0 = performance.now();
 
             try {
-                const songData = await multiAgentGenerate(topic, genre, mood, lang);
+                const { song: songData, provider } = await multiAgentGenerate(topic, genre, mood, lang);
                 const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
 
-                log('success', `✅ "${songData.title}" за ${elapsed}s`);
+                log('success', `✅ "${songData.title}" за ${elapsed}s via ${provider}`);
 
                 if (document.getElementById('toggleTokens').dataset.on === 'true') {
                     document.getElementById('ti').style.display = 'flex';
@@ -675,7 +773,7 @@ Rules:
                     title: songData.title || 'Без названия',
                     sections: songData.sections || [],
                     lyrics: (songData.sections || []).map(s => `[${s.tag}]\n${s.lines.join('\n')}`).join('\n\n'),
-                    genre, mood, model: curModel,
+                    genre, mood, model: curModel, provider,
                     timestamp: Date.now(),
                     cover: GC[genre] || GC.Pop
                 };
@@ -696,14 +794,14 @@ Rules:
             }
         };
 
-        // ══════════════════════════════════════
-        //  UI
-        // ══════════════════════════════════════
+        // ═══════════════════════════════════════════════
+        //  UI FUNCTIONS
+        // ═══════════════════════════════════════════════
         function showLoading() {
             const a = document.getElementById('rArea');
             const t = a.querySelector('.ct'); a.innerHTML = ''; a.appendChild(t);
             const d = document.createElement('div'); d.className = 'lw';
-            d.innerHTML = `<div class="lbs"><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div></div><div class="lt">${curModel}...</div><div class="ls" id="lstep">🤖 Агенты запускаются...</div>`;
+            d.innerHTML = `<div class="lbs"><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div></div><div class="lt">${curProvider}/${curModel}</div><div class="ls" id="lstep">🤖 Запуск агентов...</div>`;
             a.appendChild(d);
         }
 
@@ -720,7 +818,7 @@ Rules:
             const t = a.querySelector('.ct'); a.innerHTML = ''; a.appendChild(t);
             const r = document.createElement('div'); r.className = 'sr';
 
-            r.innerHTML = `<div class="sh"><div class="sc" style="background:${song.cover.bg}">${song.cover.e}</div><div class="si"><h3>${song.title}</h3><div class="sm"><span class="st g">${song.genre}</span><span class="st m">${song.mood}</span><span class="st mdl">🤖 ${song.model}</span></div></div></div>`;
+            r.innerHTML = `<div class="sh"><div class="sc" style="background:${song.cover.bg}">${song.cover.e}</div><div class="si"><h3>${song.title}</h3><div class="sm"><span class="st g">${song.genre}</span><span class="st m">${song.mood}</span><span class="st mdl">🤖 ${song.model}</span><span class="st prov">🔌 ${song.provider || 'auto'}</span></div></div></div>`;
 
             const lb = document.createElement('div'); lb.className = 'lbx'; lb.id = 'lBox';
             if (song.sections && song.sections.length) {
@@ -759,24 +857,7 @@ Rules:
         synth.onvoiceschanged=popV;popV();
 
         window.tPlay=function(){if(synth.paused){synth.resume();isPlaying=true;upPB();setSS('🎤');startVA();return;}if(isPlaying){synth.pause();isPlaying=false;upPB();setSS('⏸️');stopVA();return;}playS();};
-        function playS(){
-            if(!curSong)return;synth.cancel();
-            const voices=synth.getVoices();const vi=parseInt(document.getElementById('voiceSel').value);
-            const rate=parseFloat(document.getElementById('rate').value);
-            const vol=parseFloat(document.getElementById('vol')?.value||.8);
-            const clean=curSong.lyrics.replace(/\[.+?\]/g,'... ').replace(/\n{2,}/g,'... ').replace(/\n/g,'. ').trim();
-            curUtt=new SpeechSynthesisUtterance(clean);
-            if(voices[vi])curUtt.voice=voices[vi];
-            curUtt.rate=rate;curUtt.pitch=1.05;curUtt.volume=vol;
-            const dur=(clean.split(/\s+/).length/2.5)/rate;
-            const tE=document.getElementById('tTime');if(tE)tE.textContent=fT(dur);
-            const t0=Date.now();let pi;
-            curUtt.onstart=()=>{isPlaying=true;upPB();setSS('🎤 Играет');startVA();pi=setInterval(()=>{const e=(Date.now()-t0)/1000;const f=document.getElementById('pFill');if(f)f.style.width=Math.min((e/dur)*100,100)+'%';const c=document.getElementById('cTime');if(c)c.textContent=fT(e);},200);};
-            curUtt.onboundary=e=>hlL(e.charIndex,clean);
-            curUtt.onend=()=>{isPlaying=false;upPB();setSS('✅');stopVA();clearInterval(pi);const f=document.getElementById('pFill');if(f)f.style.width='100%';};
-            curUtt.onerror=()=>{isPlaying=false;upPB();setSS('❌');stopVA();clearInterval(pi);};
-            synth.speak(curUtt);
-        }
+        function playS(){if(!curSong)return;synth.cancel();const voices=synth.getVoices();const vi=parseInt(document.getElementById('voiceSel').value);const rate=parseFloat(document.getElementById('rate').value);const vol=parseFloat(document.getElementById('vol')?.value||.8);const clean=curSong.lyrics.replace(/\[.+?\]/g,'... ').replace(/\n{2,}/g,'... ').replace(/\n/g,'. ').trim();curUtt=new SpeechSynthesisUtterance(clean);if(voices[vi])curUtt.voice=voices[vi];curUtt.rate=rate;curUtt.pitch=1.05;curUtt.volume=vol;const dur=(clean.split(/\s+/).length/2.5)/rate;const tE=document.getElementById('tTime');if(tE)tE.textContent=fT(dur);const t0=Date.now();let pi;curUtt.onstart=()=>{isPlaying=true;upPB();setSS('🎤');startVA();pi=setInterval(()=>{const e=(Date.now()-t0)/1000;const f=document.getElementById('pFill');if(f)f.style.width=Math.min((e/dur)*100,100)+'%';const c=document.getElementById('cTime');if(c)c.textContent=fT(e);},200);};curUtt.onboundary=e=>hlL(e.charIndex,clean);curUtt.onend=()=>{isPlaying=false;upPB();setSS('✅');stopVA();clearInterval(pi);const f=document.getElementById('pFill');if(f)f.style.width='100%';};curUtt.onerror=()=>{isPlaying=false;upPB();setSS('❌');stopVA();clearInterval(pi);};synth.speak(curUtt);}
         window.sPlay=function(){stopPlay();};
         function stopPlay(){synth.cancel();isPlaying=false;upPB();setSS('');stopVA();const f=document.getElementById('pFill');if(f)f.style.width='0%';const c=document.getElementById('cTime');if(c)c.textContent='0:00';document.querySelectorAll('.ll.hl').forEach(e=>e.classList.remove('hl'));}
         window.restart=function(){stopPlay();setTimeout(playS,100);};
@@ -793,16 +874,18 @@ Rules:
 
         // ═══ ACTIONS ═══
         window.cpL=function(){if(!curSong)return;navigator.clipboard.writeText(`${curSong.title}\n\n${curSong.lyrics}`);toast('📋');};
-        window.dlL=function(){if(!curSong)return;const b=new Blob([`${curSong.title}\n${curSong.genre}|${curSong.mood}|${curSong.model}\n${'='.repeat(40)}\n\n${curSong.lyrics}`],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`${curSong.title.replace(/[^a-zA-Zа-яА-Я0-9]/g,'_')}.txt`;a.click();toast('💾');};
+        window.dlL=function(){if(!curSong)return;const b=new Blob([`${curSong.title}\n${curSong.genre}|${curSong.mood}|${curSong.model}|${curSong.provider}\n${'='.repeat(40)}\n\n${curSong.lyrics}`],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`${curSong.title.replace(/[^a-zA-Zа-яА-Я0-9]/g,'_')}.txt`;a.click();toast('💾');};
         window.shS=function(){if(!curSong)return;const t=`🎵 ${curSong.title}\n\n${curSong.lyrics}\n\n— SongForge`;if(navigator.share)navigator.share({title:curSong.title,text:t}).catch(()=>{});else{navigator.clipboard.writeText(t);toast('🔗');}};
 
         // ═══ HISTORY ═══
         function saveSong(s){hist.unshift({...s});hist=hist.slice(0,25);localStorage.setItem('sf_h',JSON.stringify(hist));rHist();}
-        function rHist(){const sec=document.getElementById('hSec'),g=document.getElementById('hGrid');if(!hist.length){sec.style.display='none';return;}sec.style.display='block';g.innerHTML='';hist.forEach((s,i)=>{const c=document.createElement('div');c.className='hc';c.onclick=()=>ldH(i);const d=new Date(s.timestamp).toLocaleDateString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});const pr=s.lyrics.replace(/\[.+?\]/g,'').replace(/\n+/g,' ').trim().substring(0,90);c.innerHTML=`<div class="hch"><div class="hcov" style="background:${s.cover?.bg||'linear-gradient(135deg,#7c3aed,#ec4899)'}">${s.cover?.e||'🎵'}</div><div><h4>${s.title}</h4><span class="hge">${s.genre}•${s.mood}</span></div></div><div class="hpr">${pr}...</div><div class="hdt">${d} <span class="hml">|${s.model||'?'}</span></div>`;g.appendChild(c);});}
+        function rHist(){const sec=document.getElementById('hSec'),g=document.getElementById('hGrid');if(!hist.length){sec.style.display='none';return;}sec.style.display='block';g.innerHTML='';hist.forEach((s,i)=>{const c=document.createElement('div');c.className='hc';c.onclick=()=>ldH(i);const d=new Date(s.timestamp).toLocaleDateString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});const pr=s.lyrics.replace(/\[.+?\]/g,'').replace(/\n+/g,' ').trim().substring(0,90);c.innerHTML=`<div class="hch"><div class="hcov" style="background:${s.cover?.bg||'linear-gradient(135deg,#7c3aed,#ec4899)'}">${s.cover?.e||'🎵'}</div><div><h4>${s.title}</h4><span class="hge">${s.genre}•${s.mood}</span></div></div><div class="hpr">${pr}...</div><div class="hdt">${d} <span class="hml">|${s.model}@${s.provider||'?'}</span></div>`;g.appendChild(c);});}
         function ldH(i){const s=hist[i];if(!s)return;curSong=s;stopPlay();displaySong(s);document.getElementById('rArea').scrollIntoView({behavior:'smooth'});toast('📂');}
         rHist();
 
-        // ═══ DEV PANEL ═══
+        // ═══════════════════════════════════════════════
+        //  DEV PANEL
+        // ═══════════════════════════════════════════════
         const dt=document.getElementById('devToggle'),dp=document.getElementById('devPanel'),dv=document.getElementById('devOverlay');
         dt.onclick=()=>{const o=dp.classList.contains('open');dp.classList.toggle('open',!o);dv.classList.toggle('open',!o);dt.classList.toggle('on',!o);};
         document.getElementById('devClose').onclick=()=>{dp.classList.remove('open');dv.classList.remove('open');dt.classList.remove('on');};
@@ -811,6 +894,79 @@ Rules:
         document.querySelectorAll('.ts').forEach(s=>{s.onclick=()=>{const on=s.dataset.on==='true';s.dataset.on=(!on).toString();s.classList.toggle('on',!on);};});
         ['temperature','topP'].forEach(id=>{const el=document.getElementById(id);const m={temperature:'tempV',topP:'topPV'};if(el)el.oninput=()=>{document.getElementById(m[id]).textContent=el.value;};});
 
+        // Provider selection
+        document.getElementById('providerGrid').onclick = e => {
+            const btn = e.target.closest('.prov-btn');
+            if (!btn) return;
+            document.querySelectorAll('#providerGrid .prov-btn').forEach(x => x.classList.remove('on'));
+            btn.classList.add('on');
+            curProvider = btn.dataset.p;
+            updateProviderDisplay();
+        };
+
+        function updateProviderDisplay() {
+            document.getElementById('provLabel').textContent = curProvider.charAt(0).toUpperCase() + curProvider.slice(1);
+            log('info', `Провайдер: ${curProvider}`);
+        }
+
+        // API Key management
+        window.saveApiSettings = function() {
+            curApiKey = document.getElementById('apiKey').value.trim();
+            curBaseUrl = document.getElementById('customUrl').value.trim();
+            
+            localStorage.setItem('sf_prov', curProvider);
+            localStorage.setItem('sf_apikey', curApiKey);
+            localStorage.setItem('sf_baseurl', curBaseUrl);
+            
+            updateApiStatus();
+            toast('💾 Сохранено');
+            log('success', `Настройки сохранены: ${curProvider}${curApiKey ? ' + Key' : ''}`);
+        };
+
+        window.testApiKey = async function() {
+            log('info', `Тест: ${curProvider}${curApiKey ? ' + Key' : ''}...`);
+            try {
+                const client = createClient();
+                const r = await client.chat.completions.create({
+                    model: curModel,
+                    messages: [{ role: 'user', content: 'Reply: OK' }]
+                });
+                const text = r?.choices?.[0]?.message?.content || String(r);
+                log('success', `✅ ${text.substring(0, 60)}`);
+                toast('✅ Работает!');
+            } catch (e) {
+                log('error', `❌ ${e.message}`);
+                toast('❌ Ошибка');
+            }
+        };
+
+        window.clearApiKey = function() {
+            document.getElementById('apiKey').value = '';
+            curApiKey = '';
+            localStorage.removeItem('sf_apikey');
+            updateApiStatus();
+            toast('🗑️ Ключ удалён');
+        };
+
+        function updateApiStatus() {
+            const el = document.getElementById('apiStatus');
+            const txt = document.getElementById('apiStatusText');
+            const apiLabel = document.getElementById('apiLabel');
+            const apiSep = document.getElementById('apiSep');
+            
+            if (curApiKey) {
+                el.className = 'api-status ok';
+                txt.textContent = `API Key: ${curApiKey.substring(0, 8)}...`;
+                apiLabel.style.display = 'inline';
+                apiSep.style.display = 'inline';
+            } else {
+                el.className = 'api-status no';
+                txt.textContent = 'Без ключа (бесплатный режим)';
+                apiLabel.style.display = 'none';
+                apiSep.style.display = 'none';
+            }
+        }
+
         // Chips
         document.getElementById('gG').onclick=e=>{const c=e.target.closest('.ch');if(!c)return;document.querySelectorAll('#gG .ch').forEach(x=>x.classList.remove('on'));c.classList.add('on');};
         document.getElementById('mG').onclick=e=>{const b=e.target.closest('.mob');if(!b)return;document.querySelectorAll('#mG .mob').forEach(x=>x.classList.remove('on'));b.classList.add('on');};
@@ -818,26 +974,57 @@ Rules:
         // Model dropdown
         const mS=document.getElementById('modelSearch'),mD=document.getElementById('modelDropdown');
         function rDD(f=''){mD.innerHTML='';const fl=f.toLowerCase();for(const[cat,ms]of Object.entries(MODELS)){const fm=ms.filter(m=>m.id.includes(fl)||cat.toLowerCase().includes(fl));if(!fm.length)continue;const cd=document.createElement('div');cd.className='mc';cd.textContent=cat;mD.appendChild(cd);fm.forEach(m=>{const o=document.createElement('div');o.className='mo'+(m.id===curModel?' sel':'');o.innerHTML=`<span class="mn">${m.id}</span>${m.b?`<span class="mb ${m.b}">${m.b}</span>`:''}<span class="mp">${cat}</span>`;o.onclick=()=>selM(m.id);mD.appendChild(o);});}}
-        mS.onfocus=()=>{rDD(mS.value);mD.classList.add('open');};mS.oninput=()=>{rDD(mS.value);mD.classList.add('open');};
+        mS.onfocus=()=>{rDD(mS.value);mD.classList.add('open');};
+        mS.oninput=()=>{rDD(mS.value);mD.classList.add('open');};
         document.addEventListener('click',e=>{if(!e.target.closest('.msc'))mD.classList.remove('open');});
 
         function selM(id){curModel=id;localStorage.setItem('sf_m',id);document.getElementById('cmn').textContent=id;document.getElementById('aml').textContent=id;mS.value='';mD.classList.remove('open');log('success',`Модель: ${id}`);toast(`🤖 ${id}`);}
         window.applyCustomModel=function(){const v=document.getElementById('customModel').value.trim();if(v)selM(v);};
+
+        window.fetchProviderModels = async function() {
+            log('info', `Загрузка моделей от ${curProvider}...`);
+            try {
+                const client = createClient();
+                const models = await client.models.list();
+                log('success', `Получено ${models.length} моделей`);
+                models.slice(0, 10).forEach(m => log('info', `  - ${m.id}`));
+                toast(`📋 ${models.length} моделей`);
+            } catch (e) {
+                log('error', `❌ ${e.message}`);
+                toast('❌ Ошибка');
+            }
+        };
+
         window.lPre=function(n){const p={c:{t:1.4,tp:.95},p:{t:.3,tp:.8},b:{t:.9,tp:.95},w:{t:2,tp:1}}[n];if(!p)return;document.getElementById('temperature').value=p.t;document.getElementById('tempV').textContent=p.t;document.getElementById('topP').value=p.tp;document.getElementById('topPV').textContent=p.tp;toast(`💎 ${n}`);};
 
         function log(type,msg){const l=document.getElementById('clog');const ts=new Date().toLocaleTimeString();const d=document.createElement('div');d.className=`cll ${type}`;d.innerHTML=`<span class="cts">[${ts}]</span> ${msg}`;l.appendChild(d);l.scrollTop=l.scrollHeight;}
         window.clrLog=function(){document.getElementById('clog').innerHTML='';log('info','Очищено');};
-        window.testAPI=async function(){log('info',`Тест: ${curModel}...`);try{const t=await (async()=>{const c=new Client();const r=await c.chat.completions.create({model:curModel,messages:[{role:'user',content:'Reply with exactly: {"ok":true}'}]});return r?.choices?.[0]?.message?.content||String(r);})();log('success',`✅ ${t.substring(0,60)}`);toast('✅');}catch(e){log('error',`❌ ${e.message}`);toast('❌');}};
-        window.clrAll=function(){if(confirm('Удалить?')){localStorage.clear();hist=[];rHist();log('warn','Удалено');toast('🗑️');}};
+        window.testAPI=async function(){await window.testApiKey();};
+        window.clrAll=function(){if(confirm('Удалить?')){localStorage.clear();hist=[];curApiKey='';curProvider='auto';rHist();updateApiStatus();log('warn','Удалено');toast('🗑️');}};
         window.resetSys=function(){document.getElementById('systemPrompt').value=DSYS;toast('🔄');};
         window.copySys=function(){navigator.clipboard.writeText(document.getElementById('systemPrompt').value);toast('📋');};
 
         function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
-        // Init
-        document.getElementById('cmn').textContent=curModel;
-        document.getElementById('aml').textContent=curModel;
-        log('success','v4 Multi-Agent JSON ✅');
+        // ═══════════════════════════════════════════════
+        //  INIT
+        // ═══════════════════════════════════════════════
+        document.getElementById('cmn').textContent = curModel;
+        document.getElementById('aml').textContent = curModel;
+        document.getElementById('apiKey').value = curApiKey;
+        document.getElementById('customUrl').value = curBaseUrl;
+        
+        // Set active provider button
+        document.querySelectorAll('#providerGrid .prov-btn').forEach(btn => {
+            btn.classList.toggle('on', btn.dataset.p === curProvider);
+        });
+        
+        updateProviderDisplay();
+        updateApiStatus();
+        
+        log('success', 'v5 Multi-Provider + Anti-Cache ✅');
+        log('info', `Провайдер: ${curProvider}, Модель: ${curModel}`);
+        if (curApiKey) log('info', `API Key: ${curApiKey.substring(0, 8)}...`);
 
         if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){if(w<2*r)r=w/2;if(h<2*r)r=h/2;this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this;};}
     </script>
