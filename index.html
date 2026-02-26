@@ -6,516 +6,214 @@
     <title>🎵 SongForge AI Pro</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --bg-primary: #08080d;
-            --bg-secondary: #0e0e16;
-            --bg-card: #14142a;
-            --bg-input: #0c0c18;
-            --accent-1: #7c3aed;
-            --accent-2: #ec4899;
-            --accent-3: #06b6d4;
-            --accent-4: #f59e0b;
-            --accent-5: #10b981;
-            --text-primary: #eef0f6;
-            --text-secondary: #9ca3af;
-            --text-dim: #5b6178;
-            --border: #222244;
-            --border-hover: #333366;
-            --success: #10b981;
-            --error: #ef4444;
-            --dev-accent: #f97316;
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg-primary:#08080d;--bg-secondary:#0e0e16;--bg-card:#14142a;--bg-input:#0c0c18;
+            --accent-1:#7c3aed;--accent-2:#ec4899;--accent-3:#06b6d4;--accent-4:#f59e0b;--accent-5:#10b981;
+            --text-primary:#eef0f6;--text-secondary:#9ca3af;--text-dim:#5b6178;
+            --border:#222244;--border-hover:#333366;--success:#10b981;--error:#ef4444;--dev-accent:#f97316;
         }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .bg-anim {
-            position: fixed; inset: 0; z-index: 0;
-            pointer-events: none; overflow: hidden;
-        }
-        .bg-anim .orb {
-            position: absolute; border-radius: 50%;
-            filter: blur(100px); opacity: 0.2;
-            animation: orbFloat 25s ease-in-out infinite;
-        }
-        .bg-anim .orb:nth-child(1) { width: 500px; height: 500px; background: var(--accent-1); top: -150px; left: -100px; }
-        .bg-anim .orb:nth-child(2) { width: 400px; height: 400px; background: var(--accent-2); top: 40%; right: -120px; animation-delay: -8s; }
-        .bg-anim .orb:nth-child(3) { width: 450px; height: 450px; background: var(--accent-3); bottom: -150px; left: 25%; animation-delay: -16s; }
-        @keyframes orbFloat {
-            0%,100% { transform: translate(0,0) scale(1); }
-            33% { transform: translate(80px,-60px) scale(1.1); }
-            66% { transform: translate(-60px,80px) scale(0.9); }
-        }
-
-        .app { position: relative; z-index: 1; }
-
-        .header { text-align: center; padding: 30px 20px 20px; }
-        .logo { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 10px; }
-        .logo-icon {
-            width: 56px; height: 56px;
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            border-radius: 16px; display: flex; align-items: center; justify-content: center;
-            font-size: 28px; box-shadow: 0 0 40px rgba(124,58,237,0.3);
-            animation: logoPulse 3s ease-in-out infinite;
-        }
-        @keyframes logoPulse {
-            0%,100% { box-shadow: 0 0 30px rgba(124,58,237,0.3); }
-            50% { box-shadow: 0 0 60px rgba(124,58,237,0.5); }
-        }
-        .logo h1 {
-            font-size: 2.2em; font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .header .sub { color: var(--text-secondary); font-size: 1em; }
-
-        /* Dev Toggle */
-        .dev-toggle {
-            position: fixed; top: 16px; right: 16px; z-index: 100;
-            width: 44px; height: 44px; border-radius: 12px;
-            border: 1px solid var(--border); background: var(--bg-card);
-            color: var(--text-dim); font-size: 1.2em; cursor: pointer;
-            transition: all 0.3s; display: flex; align-items: center; justify-content: center;
-        }
-        .dev-toggle:hover, .dev-toggle.active {
-            border-color: var(--dev-accent); color: var(--dev-accent);
-            box-shadow: 0 0 20px rgba(249,115,22,0.2);
-        }
-
-        /* Dev Overlay & Panel */
-        .dev-overlay {
-            position: fixed; inset: 0; z-index: 200;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
-        .dev-overlay.open { opacity: 1; pointer-events: auto; }
-
-        .dev-panel {
-            position: fixed; top: 0; right: -520px;
-            width: 500px; max-width: 95vw; height: 100vh;
-            background: var(--bg-secondary); border-left: 1px solid var(--border);
-            z-index: 201; transition: right 0.4s cubic-bezier(0.16,1,0.3,1);
-            overflow-y: auto; box-shadow: -10px 0 60px rgba(0,0,0,0.5);
-        }
-        .dev-panel.open { right: 0; }
-        .dev-panel::-webkit-scrollbar { width: 6px; }
-        .dev-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-        .dev-header {
-            padding: 24px; display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border); position: sticky; top: 0;
-            background: var(--bg-secondary); z-index: 10;
-        }
-        .dev-header h2 { display: flex; align-items: center; gap: 10px; font-size: 1.2em; }
-        .dev-header .badge {
-            font-size: 0.55em; padding: 3px 8px; border-radius: 6px;
-            background: var(--dev-accent); color: white; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .dev-close {
-            width: 36px; height: 36px; border-radius: 10px;
-            border: 1px solid var(--border); background: transparent;
-            color: var(--text-secondary); cursor: pointer; font-size: 1.1em;
-            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-        }
-        .dev-close:hover { border-color: var(--error); color: var(--error); }
-
-        .dev-body { padding: 20px 24px 40px; }
-
-        .dev-section { margin-bottom: 24px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-        .dev-section-header {
-            padding: 14px 18px; background: rgba(255,255,255,0.02);
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; gap: 10px;
-            font-weight: 600; font-size: 0.95em; cursor: pointer; user-select: none; transition: background 0.2s;
-        }
-        .dev-section-header:hover { background: rgba(255,255,255,0.04); }
-        .dev-section-header .arrow { margin-left: auto; transition: transform 0.3s; font-size: 0.8em; }
-        .dev-section-header.collapsed .arrow { transform: rotate(-90deg); }
-        .dev-section-body { padding: 16px 18px; }
-        .dev-section-body.collapsed { display: none; }
-
-        .dev-field { margin-bottom: 16px; }
-        .dev-field:last-child { margin-bottom: 0; }
-        .dev-field label {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.8em; font-weight: 600; color: var(--text-secondary);
-            margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .dev-field label .hint { font-weight: 400; text-transform: none; color: var(--text-dim); font-size: 0.9em; letter-spacing: 0; }
-
-        .dev-field input[type="text"],
-        .dev-field input[type="number"],
-        .dev-field textarea,
-        .dev-field select {
-            width: 100%; padding: 10px 14px; background: var(--bg-input);
-            border: 1px solid var(--border); border-radius: 10px;
-            color: var(--text-primary); font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85em; transition: border-color 0.2s; outline: none;
-        }
-        .dev-field input:focus, .dev-field textarea:focus, .dev-field select:focus { border-color: var(--dev-accent); }
-        .dev-field textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
-        .dev-field select option { background: var(--bg-secondary); }
-
-        .dev-field .range-row { display: flex; align-items: center; gap: 12px; }
-        .dev-field input[type="range"] {
-            flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px;
-            background: var(--border); outline: none;
-        }
-        .dev-field input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
-            background: var(--dev-accent); cursor: pointer; box-shadow: 0 2px 8px rgba(249,115,22,0.3);
-        }
-        .dev-field .range-val {
-            font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
-            color: var(--dev-accent); min-width: 40px; text-align: right;
-        }
-
-        .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
-        .toggle-row span { font-size: 0.9em; }
-        .toggle-switch {
-            width: 44px; height: 24px; border-radius: 12px; background: var(--border);
-            position: relative; cursor: pointer; transition: background 0.3s;
-        }
-        .toggle-switch.on { background: var(--dev-accent); }
-        .toggle-switch::after {
-            content: ''; position: absolute; width: 18px; height: 18px;
-            border-radius: 50%; background: white; top: 3px; left: 3px; transition: transform 0.3s;
-        }
-        .toggle-switch.on::after { transform: translateX(20px); }
-
-        .model-search-container { position: relative; }
-        .model-search {
-            width: 100%; padding: 10px 14px 10px 36px; background: var(--bg-input);
-            border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace; font-size: 0.85em; outline: none; transition: border-color 0.2s;
-        }
-        .model-search:focus { border-color: var(--dev-accent); }
-        .model-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.9em; color: var(--text-dim); }
-
-        .model-dropdown {
-            position: absolute; top: calc(100% + 4px); left: 0; right: 0;
-            max-height: 260px; overflow-y: auto; background: var(--bg-card);
-            border: 1px solid var(--border); border-radius: 10px; z-index: 50;
-            display: none; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }
-        .model-dropdown.open { display: block; }
-        .model-dropdown::-webkit-scrollbar { width: 5px; }
-        .model-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-        .model-category {
-            padding: 8px 14px; font-size: 0.7em; color: var(--dev-accent); font-weight: 700;
-            text-transform: uppercase; letter-spacing: 1px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            position: sticky; top: 0; background: var(--bg-card);
-        }
-        .model-option {
-            padding: 10px 14px; cursor: pointer; transition: background 0.15s;
-            display: flex; align-items: center; gap: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-        }
-        .model-option:hover { background: rgba(249,115,22,0.08); }
-        .model-option.selected { background: rgba(249,115,22,0.12); }
-        .model-option .model-name { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; font-weight: 500; }
-        .model-option .model-provider { font-size: 0.7em; color: var(--text-dim); margin-left: auto; }
-        .model-option .model-badge { font-size: 0.6em; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
-        .model-badge.free { background: rgba(16,185,129,0.15); color: var(--success); }
-        .model-badge.popular { background: rgba(124,58,237,0.15); color: var(--accent-1); }
-        .model-badge.new { background: rgba(236,72,153,0.15); color: var(--accent-2); }
-
-        .current-model {
-            margin-top: 8px; padding: 8px 12px;
-            background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.2);
-            border-radius: 8px; font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8em; color: var(--dev-accent);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .current-model .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px var(--success); }
-
-        .dev-btn-row { display: flex; gap: 8px; margin-top: 12px; }
-        .dev-btn {
-            flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
-            background: transparent; color: var(--text-secondary);
-            font-family: 'Inter', sans-serif; font-size: 0.82em; font-weight: 500;
-            cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .dev-btn:hover { border-color: var(--dev-accent); color: var(--dev-accent); background: rgba(249,115,22,0.05); }
-        .dev-btn.danger:hover { border-color: var(--error); color: var(--error); background: rgba(239,68,68,0.05); }
-
-        .console-log {
-            background: #000; border-radius: 10px; padding: 12px;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.75em;
-            max-height: 200px; overflow-y: auto; line-height: 1.6; border: 1px solid #222;
-        }
-        .console-log::-webkit-scrollbar { width: 4px; }
-        .console-log::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-        .console-line { padding: 1px 0; word-break: break-all; }
-        .console-line.info { color: #60a5fa; }
-        .console-line.success { color: #34d399; }
-        .console-line.error { color: #f87171; }
-        .console-line.warn { color: #fbbf24; }
-        .console-line .ts { color: #555; }
-
-        /* Main */
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
-        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
-
-        .card {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 18px; padding: 26px; backdrop-filter: blur(8px); transition: border-color 0.3s;
-        }
-        .card:hover { border-color: var(--border-hover); }
-        .card-title { display: flex; align-items: center; gap: 10px; font-size: 1.2em; font-weight: 700; margin-bottom: 20px; }
-
-        .form-group { margin-bottom: 16px; }
-        .form-group label {
-            display: block; font-size: 0.82em; font-weight: 600; color: var(--text-secondary);
-            margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 12px 16px; background: var(--bg-input);
-            border: 1px solid var(--border); border-radius: 11px; color: var(--text-primary);
-            font-family: 'Inter', sans-serif; font-size: 0.92em; transition: all 0.2s; outline: none;
-        }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            border-color: var(--accent-1); box-shadow: 0 0 20px rgba(124,58,237,0.12);
-        }
-        .form-group textarea { resize: vertical; min-height: 90px; }
-        .form-group select option { background: var(--bg-secondary); }
-
-        .chip-grid { display: flex; flex-wrap: wrap; gap: 7px; }
-        .chip {
-            padding: 7px 14px; border-radius: 18px; border: 1px solid var(--border);
-            background: var(--bg-input); color: var(--text-secondary);
-            font-size: 0.82em; font-weight: 500; cursor: pointer; transition: all 0.2s; user-select: none;
-        }
-        .chip:hover { border-color: var(--accent-1); color: var(--text-primary); }
-        .chip.active {
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(124,58,237,0.25);
-        }
-
-        .mood-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
-        .mood-btn {
-            padding: 9px 6px; border-radius: 11px; border: 1px solid var(--border);
-            background: var(--bg-input); color: var(--text-secondary);
-            font-size: 0.75em; cursor: pointer; transition: all 0.2s; text-align: center;
-        }
-        .mood-btn:hover { border-color: var(--accent-3); }
-        .mood-btn.active {
-            background: linear-gradient(135deg, var(--accent-3), #0891b2);
-            border-color: transparent; color: #fff;
-        }
-        .mood-btn .me { font-size: 1.4em; display: block; margin-bottom: 3px; }
-
-        .btn-gen {
-            width: 100%; padding: 16px; border: none; border-radius: 13px;
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            color: #fff; font-family: 'Inter', sans-serif; font-size: 1.05em; font-weight: 700;
-            cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
-            text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;
-        }
-        .btn-gen:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(124,58,237,0.4); }
-        .btn-gen:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-gen .shim {
-            position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            animation: shimmer 2.5s infinite;
-        }
-        @keyframes shimmer { to { left: 100%; } }
-
-        .model-indicator {
-            display: flex; align-items: center; gap: 8px; padding: 8px 14px; margin-bottom: 16px;
-            background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.15);
-            border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.78em; color: var(--dev-accent);
-        }
-        .model-indicator .dot {
-            width: 7px; height: 7px; border-radius: 50%; background: var(--success);
-            box-shadow: 0 0 6px var(--success); animation: dotBlink 2s infinite;
-        }
-        @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-        .result-area { min-height: 420px; display: flex; flex-direction: column; }
-        .placeholder {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-dim); text-align: center; padding: 40px;
-        }
-        .placeholder .big { font-size: 3.5em; margin-bottom: 14px; opacity: 0.5; }
-
-        .loading-wrap {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;
-        }
-        .loading-bars { display: flex; gap: 5px; align-items: end; height: 55px; margin-bottom: 18px; }
-        .lbar { width: 7px; border-radius: 4px; animation: lbarBounce 1.2s ease-in-out infinite; }
-        .lbar:nth-child(1) { background: var(--accent-1); animation-delay: 0s; }
-        .lbar:nth-child(2) { background: var(--accent-2); animation-delay: .1s; }
-        .lbar:nth-child(3) { background: var(--accent-3); animation-delay: .2s; }
-        .lbar:nth-child(4) { background: var(--accent-4); animation-delay: .3s; }
-        .lbar:nth-child(5) { background: var(--accent-1); animation-delay: .4s; }
-        .lbar:nth-child(6) { background: var(--accent-2); animation-delay: .5s; }
-        .lbar:nth-child(7) { background: var(--accent-3); animation-delay: .6s; }
-        @keyframes lbarBounce { 0%,100% { height: 8px; } 50% { height: 50px; } }
-        .loading-txt { color: var(--text-secondary); }
-        .loading-step { color: var(--accent-3); font-size: 0.88em; margin-top: 6px; animation: fadeIO 2s ease-in-out infinite; }
-        @keyframes fadeIO { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
-
-        .song-result { flex: 1; display: flex; flex-direction: column; animation: slideUp .5s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-
-        .song-hdr {
-            display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
-            padding-bottom: 18px; border-bottom: 1px solid var(--border);
-        }
-        .song-cover {
-            width: 72px; height: 72px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.2em; flex-shrink: 0;
-        }
-        .song-info h3 { font-size: 1.15em; font-weight: 700; margin-bottom: 5px; }
-        .song-meta { display: flex; gap: 8px; flex-wrap: wrap; }
-        .song-tag { font-size: 0.72em; padding: 3px 9px; border-radius: 8px; font-weight: 500; }
-        .song-tag.g { background: rgba(124,58,237,.12); color: var(--accent-1); }
-        .song-tag.m { background: rgba(6,182,212,.12); color: var(--accent-3); }
-        .song-tag.model { background: rgba(249,115,22,.12); color: var(--dev-accent); font-family: 'JetBrains Mono', monospace; }
-
-        .lyrics-box {
-            flex: 1; background: var(--bg-input); border-radius: 12px; padding: 18px;
-            max-height: 300px; overflow-y: auto; border: 1px solid var(--border); margin-bottom: 14px;
-        }
-        .lyrics-box::-webkit-scrollbar { width: 5px; }
-        .lyrics-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-        .lyrics-sec {
-            color: var(--accent-2); font-weight: 700; font-size: 0.82em;
-            text-transform: uppercase; letter-spacing: .5px; margin: 16px 0 6px;
-        }
-        .lyrics-sec:first-child { margin-top: 0; }
-        .lyrics-ln { line-height: 1.8; font-size: 0.92em; }
-        .lyrics-ln.hl { color: var(--accent-3); font-weight: 500; }
-
-        .viz-canvas { width: 100%; height: 55px; border-radius: 10px; margin-bottom: 10px; }
-
-        .player-sec {
-            background: var(--bg-input); border-radius: 12px; padding: 18px; border: 1px solid var(--border);
-        }
-        .prog-bg { width: 100%; height: 5px; background: var(--border); border-radius: 3px; cursor: pointer; }
-        .prog-fill {
-            height: 100%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
-            border-radius: 3px; width: 0%; transition: width .3s linear;
-        }
-        .time-labels { display: flex; justify-content: space-between; font-size: .72em; color: var(--text-dim); margin-top: 5px; }
-        .p-ctrls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 12px; }
-        .cbtn {
-            width: 42px; height: 42px; border-radius: 50%; border: none; background: transparent;
-            color: var(--text-secondary); font-size: 1.1em; cursor: pointer; transition: all .2s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .cbtn:hover { color: var(--text-primary); background: rgba(255,255,255,.04); }
-        .cbtn.play {
-            width: 52px; height: 52px;
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            color: #fff; font-size: 1.3em;
-        }
-        .cbtn.play:hover { transform: scale(1.1); box-shadow: 0 5px 25px rgba(124,58,237,.4); }
-        .vol-sec { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 10px; }
-        .vol-sl {
-            -webkit-appearance: none; width: 100px; height: 4px; border-radius: 2px;
-            background: var(--border); outline: none;
-        }
-        .vol-sl::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
-            background: var(--accent-1); cursor: pointer;
-        }
-        .speech-st { text-align: center; font-size: .78em; color: var(--accent-3); margin-top: 6px; min-height: 18px; }
-
-        .act-btns { display: flex; gap: 8px; margin-top: 12px; }
-        .act-btn {
-            flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
-            background: var(--bg-input); color: var(--text-secondary);
-            font-family: 'Inter', sans-serif; font-size: .82em; font-weight: 500;
-            cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 5px;
-        }
-        .act-btn:hover { border-color: var(--accent-1); color: var(--text-primary); }
-
-        .hist-sec { grid-column: 1/-1; margin-top: 10px; }
-        .hist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; margin-top: 14px; }
-        .hist-card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 13px;
-            padding: 16px; cursor: pointer; transition: all .3s; animation: slideUp .4s ease;
-        }
-        .hist-card:hover { border-color: var(--accent-1); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.3); }
-        .hist-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .hist-cover {
-            width: 42px; height: 42px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center; font-size: 1.4em; flex-shrink: 0;
-        }
-        .hist-hdr h4 { font-size: .9em; }
-        .hist-hdr .hist-genre { font-size: .72em; color: var(--text-dim); }
-        .hist-preview { font-size: .78em; color: var(--text-secondary); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .hist-date { font-size: .68em; color: var(--text-dim); margin-top: 6px; }
-        .hist-model { font-size: .65em; color: var(--dev-accent); font-family: 'JetBrains Mono', monospace; }
-
-        .err-box {
-            background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.25);
-            border-radius: 12px; padding: 20px; text-align: center; color: var(--error);
-        }
-        .err-box .ei { font-size: 2em; margin-bottom: 8px; }
-        .retry-btn {
-            margin-top: 10px; padding: 8px 22px; border-radius: 8px; border: 1px solid var(--error);
-            background: transparent; color: var(--error); font-family: 'Inter', sans-serif; cursor: pointer; transition: all .2s;
-        }
-        .retry-btn:hover { background: var(--error); color: #fff; }
-
-        .toast {
-            position: fixed; bottom: 28px; left: 50%;
-            transform: translateX(-50%) translateY(90px);
-            padding: 12px 24px; border-radius: 12px; background: var(--bg-card);
-            border: 1px solid var(--accent-1); color: var(--text-primary); font-size: .88em;
-            z-index: 300; transition: transform .4s ease; box-shadow: 0 10px 40px rgba(0,0,0,.5);
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
-
-        .token-info { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
-        .token-pill {
-            padding: 4px 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace;
-            font-size: 0.72em; background: rgba(255,255,255,.03); border: 1px solid var(--border); color: var(--text-dim);
-        }
-        .token-pill .val { color: var(--accent-3); font-weight: 600; }
-
-        .footer { text-align: center; padding: 30px 0; color: var(--text-dim); font-size: .78em; grid-column: 1/-1; }
-
-        /* Raw response viewer */
-        .raw-response {
-            margin-top: 10px; padding: 10px; background: #000; border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.7em;
-            max-height: 150px; overflow-y: auto; border: 1px solid #222;
-            color: #888; word-break: break-all; display: none;
-        }
-        .raw-response.visible { display: block; }
+        body{font-family:'Inter',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
+        .bg-anim{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+        .bg-anim .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.2;animation:orbFloat 25s ease-in-out infinite}
+        .bg-anim .orb:nth-child(1){width:500px;height:500px;background:var(--accent-1);top:-150px;left:-100px}
+        .bg-anim .orb:nth-child(2){width:400px;height:400px;background:var(--accent-2);top:40%;right:-120px;animation-delay:-8s}
+        .bg-anim .orb:nth-child(3){width:450px;height:450px;background:var(--accent-3);bottom:-150px;left:25%;animation-delay:-16s}
+        @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,-60px) scale(1.1)}66%{transform:translate(-60px,80px) scale(.9)}}
+        .app{position:relative;z-index:1}
+        .header{text-align:center;padding:30px 20px 20px}
+        .logo{display:inline-flex;align-items:center;gap:14px;margin-bottom:10px}
+        .logo-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 0 40px rgba(124,58,237,.3);animation:logoPulse 3s ease-in-out infinite}
+        @keyframes logoPulse{0%,100%{box-shadow:0 0 30px rgba(124,58,237,.3)}50%{box-shadow:0 0 60px rgba(124,58,237,.5)}}
+        .logo h1{font-size:2.2em;font-weight:900;background:linear-gradient(135deg,var(--accent-1),var(--accent-2),var(--accent-3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .header .sub{color:var(--text-secondary);font-size:1em}
+        .dev-toggle{position:fixed;top:16px;right:16px;z-index:100;width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-dim);font-size:1.2em;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+        .dev-toggle:hover,.dev-toggle.active{border-color:var(--dev-accent);color:var(--dev-accent);box-shadow:0 0 20px rgba(249,115,22,.2)}
+        .dev-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+        .dev-overlay.open{opacity:1;pointer-events:auto}
+        .dev-panel{position:fixed;top:0;right:-520px;width:500px;max-width:95vw;height:100vh;background:var(--bg-secondary);border-left:1px solid var(--border);z-index:201;transition:right .4s cubic-bezier(.16,1,.3,1);overflow-y:auto;box-shadow:-10px 0 60px rgba(0,0,0,.5)}
+        .dev-panel.open{right:0}
+        .dev-panel::-webkit-scrollbar{width:6px}
+        .dev-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        .dev-header{padding:24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-secondary);z-index:10}
+        .dev-header h2{display:flex;align-items:center;gap:10px;font-size:1.2em}
+        .dev-header .badge{font-size:.55em;padding:3px 8px;border-radius:6px;background:var(--dev-accent);color:white;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+        .dev-close{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;transition:all .2s}
+        .dev-close:hover{border-color:var(--error);color:var(--error)}
+        .dev-body{padding:20px 24px 40px}
+        .dev-section{margin-bottom:24px;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+        .dev-section-header{padding:14px 18px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-weight:600;font-size:.95em;cursor:pointer;user-select:none;transition:background .2s}
+        .dev-section-header:hover{background:rgba(255,255,255,.04)}
+        .dev-section-header .arrow{margin-left:auto;transition:transform .3s;font-size:.8em}
+        .dev-section-header.collapsed .arrow{transform:rotate(-90deg)}
+        .dev-section-body{padding:16px 18px}
+        .dev-section-body.collapsed{display:none}
+        .dev-field{margin-bottom:16px}
+        .dev-field:last-child{margin-bottom:0}
+        .dev-field label{display:flex;align-items:center;gap:6px;font-size:.8em;font-weight:600;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+        .dev-field label .hint{font-weight:400;text-transform:none;color:var(--text-dim);font-size:.9em;letter-spacing:0}
+        .dev-field input[type="text"],.dev-field input[type="number"],.dev-field textarea,.dev-field select{width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:.85em;transition:border-color .2s;outline:none}
+        .dev-field input:focus,.dev-field textarea:focus,.dev-field select:focus{border-color:var(--dev-accent)}
+        .dev-field textarea{min-height:120px;resize:vertical;line-height:1.6}
+        .dev-field select option{background:var(--bg-secondary)}
+        .dev-field .range-row{display:flex;align-items:center;gap:12px}
+        .dev-field input[type="range"]{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border);outline:none}
+        .dev-field input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--dev-accent);cursor:pointer;box-shadow:0 2px 8px rgba(249,115,22,.3)}
+        .dev-field .range-val{font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--dev-accent);min-width:40px;text-align:right}
+        .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+        .toggle-row span{font-size:.9em}
+        .toggle-switch{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .3s}
+        .toggle-switch.on{background:var(--dev-accent)}
+        .toggle-switch::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:white;top:3px;left:3px;transition:transform .3s}
+        .toggle-switch.on::after{transform:translateX(20px)}
+        .model-search-container{position:relative}
+        .model-search{width:100%;padding:10px 14px 10px 36px;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:.85em;outline:none;transition:border-color .2s}
+        .model-search:focus{border-color:var(--dev-accent)}
+        .model-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:.9em;color:var(--text-dim)}
+        .model-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;max-height:260px;overflow-y:auto;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;z-index:50;display:none;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+        .model-dropdown.open{display:block}
+        .model-dropdown::-webkit-scrollbar{width:5px}
+        .model-dropdown::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        .model-category{padding:8px 14px;font-size:.7em;color:var(--dev-accent);font-weight:700;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,.03);position:sticky;top:0;background:var(--bg-card)}
+        .model-option{padding:10px 14px;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.02)}
+        .model-option:hover{background:rgba(249,115,22,.08)}
+        .model-option.selected{background:rgba(249,115,22,.12)}
+        .model-option .model-name{font-family:'JetBrains Mono',monospace;font-size:.85em;font-weight:500}
+        .model-option .model-provider{font-size:.7em;color:var(--text-dim);margin-left:auto}
+        .model-option .model-badge{font-size:.6em;padding:2px 6px;border-radius:4px;font-weight:600}
+        .model-badge.free{background:rgba(16,185,129,.15);color:var(--success)}
+        .model-badge.popular{background:rgba(124,58,237,.15);color:var(--accent-1)}
+        .model-badge.new{background:rgba(236,72,153,.15);color:var(--accent-2)}
+        .current-model{margin-top:8px;padding:8px 12px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.8em;color:var(--dev-accent);display:flex;align-items:center;gap:8px}
+        .current-model .dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success)}
+        .dev-btn-row{display:flex;gap:8px;margin-top:12px}
+        .dev-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);font-family:'Inter',sans-serif;font-size:.82em;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+        .dev-btn:hover{border-color:var(--dev-accent);color:var(--dev-accent);background:rgba(249,115,22,.05)}
+        .dev-btn.danger:hover{border-color:var(--error);color:var(--error);background:rgba(239,68,68,.05)}
+        .console-log{background:#000;border-radius:10px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:.72em;max-height:250px;overflow-y:auto;line-height:1.6;border:1px solid #222}
+        .console-log::-webkit-scrollbar{width:4px}
+        .console-log::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+        .console-line{padding:1px 0;word-break:break-all}
+        .console-line.info{color:#60a5fa}
+        .console-line.success{color:#34d399}
+        .console-line.error{color:#f87171}
+        .console-line.warn{color:#fbbf24}
+        .console-line .ts{color:#555}
+        .container{max-width:1200px;margin:0 auto;padding:0 20px 40px}
+        .main-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px}
+        @media(max-width:900px){.main-grid{grid-template-columns:1fr}}
+        .card{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:26px;backdrop-filter:blur(8px);transition:border-color .3s}
+        .card:hover{border-color:var(--border-hover)}
+        .card-title{display:flex;align-items:center;gap:10px;font-size:1.2em;font-weight:700;margin-bottom:20px}
+        .form-group{margin-bottom:16px}
+        .form-group label{display:block;font-size:.82em;font-weight:600;color:var(--text-secondary);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px}
+        .form-group input,.form-group textarea,.form-group select{width:100%;padding:12px 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:11px;color:var(--text-primary);font-family:'Inter',sans-serif;font-size:.92em;transition:all .2s;outline:none}
+        .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent-1);box-shadow:0 0 20px rgba(124,58,237,.12)}
+        .form-group textarea{resize:vertical;min-height:90px}
+        .form-group select option{background:var(--bg-secondary)}
+        .chip-grid{display:flex;flex-wrap:wrap;gap:7px}
+        .chip{padding:7px 14px;border-radius:18px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-secondary);font-size:.82em;font-weight:500;cursor:pointer;transition:all .2s;user-select:none}
+        .chip:hover{border-color:var(--accent-1);color:var(--text-primary)}
+        .chip.active{background:linear-gradient(135deg,var(--accent-1),var(--accent-2));border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.25)}
+        .mood-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+        .mood-btn{padding:9px 6px;border-radius:11px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-secondary);font-size:.75em;cursor:pointer;transition:all .2s;text-align:center}
+        .mood-btn:hover{border-color:var(--accent-3)}
+        .mood-btn.active{background:linear-gradient(135deg,var(--accent-3),#0891b2);border-color:transparent;color:#fff}
+        .mood-btn .me{font-size:1.4em;display:block;margin-bottom:3px}
+        .btn-gen{width:100%;padding:16px;border:none;border-radius:13px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));color:#fff;font-family:'Inter',sans-serif;font-size:1.05em;font-weight:700;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;text-transform:uppercase;letter-spacing:1px;margin-top:8px}
+        .btn-gen:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 40px rgba(124,58,237,.4)}
+        .btn-gen:disabled{opacity:.6;cursor:not-allowed}
+        .btn-gen .shim{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:shimmer 2.5s infinite}
+        @keyframes shimmer{to{left:100%}}
+        .model-indicator{display:flex;align-items:center;gap:8px;padding:8px 14px;margin-bottom:16px;background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.15);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.78em;color:var(--dev-accent)}
+        .model-indicator .dot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);animation:dotBlink 2s infinite}
+        @keyframes dotBlink{0%,100%{opacity:1}50%{opacity:.4}}
+        .result-area{min-height:420px;display:flex;flex-direction:column}
+        .placeholder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-dim);text-align:center;padding:40px}
+        .placeholder .big{font-size:3.5em;margin-bottom:14px;opacity:.5}
+        .loading-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px}
+        .loading-bars{display:flex;gap:5px;align-items:end;height:55px;margin-bottom:18px}
+        .lbar{width:7px;border-radius:4px;animation:lbarBounce 1.2s ease-in-out infinite}
+        .lbar:nth-child(1){background:var(--accent-1);animation-delay:0s}
+        .lbar:nth-child(2){background:var(--accent-2);animation-delay:.1s}
+        .lbar:nth-child(3){background:var(--accent-3);animation-delay:.2s}
+        .lbar:nth-child(4){background:var(--accent-4);animation-delay:.3s}
+        .lbar:nth-child(5){background:var(--accent-1);animation-delay:.4s}
+        .lbar:nth-child(6){background:var(--accent-2);animation-delay:.5s}
+        .lbar:nth-child(7){background:var(--accent-3);animation-delay:.6s}
+        @keyframes lbarBounce{0%,100%{height:8px}50%{height:50px}}
+        .loading-txt{color:var(--text-secondary)}
+        .loading-step{color:var(--accent-3);font-size:.88em;margin-top:6px;animation:fadeIO 2s ease-in-out infinite}
+        @keyframes fadeIO{0%,100%{opacity:.5}50%{opacity:1}}
+        .song-result{flex:1;display:flex;flex-direction:column;animation:slideUp .5s ease}
+        @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        .song-hdr{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+        .song-cover{width:72px;height:72px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2.2em;flex-shrink:0}
+        .song-info h3{font-size:1.15em;font-weight:700;margin-bottom:5px}
+        .song-meta{display:flex;gap:8px;flex-wrap:wrap}
+        .song-tag{font-size:.72em;padding:3px 9px;border-radius:8px;font-weight:500}
+        .song-tag.g{background:rgba(124,58,237,.12);color:var(--accent-1)}
+        .song-tag.m{background:rgba(6,182,212,.12);color:var(--accent-3)}
+        .song-tag.model{background:rgba(249,115,22,.12);color:var(--dev-accent);font-family:'JetBrains Mono',monospace}
+        .lyrics-box{flex:1;background:var(--bg-input);border-radius:12px;padding:18px;max-height:300px;overflow-y:auto;border:1px solid var(--border);margin-bottom:14px}
+        .lyrics-box::-webkit-scrollbar{width:5px}
+        .lyrics-box::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        .lyrics-sec{color:var(--accent-2);font-weight:700;font-size:.82em;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 6px}
+        .lyrics-sec:first-child{margin-top:0}
+        .lyrics-ln{line-height:1.8;font-size:.92em}
+        .lyrics-ln.hl{color:var(--accent-3);font-weight:500}
+        .viz-canvas{width:100%;height:55px;border-radius:10px;margin-bottom:10px}
+        .player-sec{background:var(--bg-input);border-radius:12px;padding:18px;border:1px solid var(--border)}
+        .prog-bg{width:100%;height:5px;background:var(--border);border-radius:3px;cursor:pointer}
+        .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border-radius:3px;width:0%;transition:width .3s linear}
+        .time-labels{display:flex;justify-content:space-between;font-size:.72em;color:var(--text-dim);margin-top:5px}
+        .p-ctrls{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:12px}
+        .cbtn{width:42px;height:42px;border-radius:50%;border:none;background:transparent;color:var(--text-secondary);font-size:1.1em;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+        .cbtn:hover{color:var(--text-primary);background:rgba(255,255,255,.04)}
+        .cbtn.play{width:52px;height:52px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));color:#fff;font-size:1.3em}
+        .cbtn.play:hover{transform:scale(1.1);box-shadow:0 5px 25px rgba(124,58,237,.4)}
+        .vol-sec{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:10px}
+        .vol-sl{-webkit-appearance:none;width:100px;height:4px;border-radius:2px;background:var(--border);outline:none}
+        .vol-sl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent-1);cursor:pointer}
+        .speech-st{text-align:center;font-size:.78em;color:var(--accent-3);margin-top:6px;min-height:18px}
+        .act-btns{display:flex;gap:8px;margin-top:12px}
+        .act-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-secondary);font-family:'Inter',sans-serif;font-size:.82em;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+        .act-btn:hover{border-color:var(--accent-1);color:var(--text-primary)}
+        .hist-sec{grid-column:1/-1;margin-top:10px}
+        .hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:14px}
+        .hist-card{background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:16px;cursor:pointer;transition:all .3s;animation:slideUp .4s ease}
+        .hist-card:hover{border-color:var(--accent-1);transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+        .hist-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+        .hist-cover{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4em;flex-shrink:0}
+        .hist-hdr h4{font-size:.9em}
+        .hist-hdr .hist-genre{font-size:.72em;color:var(--text-dim)}
+        .hist-preview{font-size:.78em;color:var(--text-secondary);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .hist-date{font-size:.68em;color:var(--text-dim);margin-top:6px}
+        .hist-model{font-size:.65em;color:var(--dev-accent);font-family:'JetBrains Mono',monospace}
+        .err-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:20px;text-align:center;color:var(--error)}
+        .err-box .ei{font-size:2em;margin-bottom:8px}
+        .retry-btn{margin-top:10px;padding:8px 22px;border-radius:8px;border:1px solid var(--error);background:transparent;color:var(--error);font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
+        .retry-btn:hover{background:var(--error);color:#fff}
+        .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(90px);padding:12px 24px;border-radius:12px;background:var(--bg-card);border:1px solid var(--accent-1);color:var(--text-primary);font-size:.88em;z-index:300;transition:transform .4s ease;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+        .toast.show{transform:translateX(-50%) translateY(0)}
+        .token-info{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+        .token-pill{padding:4px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.72em;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text-dim)}
+        .token-pill .val{color:var(--accent-3);font-weight:600}
+        .footer{text-align:center;padding:30px 0;color:var(--text-dim);font-size:.78em;grid-column:1/-1}
+        .raw-response{margin-top:10px;padding:10px;background:#000;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.7em;max-height:150px;overflow-y:auto;border:1px solid #222;color:#888;word-break:break-all;display:none}
+        .raw-response.visible{display:block}
     </style>
 </head>
 <body>
     <div class="bg-anim"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
-
-    <button class="dev-toggle" id="devToggle" title="Настройки разработчика">⚙️</button>
+    <button class="dev-toggle" id="devToggle" title="Dev Settings">⚙️</button>
     <div class="dev-overlay" id="devOverlay"></div>
-
     <div class="dev-panel" id="devPanel">
         <div class="dev-header">
             <h2>⚙️ Developer Settings <span class="badge">DEV</span></h2>
             <button class="dev-close" id="devClose">✕</button>
         </div>
         <div class="dev-body">
-            <!-- Model -->
             <div class="dev-section">
                 <div class="dev-section-header" data-section="model">🤖 Модель ИИ <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="model">
@@ -523,116 +221,55 @@
                         <label>Поиск и выбор модели</label>
                         <div class="model-search-container">
                             <span class="model-search-icon">🔍</span>
-                            <input type="text" class="model-search" id="modelSearch" placeholder="Поиск модели..." autocomplete="off">
+                            <input type="text" class="model-search" id="modelSearch" placeholder="Поиск..." autocomplete="off">
                             <div class="model-dropdown" id="modelDropdown"></div>
                         </div>
-                        <div class="current-model" id="currentModelDisplay">
-                            <span class="dot"></span>
-                            <span id="currentModelName">gpt-4.1</span>
-                        </div>
+                        <div class="current-model"><span class="dot"></span><span id="currentModelName">gpt-4.1</span></div>
                     </div>
                     <div class="dev-field">
-                        <label>Или введите ID вручную</label>
-                        <input type="text" id="customModelInput" placeholder="e.g. my-custom-model">
+                        <label>Или ID вручную</label>
+                        <input type="text" id="customModelInput" placeholder="e.g. my-model">
                     </div>
-                    <div class="dev-btn-row">
-                        <button class="dev-btn" onclick="applyCustomModel()">✅ Применить</button>
-                    </div>
+                    <div class="dev-btn-row"><button class="dev-btn" onclick="applyCustomModel()">✅ Применить</button></div>
                 </div>
             </div>
-
-            <!-- Params -->
             <div class="dev-section">
-                <div class="dev-section-header" data-section="params">🎛️ Параметры генерации <span class="arrow">▼</span></div>
+                <div class="dev-section-header" data-section="params">🎛️ Параметры <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="params">
-                    <div class="dev-field">
-                        <label>Temperature <span class="hint">(креативность)</span></label>
-                        <div class="range-row">
-                            <input type="range" id="temperature" min="0" max="2" step="0.05" value="0.9">
-                            <span class="range-val" id="tempVal">0.9</span>
-                        </div>
-                    </div>
-                    <div class="dev-field">
-                        <label>Top P</label>
-                        <div class="range-row">
-                            <input type="range" id="topP" min="0" max="1" step="0.05" value="0.95">
-                            <span class="range-val" id="topPVal">0.95</span>
-                        </div>
-                    </div>
-                    <div class="dev-field">
-                        <label>Max Tokens</label>
-                        <input type="number" id="maxTokens" value="2048" min="256" max="16384" step="256">
-                    </div>
-                    <div class="dev-field">
-                        <label>Frequency Penalty</label>
-                        <div class="range-row">
-                            <input type="range" id="freqPenalty" min="0" max="2" step="0.1" value="0.3">
-                            <span class="range-val" id="freqVal">0.3</span>
-                        </div>
-                    </div>
-                    <div class="dev-field">
-                        <label>Presence Penalty</label>
-                        <div class="range-row">
-                            <input type="range" id="presPenalty" min="0" max="2" step="0.1" value="0.2">
-                            <span class="range-val" id="presVal">0.2</span>
-                        </div>
-                    </div>
+                    <div class="dev-field"><label>Temperature</label><div class="range-row"><input type="range" id="temperature" min="0" max="2" step="0.05" value="0.9"><span class="range-val" id="tempVal">0.9</span></div></div>
+                    <div class="dev-field"><label>Top P</label><div class="range-row"><input type="range" id="topP" min="0" max="1" step="0.05" value="0.95"><span class="range-val" id="topPVal">0.95</span></div></div>
+                    <div class="dev-field"><label>Max Tokens</label><input type="number" id="maxTokens" value="2048" min="256" max="16384" step="256"></div>
+                    <div class="dev-field"><label>Frequency Penalty</label><div class="range-row"><input type="range" id="freqPenalty" min="0" max="2" step="0.1" value="0.3"><span class="range-val" id="freqVal">0.3</span></div></div>
+                    <div class="dev-field"><label>Presence Penalty</label><div class="range-row"><input type="range" id="presPenalty" min="0" max="2" step="0.1" value="0.2"><span class="range-val" id="presVal">0.2</span></div></div>
                 </div>
             </div>
-
-            <!-- System Prompt -->
             <div class="dev-section">
                 <div class="dev-section-header" data-section="prompt">📝 System Prompt <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="prompt">
-                    <div class="dev-field">
-                        <textarea id="systemPrompt">Ты — профессиональный автор песен мирового уровня. Ты создаёшь уникальные, поэтичные тексты песен с рифмами, метафорами и эмоциональной глубиной. Всегда следуй заданному формату.</textarea>
-                    </div>
-                    <div class="dev-btn-row">
-                        <button class="dev-btn" onclick="resetSystemPrompt()">🔄 Сбросить</button>
-                        <button class="dev-btn" onclick="copySystemPrompt()">📋 Копировать</button>
-                    </div>
+                    <div class="dev-field"><textarea id="systemPrompt">Ты — профессиональный автор песен мирового уровня. Создаёшь уникальные поэтичные тексты с рифмами, метафорами и глубиной. Следуй формату.</textarea></div>
+                    <div class="dev-btn-row"><button class="dev-btn" onclick="resetSystemPrompt()">🔄 Сбросить</button><button class="dev-btn" onclick="copySystemPrompt()">📋 Копировать</button></div>
                 </div>
             </div>
-
-            <!-- Advanced -->
             <div class="dev-section">
                 <div class="dev-section-header" data-section="advanced">🔬 Расширенные <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="advanced">
-                    <div class="toggle-row">
-                        <span>📊 Показывать токены</span>
-                        <div class="toggle-switch on" id="toggleTokens" data-on="true"></div>
-                    </div>
-                    <div class="toggle-row">
-                        <span>🪲 Debug логи</span>
-                        <div class="toggle-switch on" id="toggleDebug" data-on="true"></div>
-                    </div>
-                    <div class="toggle-row">
-                        <span>💾 Авто-сохранение</span>
-                        <div class="toggle-switch on" id="toggleAutoSave" data-on="true"></div>
-                    </div>
-                    <div class="toggle-row">
-                        <span>📄 Показать сырой ответ</span>
-                        <div class="toggle-switch" id="toggleRaw" data-on="false"></div>
-                    </div>
+                    <div class="toggle-row"><span>📊 Показывать токены</span><div class="toggle-switch on" id="toggleTokens" data-on="true"></div></div>
+                    <div class="toggle-row"><span>🪲 Debug логи</span><div class="toggle-switch on" id="toggleDebug" data-on="true"></div></div>
+                    <div class="toggle-row"><span>💾 Авто-сохранение</span><div class="toggle-switch on" id="toggleAutoSave" data-on="true"></div></div>
+                    <div class="toggle-row"><span>📄 Сырой ответ</span><div class="toggle-switch" id="toggleRaw" data-on="false"></div></div>
                 </div>
             </div>
-
-            <!-- Console -->
             <div class="dev-section">
                 <div class="dev-section-header" data-section="console">🖥️ Консоль <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="console">
-                    <div class="console-log" id="consoleLog">
-                        <div class="console-line info"><span class="ts">[init]</span> SongForge AI Pro v2.0</div>
-                    </div>
+                    <div class="console-log" id="consoleLog"><div class="console-line info"><span class="ts">[init]</span> SongForge AI Pro v3.0 — Raw Text Fix</div></div>
                     <div class="dev-btn-row">
                         <button class="dev-btn" onclick="clearConsole()">🧹 Очистить</button>
-                        <button class="dev-btn" onclick="testConnection()">🔌 Тест API</button>
+                        <button class="dev-btn" onclick="testConnection()">🔌 Тест</button>
                         <button class="dev-btn danger" onclick="clearAllData()">🗑️ Сброс</button>
                     </div>
                 </div>
             </div>
-
-            <!-- Presets -->
             <div class="dev-section">
                 <div class="dev-section-header" data-section="presets">💎 Пресеты <span class="arrow">▼</span></div>
                 <div class="dev-section-body" data-section="presets">
@@ -650,44 +287,25 @@
     <div class="app">
         <div class="container">
             <header class="header">
-                <div class="logo">
-                    <div class="logo-icon">🎵</div>
-                    <h1>SongForge AI</h1>
-                </div>
+                <div class="logo"><div class="logo-icon">🎵</div><h1>SongForge AI</h1></div>
                 <p class="sub">Создавай песни с ИИ — текст, голос, визуализация</p>
             </header>
-
             <div class="main-grid">
                 <div class="card">
                     <div class="card-title">✨ Создать песню</div>
-                    <div class="model-indicator" id="modelIndicator">
-                        <span class="dot"></span>
-                        Модель: <strong id="activeModelLabel">gpt-4.1</strong>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Тема / Описание</label>
-                        <textarea id="songTopic" placeholder="О чём ваша песня?...">Летняя ночь в большом городе, огни и мечты</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Жанр</label>
+                    <div class="model-indicator"><span class="dot"></span>Модель: <strong id="activeModelLabel">gpt-4.1</strong></div>
+                    <div class="form-group"><label>Тема</label><textarea id="songTopic" placeholder="О чём песня?...">Летняя ночь в большом городе, огни и мечты</textarea></div>
+                    <div class="form-group"><label>Жанр</label>
                         <div class="chip-grid" id="genreGrid">
-                            <div class="chip active" data-v="Pop">🎤 Pop</div>
-                            <div class="chip" data-v="Rock">🎸 Rock</div>
-                            <div class="chip" data-v="Hip-Hop">🎧 Hip-Hop</div>
-                            <div class="chip" data-v="R&B">🎹 R&B</div>
-                            <div class="chip" data-v="Electronic">⚡ Electronic</div>
-                            <div class="chip" data-v="Jazz">🎷 Jazz</div>
-                            <div class="chip" data-v="Country">🤠 Country</div>
-                            <div class="chip" data-v="Indie">🌿 Indie</div>
-                            <div class="chip" data-v="Metal">🤘 Metal</div>
-                            <div class="chip" data-v="Lo-Fi">🌙 Lo-Fi</div>
-                            <div class="chip" data-v="Reggaeton">💃 Reggaeton</div>
-                            <div class="chip" data-v="K-Pop">🇰🇷 K-Pop</div>
+                            <div class="chip active" data-v="Pop">🎤 Pop</div><div class="chip" data-v="Rock">🎸 Rock</div>
+                            <div class="chip" data-v="Hip-Hop">🎧 Hip-Hop</div><div class="chip" data-v="R&B">🎹 R&B</div>
+                            <div class="chip" data-v="Electronic">⚡ Electronic</div><div class="chip" data-v="Jazz">🎷 Jazz</div>
+                            <div class="chip" data-v="Country">🤠 Country</div><div class="chip" data-v="Indie">🌿 Indie</div>
+                            <div class="chip" data-v="Metal">🤘 Metal</div><div class="chip" data-v="Lo-Fi">🌙 Lo-Fi</div>
+                            <div class="chip" data-v="Reggaeton">💃 Reggaeton</div><div class="chip" data-v="K-Pop">🇰🇷 K-Pop</div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Настроение</label>
+                    <div class="form-group"><label>Настроение</label>
                         <div class="mood-grid" id="moodGrid">
                             <div class="mood-btn active" data-v="Весёлое"><span class="me">😊</span>Весёлое</div>
                             <div class="mood-btn" data-v="Грустное"><span class="me">😢</span>Грустное</div>
@@ -699,36 +317,10 @@
                             <div class="mood-btn" data-v="Ностальгия"><span class="me">🌅</span>Ностальгия</div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Язык</label>
-                        <select id="songLang">
-                            <option value="русский">🇷🇺 Русский</option>
-                            <option value="английский">🇬🇧 Английский</option>
-                            <option value="испанский">🇪🇸 Испанский</option>
-                            <option value="французский">🇫🇷 Французский</option>
-                            <option value="японский">🇯🇵 Японский</option>
-                            <option value="корейский">🇰🇷 Корейский</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Голос</label>
-                        <select id="voiceSelect"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Темп речи</label>
-                        <select id="speechRate">
-                            <option value="0.6">🐢 Очень медленно</option>
-                            <option value="0.8">🚶 Медленно</option>
-                            <option value="1" selected>🏃 Нормально</option>
-                            <option value="1.2">🏎️ Быстро</option>
-                            <option value="1.5">🚀 Очень быстро</option>
-                        </select>
-                    </div>
-
-                    <button class="btn-gen" id="genBtn" onclick="generateSong()">
-                        <span class="shim"></span>🎵 Сгенерировать песню
-                    </button>
-
+                    <div class="form-group"><label>Язык</label><select id="songLang"><option value="русский">🇷🇺 Русский</option><option value="английский">🇬🇧 English</option><option value="испанский">🇪🇸 Español</option><option value="французский">🇫🇷 Français</option><option value="японский">🇯🇵 日本語</option><option value="корейский">🇰🇷 한국어</option></select></div>
+                    <div class="form-group"><label>Голос</label><select id="voiceSelect"></select></div>
+                    <div class="form-group"><label>Темп</label><select id="speechRate"><option value="0.6">🐢 Очень медленно</option><option value="0.8">🚶 Медленно</option><option value="1" selected>🏃 Нормально</option><option value="1.2">🏎️ Быстро</option><option value="1.5">🚀 Очень быстро</option></select></div>
+                    <button class="btn-gen" id="genBtn" onclick="generateSong()"><span class="shim"></span>🎵 Сгенерировать</button>
                     <div class="token-info" id="tokenInfo" style="display:none">
                         <div class="token-pill">Промпт: <span class="val" id="promptTokens">0</span> tok</div>
                         <div class="token-pill">Ответ: <span class="val" id="responseTokens">0</span> tok</div>
@@ -739,10 +331,7 @@
 
                 <div class="card result-area" id="resultArea">
                     <div class="card-title">🎶 Результат</div>
-                    <div class="placeholder" id="ph">
-                        <div class="big">🎵</div>
-                        <p>Настройте параметры и нажмите «Сгенерировать»</p>
-                    </div>
+                    <div class="placeholder"><div class="big">🎵</div><p>Настройте и нажмите «Сгенерировать»</p></div>
                 </div>
 
                 <div class="card hist-sec" id="histSec" style="display:none">
@@ -750,96 +339,83 @@
                     <div class="hist-grid" id="histGrid"></div>
                 </div>
             </div>
-            <div class="footer">SongForge AI Pro v2.0 — GPT4Free + Web Speech API</div>
+            <div class="footer">SongForge AI Pro v3.0 — GPT4Free + Web Speech</div>
         </div>
     </div>
-
     <div class="toast" id="toast"></div>
 
     <script type="module">
         import Client from 'https://g4f.dev/dist/js/client.js';
-        const client = new Client();
 
-        // ══════════════════════════════════
-        //  MODELS DATABASE
-        // ══════════════════════════════════
         const ALL_MODELS = {
-            'OpenAI': [
-                { id: 'gpt-4.1', badge: 'popular', label: 'GPT-4.1' },
-                { id: 'gpt-4.1-mini', badge: 'new', label: 'GPT-4.1 Mini' },
-                { id: 'gpt-4.1-nano', badge: 'new', label: 'GPT-4.1 Nano' },
-                { id: 'gpt-4', badge: '', label: 'GPT-4' },
-                { id: 'gpt-4o', badge: 'popular', label: 'GPT-4o' },
-                { id: 'gpt-4o-mini', badge: 'free', label: 'GPT-4o Mini' },
-                { id: 'gpt-4-turbo', badge: '', label: 'GPT-4 Turbo' },
-                { id: 'gpt-3.5-turbo', badge: 'free', label: 'GPT-3.5 Turbo' },
-                { id: 'o1', badge: '', label: 'O1' },
-                { id: 'o1-mini', badge: '', label: 'O1 Mini' },
-                { id: 'o3-mini', badge: 'new', label: 'O3 Mini' },
-                { id: 'o4-mini', badge: 'new', label: 'O4 Mini' },
+            'OpenAI':[
+                {id:'gpt-4.1',badge:'popular',label:'GPT-4.1'},
+                {id:'gpt-4.1-mini',badge:'new',label:'GPT-4.1 Mini'},
+                {id:'gpt-4.1-nano',badge:'new',label:'GPT-4.1 Nano'},
+                {id:'gpt-4',badge:'',label:'GPT-4'},
+                {id:'gpt-4o',badge:'popular',label:'GPT-4o'},
+                {id:'gpt-4o-mini',badge:'free',label:'GPT-4o Mini'},
+                {id:'gpt-4-turbo',badge:'',label:'GPT-4 Turbo'},
+                {id:'gpt-3.5-turbo',badge:'free',label:'GPT-3.5 Turbo'},
+                {id:'o1',badge:'',label:'O1'},
+                {id:'o1-mini',badge:'',label:'O1 Mini'},
+                {id:'o3-mini',badge:'new',label:'O3 Mini'},
+                {id:'o4-mini',badge:'new',label:'O4 Mini'},
             ],
-            'Meta Llama': [
-                { id: 'llama-3.3-70b', badge: 'popular', label: 'Llama 3.3 70B' },
-                { id: 'llama-3.2-90b', badge: '', label: 'Llama 3.2 90B' },
-                { id: 'llama-3.2-11b', badge: 'free', label: 'Llama 3.2 11B' },
-                { id: 'llama-3.1-405b', badge: '', label: 'Llama 3.1 405B' },
-                { id: 'llama-3.1-70b', badge: 'free', label: 'Llama 3.1 70B' },
-                { id: 'llama-3.1-8b', badge: 'free', label: 'Llama 3.1 8B' },
-                { id: 'llama-4-scout', badge: 'new', label: 'Llama 4 Scout' },
-                { id: 'llama-4-maverick', badge: 'new', label: 'Llama 4 Maverick' },
+            'Meta Llama':[
+                {id:'llama-3.3-70b',badge:'popular',label:'Llama 3.3 70B'},
+                {id:'llama-3.1-405b',badge:'',label:'Llama 3.1 405B'},
+                {id:'llama-3.1-70b',badge:'free',label:'Llama 3.1 70B'},
+                {id:'llama-3.1-8b',badge:'free',label:'Llama 3.1 8B'},
+                {id:'llama-4-scout',badge:'new',label:'Llama 4 Scout'},
+                {id:'llama-4-maverick',badge:'new',label:'Llama 4 Maverick'},
             ],
-            'DeepSeek': [
-                { id: 'deepseek-v3', badge: 'popular', label: 'DeepSeek V3' },
-                { id: 'deepseek-r1', badge: 'popular', label: 'DeepSeek R1' },
-                { id: 'deepseek-chat', badge: 'free', label: 'DeepSeek Chat' },
+            'DeepSeek':[
+                {id:'deepseek-v3',badge:'popular',label:'DeepSeek V3'},
+                {id:'deepseek-r1',badge:'popular',label:'DeepSeek R1'},
+                {id:'deepseek-chat',badge:'free',label:'DeepSeek Chat'},
             ],
-            'Google': [
-                { id: 'gemini-2.5-pro', badge: 'new', label: 'Gemini 2.5 Pro' },
-                { id: 'gemini-2.5-flash', badge: 'new', label: 'Gemini 2.5 Flash' },
-                { id: 'gemini-2.0-flash', badge: 'popular', label: 'Gemini 2.0 Flash' },
-                { id: 'gemini-pro', badge: 'free', label: 'Gemini Pro' },
-                { id: 'gemma-2-27b', badge: 'free', label: 'Gemma 2 27B' },
-                { id: 'gemma-3', badge: 'new', label: 'Gemma 3' },
+            'Google':[
+                {id:'gemini-2.5-pro',badge:'new',label:'Gemini 2.5 Pro'},
+                {id:'gemini-2.5-flash',badge:'new',label:'Gemini 2.5 Flash'},
+                {id:'gemini-2.0-flash',badge:'popular',label:'Gemini 2.0 Flash'},
+                {id:'gemini-pro',badge:'free',label:'Gemini Pro'},
+                {id:'gemma-3',badge:'new',label:'Gemma 3'},
             ],
-            'Anthropic': [
-                { id: 'claude-3.7-sonnet', badge: 'new', label: 'Claude 3.7 Sonnet' },
-                { id: 'claude-3.5-sonnet', badge: 'popular', label: 'Claude 3.5 Sonnet' },
-                { id: 'claude-3-opus', badge: '', label: 'Claude 3 Opus' },
-                { id: 'claude-3-haiku', badge: 'free', label: 'Claude 3 Haiku' },
-                { id: 'claude-sonnet-4', badge: 'new', label: 'Claude Sonnet 4' },
+            'Anthropic':[
+                {id:'claude-3.7-sonnet',badge:'new',label:'Claude 3.7 Sonnet'},
+                {id:'claude-3.5-sonnet',badge:'popular',label:'Claude 3.5 Sonnet'},
+                {id:'claude-3-opus',badge:'',label:'Claude 3 Opus'},
+                {id:'claude-3-haiku',badge:'free',label:'Claude 3 Haiku'},
+                {id:'claude-sonnet-4',badge:'new',label:'Claude Sonnet 4'},
             ],
-            'Qwen': [
-                { id: 'qwen-2.5-72b', badge: 'popular', label: 'Qwen 2.5 72B' },
-                { id: 'qwen-2.5-coder-32b', badge: '', label: 'Qwen 2.5 Coder 32B' },
-                { id: 'qwen3-235b', badge: 'new', label: 'Qwen3 235B' },
-                { id: 'qwen3-32b', badge: 'new', label: 'Qwen3 32B' },
-                { id: 'qwq-32b', badge: 'popular', label: 'QwQ 32B' },
+            'Qwen':[
+                {id:'qwen-2.5-72b',badge:'popular',label:'Qwen 2.5 72B'},
+                {id:'qwen3-235b',badge:'new',label:'Qwen3 235B'},
+                {id:'qwen3-32b',badge:'new',label:'Qwen3 32B'},
+                {id:'qwq-32b',badge:'popular',label:'QwQ 32B'},
             ],
-            'Mistral': [
-                { id: 'mistral-large', badge: 'popular', label: 'Mistral Large' },
-                { id: 'mistral-small', badge: 'free', label: 'Mistral Small' },
-                { id: 'mixtral-8x7b', badge: 'free', label: 'Mixtral 8x7B' },
+            'Mistral':[
+                {id:'mistral-large',badge:'popular',label:'Mistral Large'},
+                {id:'mistral-small',badge:'free',label:'Mistral Small'},
+                {id:'mixtral-8x7b',badge:'free',label:'Mixtral 8x7B'},
             ],
-            'xAI': [
-                { id: 'grok-3', badge: 'new', label: 'Grok 3' },
-                { id: 'grok-3-mini', badge: 'new', label: 'Grok 3 Mini' },
-                { id: 'grok-2', badge: 'popular', label: 'Grok 2' },
+            'xAI':[
+                {id:'grok-3',badge:'new',label:'Grok 3'},
+                {id:'grok-3-mini',badge:'new',label:'Grok 3 Mini'},
+                {id:'grok-2',badge:'popular',label:'Grok 2'},
             ],
-            'Microsoft': [
-                { id: 'phi-4', badge: 'new', label: 'Phi-4' },
-                { id: 'phi-3.5-mini', badge: 'free', label: 'Phi 3.5 Mini' },
-            ],
-            'Other': [
-                { id: 'command-r-plus', badge: '', label: 'Command R+' },
-                { id: 'command-r', badge: 'free', label: 'Command R' },
-                { id: 'nemotron-70b', badge: '', label: 'Nemotron 70B' },
-                { id: 'sonar-pro', badge: 'new', label: 'Sonar Pro' },
-                { id: 'sonar', badge: '', label: 'Sonar' },
-                { id: 'glm-4', badge: '', label: 'GLM-4' },
+            'Other':[
+                {id:'command-r-plus',badge:'',label:'Command R+'},
+                {id:'command-r',badge:'free',label:'Command R'},
+                {id:'nemotron-70b',badge:'',label:'Nemotron 70B'},
+                {id:'phi-4',badge:'new',label:'Phi-4'},
+                {id:'sonar-pro',badge:'new',label:'Sonar Pro'},
+                {id:'glm-4',badge:'',label:'GLM-4'},
             ]
         };
 
-        // State
+        // ═══ STATE ═══
         let currentModel = localStorage.getItem('sf_model') || 'gpt-4.1';
         let currentSong = null;
         let songHistory = JSON.parse(localStorage.getItem('sf_history') || '[]');
@@ -847,109 +423,141 @@
         let currentUtterance = null;
         let animFrame = null;
 
-        const DEFAULT_SYSTEM = `Ты — профессиональный автор песен мирового уровня. Ты создаёшь уникальные, поэтичные тексты песен с рифмами, метафорами и эмоциональной глубиной. Всегда следуй заданному формату.`;
+        const DEFAULT_SYS = `Ты — профессиональный автор песен мирового уровня. Создаёшь уникальные поэтичные тексты с рифмами, метафорами и глубиной. Следуй формату.`;
 
         const genreCovers = {
-            'Pop': { bg:'linear-gradient(135deg,#ec4899,#f59e0b)', e:'🎤' },
-            'Rock': { bg:'linear-gradient(135deg,#ef4444,#7c3aed)', e:'🎸' },
-            'Hip-Hop': { bg:'linear-gradient(135deg,#f59e0b,#ef4444)', e:'🎧' },
-            'R&B': { bg:'linear-gradient(135deg,#8b5cf6,#ec4899)', e:'🎹' },
-            'Electronic': { bg:'linear-gradient(135deg,#06b6d4,#7c3aed)', e:'⚡' },
-            'Jazz': { bg:'linear-gradient(135deg,#f59e0b,#78350f)', e:'🎷' },
-            'Country': { bg:'linear-gradient(135deg,#d97706,#65a30d)', e:'🤠' },
-            'Indie': { bg:'linear-gradient(135deg,#10b981,#06b6d4)', e:'🌿' },
-            'Metal': { bg:'linear-gradient(135deg,#374151,#ef4444)', e:'🤘' },
-            'Lo-Fi': { bg:'linear-gradient(135deg,#6366f1,#8b5cf6)', e:'🌙' },
-            'Reggaeton': { bg:'linear-gradient(135deg,#ef4444,#f59e0b)', e:'💃' },
-            'K-Pop': { bg:'linear-gradient(135deg,#ec4899,#06b6d4)', e:'🇰🇷' },
+            'Pop':{bg:'linear-gradient(135deg,#ec4899,#f59e0b)',e:'🎤'},
+            'Rock':{bg:'linear-gradient(135deg,#ef4444,#7c3aed)',e:'🎸'},
+            'Hip-Hop':{bg:'linear-gradient(135deg,#f59e0b,#ef4444)',e:'🎧'},
+            'R&B':{bg:'linear-gradient(135deg,#8b5cf6,#ec4899)',e:'🎹'},
+            'Electronic':{bg:'linear-gradient(135deg,#06b6d4,#7c3aed)',e:'⚡'},
+            'Jazz':{bg:'linear-gradient(135deg,#f59e0b,#78350f)',e:'🎷'},
+            'Country':{bg:'linear-gradient(135deg,#d97706,#65a30d)',e:'🤠'},
+            'Indie':{bg:'linear-gradient(135deg,#10b981,#06b6d4)',e:'🌿'},
+            'Metal':{bg:'linear-gradient(135deg,#374151,#ef4444)',e:'🤘'},
+            'Lo-Fi':{bg:'linear-gradient(135deg,#6366f1,#8b5cf6)',e:'🌙'},
+            'Reggaeton':{bg:'linear-gradient(135deg,#ef4444,#f59e0b)',e:'💃'},
+            'K-Pop':{bg:'linear-gradient(135deg,#ec4899,#06b6d4)',e:'🇰🇷'},
         };
 
-        // ══════════════════════════════════
-        //  ROBUST API CALL WITH FALLBACKS
-        // ══════════════════════════════════
-        async function callAI(messages, params = {}) {
-            const requestParams = {
-                model: currentModel,
-                messages,
-                ...params
-            };
+        // ══════════════════════════════════════════
+        //  🔧 MONKEY-PATCH: Intercept raw text
+        //  before JSON.parse crashes
+        // ══════════════════════════════════════════
+        const _origParse = JSON.parse;
+        let _lastRawText = null;
 
-            forceLog('info', `API запрос → ${currentModel}`);
-            forceLog('info', `Параметры: temp=${params.temperature || '?'}, topP=${params.top_p || '?'}`);
+        JSON.parse = function(text, ...args) {
+            try {
+                return _origParse.call(JSON, text, ...args);
+            } catch(e) {
+                // Save the raw text so we can recover it
+                if (typeof text === 'string' && text.length > 20) {
+                    _lastRawText = text;
+                    forceLog('warn', `JSON.parse перехвачен! Сохраняю сырой текст (${text.length} символов)`);
+                }
+                throw e;
+            }
+        };
+
+        // ══════════════════════════════════════════
+        //  ROBUST API CALL
+        // ══════════════════════════════════════════
+        async function callAI(messages, params = {}) {
+            _lastRawText = null; // Reset
+
+            forceLog('info', `API → ${currentModel}`);
 
             try {
-                const result = await client.chat.completions.create(requestParams);
+                const client = new Client();
+                const result = await client.chat.completions.create({
+                    model: currentModel,
+                    messages,
+                    ...params
+                });
 
-                // Case 1: Normal structured response
-                if (result && result.choices && result.choices[0] && result.choices[0].message) {
-                    const text = result.choices[0].message.content;
-                    forceLog('success', `✅ Структурированный ответ (${text.length} символов)`);
-                    return text;
+                // Normal response
+                if (result?.choices?.[0]?.message?.content) {
+                    const t = result.choices[0].message.content;
+                    forceLog('success', `✅ Норм. ответ (${t.length} сим.)`);
+                    return t;
                 }
-
-                // Case 2: Result is a string directly
-                if (typeof result === 'string') {
-                    forceLog('warn', `⚠️ Ответ как строка (${result.length} символов)`);
+                if (typeof result === 'string' && result.length > 20) {
+                    forceLog('success', `✅ String ответ (${result.length} сим.)`);
                     return result;
                 }
 
-                // Case 3: Result has some other structure
-                if (result && typeof result === 'object') {
-                    // Try different possible paths
-                    const possiblePaths = [
-                        result.content,
-                        result.text,
-                        result.message?.content,
-                        result.response,
-                        result.data?.choices?.[0]?.message?.content,
-                        result.data?.content,
-                    ];
-                    for (const val of possiblePaths) {
-                        if (typeof val === 'string' && val.length > 10) {
-                            forceLog('warn', `⚠️ Ответ найден в нестандартном поле (${val.length} символов)`);
-                            return val;
-                        }
-                    }
-
-                    // Last resort: stringify
-                    const str = JSON.stringify(result);
-                    forceLog('warn', `⚠️ Не найден текст, JSON: ${str.substring(0, 200)}`);
-                    throw new Error('Неизвестный формат ответа от API');
+                // Try other fields
+                for (const path of [result?.content, result?.text, result?.message?.content, result?.response]) {
+                    if (typeof path === 'string' && path.length > 20) return path;
                 }
 
-                throw new Error('Пустой ответ от API');
+                throw new Error('Пустой ответ');
 
-            } catch (err) {
-                // ═══ CRITICAL FIX: Handle raw text responses ═══
-                // Some models return raw text that the client tries to parse as JSON
-                const errMsg = err.message || '';
+            } catch(err) {
+                const msg = err.message || '';
 
-                if (errMsg.includes('is not valid JSON') || errMsg.includes('Unexpected token')) {
-                    forceLog('warn', `⚠️ Получен сырой текст (не JSON). Извлекаю...`);
+                // ═══ KEY FIX: Recover from JSON.parse failure ═══
+                if (msg.includes('not valid JSON') || msg.includes('Unexpected token')) {
+                    forceLog('warn', `⚠️ JSON ошибка — ищу сохранённый текст...`);
 
-                    // Extract the raw text from the error message
-                    // Error format: 'Unexpected token 'X', "ACTUAL TEXT..."... is not valid JSON'
-                    let rawText = '';
-
-                    // Method 1: Try to extract from error message quotes
-                    const quoteMatch = errMsg.match(/"(.+?)"\.\.\./);
-                    if (quoteMatch) {
-                        rawText = quoteMatch[1];
-                    }
-
-                    // Method 2: Direct fetch to get the raw response
-                    if (!rawText || rawText.length < 30) {
-                        forceLog('info', `Повторный запрос с ручным fetch...`);
-                        try {
-                            rawText = await fetchRawResponse(messages, params);
-                        } catch (fetchErr) {
-                            forceLog('error', `Ручной fetch ошибка: ${fetchErr.message}`);
+                    // Method 1: Use monkey-patched saved text
+                    if (_lastRawText && _lastRawText.length > 30) {
+                        const cleaned = cleanRawResponse(_lastRawText);
+                        if (cleaned.length > 30) {
+                            forceLog('success', `✅ Восстановлено из перехвата! (${cleaned.length} сим.)`);
+                            return cleaned;
                         }
                     }
 
-                    if (rawText && rawText.length > 30) {
-                        forceLog('success', `✅ Извлечён сырой текст (${rawText.length} символов)`);
-                        return rawText;
+                    // Method 2: Extract from error message itself
+                    // Error: Unexpected token 'T', "TITLE: Нео"... is not valid JSON
+                    // Or:    Unexpected token 'T', "TITLE: Неоновые Мечты\n---\n\n[Ve"... is not valid JSON
+                    const extracted = extractFromError(msg);
+                    if (extracted && extracted.length > 20) {
+                        forceLog('warn', `⚠️ Частичный текст из ошибки (${extracted.length} сим.). Повтор запроса...`);
+                        // We know the model works but returns raw text
+                        // Try again — sometimes second attempt works differently
+                    }
+
+                    // Method 3: Retry with a simpler approach
+                    forceLog('info', `Повтор запроса...`);
+                    try {
+                        _lastRawText = null;
+                        const client2 = new Client();
+                        const result2 = await client2.chat.completions.create({
+                            model: currentModel,
+                            messages,
+                        });
+
+                        if (result2?.choices?.[0]?.message?.content) return result2.choices[0].message.content;
+                        if (typeof result2 === 'string') return result2;
+
+                        // Check saved raw again
+                        if (_lastRawText && _lastRawText.length > 30) {
+                            const cleaned = cleanRawResponse(_lastRawText);
+                            if (cleaned.length > 30) {
+                                forceLog('success', `✅ Восстановлено при повторе! (${cleaned.length} сим.)`);
+                                return cleaned;
+                            }
+                        }
+                    } catch(e2) {
+                        // Check if we caught raw text on the retry
+                        if (_lastRawText && _lastRawText.length > 30) {
+                            const cleaned = cleanRawResponse(_lastRawText);
+                            if (cleaned.length > 30) {
+                                forceLog('success', `✅ Восстановлено из повторного перехвата! (${cleaned.length} сим.)`);
+                                return cleaned;
+                            }
+                        }
+                        forceLog('error', `Повтор тоже упал: ${e2.message?.substring(0,100)}`);
+                    }
+
+                    // Method 4: If we have ANY raw text, use it even if partial
+                    if (_lastRawText && _lastRawText.length > 30) {
+                        const cleaned = cleanRawResponse(_lastRawText);
+                        forceLog('warn', `⚠️ Используем что есть (${cleaned.length} сим.)`);
+                        return cleaned;
                     }
                 }
 
@@ -957,304 +565,156 @@
             }
         }
 
-        // Direct fetch fallback for raw text responses
-        async function fetchRawResponse(messages, params) {
-            const endpoints = [
-                'https://api.g4f.dev/chat/completions',
-                'https://g4f.dev/api/chat/completions',
-            ];
-
-            const body = {
-                model: currentModel,
-                messages,
-                temperature: params.temperature || 0.9,
-                top_p: params.top_p || 0.95,
-                max_tokens: params.max_tokens || 2048,
-            };
-
-            for (const url of endpoints) {
-                try {
-                    forceLog('info', `Fetch → ${url}`);
-                    const resp = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(body)
-                    });
-
-                    const contentType = resp.headers.get('content-type') || '';
-                    let text;
-
-                    if (contentType.includes('application/json')) {
-                        const json = await resp.json();
-                        text = json?.choices?.[0]?.message?.content
-                            || json?.content
-                            || json?.response
-                            || JSON.stringify(json);
-                    } else {
-                        // Raw text response
-                        text = await resp.text();
-                    }
-
-                    // Clean up potential SSE/streaming artifacts
-                    text = cleanStreamingText(text);
-
-                    if (text && text.length > 30) {
-                        forceLog('success', `✅ Fetch успех: ${text.length} символов`);
-                        return text;
-                    }
-                } catch (e) {
-                    forceLog('warn', `Fetch ${url} ошибка: ${e.message}`);
-                }
-            }
-
-            throw new Error('Все endpoints недоступны');
+        function extractFromError(errMsg) {
+            // Try to pull text between quotes in error message
+            const m = errMsg.match(/"(.+?)"/s);
+            if (m) return m[1];
+            return null;
         }
 
-        // Clean up SSE/streaming text artifacts
-        function cleanStreamingText(text) {
-            if (!text) return '';
+        function cleanRawResponse(raw) {
+            if (!raw) return '';
 
-            // Remove SSE data: prefixes
-            text = text.replace(/^data:\s*/gm, '');
-
-            // Remove [DONE] markers
-            text = text.replace(/\[DONE\]/g, '');
-
-            // Try to extract content from JSON chunks
-            const contentParts = [];
-            const jsonChunks = text.split('\n').filter(l => l.trim().startsWith('{'));
-
-            if (jsonChunks.length > 0) {
-                for (const chunk of jsonChunks) {
-                    try {
-                        const parsed = JSON.parse(chunk);
-                        const content = parsed?.choices?.[0]?.delta?.content
-                            || parsed?.choices?.[0]?.message?.content
-                            || '';
-                        if (content) contentParts.push(content);
-                    } catch (e) {
-                        // Not JSON, skip
+            // If it looks like SSE streaming data
+            if (raw.includes('data: {')) {
+                const parts = [];
+                const lines = raw.split('\n');
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (trimmed.startsWith('data: ') && trimmed !== 'data: [DONE]') {
+                        try {
+                            const json = _origParse(trimmed.substring(6));
+                            const content = json?.choices?.[0]?.delta?.content || json?.choices?.[0]?.message?.content || '';
+                            if (content) parts.push(content);
+                        } catch(e) {
+                            // Not valid JSON chunk, skip
+                        }
                     }
                 }
-                if (contentParts.length > 0) {
-                    return contentParts.join('');
-                }
+                if (parts.length > 0) return parts.join('');
             }
 
-            // If no JSON found, return cleaned text
+            // If it looks like plain text (our case!)
+            // Remove any leading/trailing garbage
+            let text = raw.trim();
+
+            // Remove potential JSON wrapper attempts
+            text = text.replace(/^[\s\n]*\{[\s\S]*?"content":\s*"/, '');
+            text = text.replace(/"\s*\}\s*\]\s*\}\s*$/, '');
+
+            // Unescape if it was inside a JSON string
+            text = text.replace(/\\n/g, '\n');
+            text = text.replace(/\\"/g, '"');
+            text = text.replace(/\\\\/g, '\\');
+
             return text.trim();
         }
 
-        // ══════════════════════════════════
-        //  DEV PANEL
-        // ══════════════════════════════════
+        // ══════════════════════════════════════════
+        //  DEV PANEL UI
+        // ══════════════════════════════════════════
         const devToggle = document.getElementById('devToggle');
         const devPanel = document.getElementById('devPanel');
         const devOverlay = document.getElementById('devOverlay');
-        const devClose = document.getElementById('devClose');
-
-        function openDev() { devPanel.classList.add('open'); devOverlay.classList.add('open'); devToggle.classList.add('active'); }
-        function closeDev() { devPanel.classList.remove('open'); devOverlay.classList.remove('open'); devToggle.classList.remove('active'); }
-        devToggle.onclick = () => devPanel.classList.contains('open') ? closeDev() : openDev();
-        devClose.onclick = closeDev;
-        devOverlay.onclick = closeDev;
+        devToggle.onclick = () => { const o = devPanel.classList.contains('open'); devPanel.classList.toggle('open',!o); devOverlay.classList.toggle('open',!o); devToggle.classList.toggle('active',!o); };
+        document.getElementById('devClose').onclick = () => { devPanel.classList.remove('open'); devOverlay.classList.remove('open'); devToggle.classList.remove('active'); };
+        devOverlay.onclick = () => { devPanel.classList.remove('open'); devOverlay.classList.remove('open'); devToggle.classList.remove('active'); };
 
         document.querySelectorAll('.dev-section-header').forEach(h => {
-            h.addEventListener('click', () => {
-                const sec = h.dataset.section;
-                const body = document.querySelector(`.dev-section-body[data-section="${sec}"]`);
-                h.classList.toggle('collapsed');
-                body.classList.toggle('collapsed');
-            });
+            h.addEventListener('click', () => { h.classList.toggle('collapsed'); document.querySelector(`.dev-section-body[data-section="${h.dataset.section}"]`).classList.toggle('collapsed'); });
         });
-
         document.querySelectorAll('.toggle-switch').forEach(sw => {
-            sw.addEventListener('click', () => {
-                const isOn = sw.dataset.on === 'true';
-                sw.dataset.on = (!isOn).toString();
-                sw.classList.toggle('on', !isOn);
-                forceLog('info', `${sw.id}: ${!isOn}`);
-            });
+            sw.addEventListener('click', () => { const on = sw.dataset.on==='true'; sw.dataset.on=(!on).toString(); sw.classList.toggle('on',!on); });
         });
-
         ['temperature','topP','freqPenalty','presPenalty'].forEach(id => {
-            const el = document.getElementById(id);
-            const valMap = { temperature:'tempVal', topP:'topPVal', freqPenalty:'freqVal', presPenalty:'presVal' };
-            if (el) el.addEventListener('input', () => { document.getElementById(valMap[id]).textContent = el.value; });
+            const el=document.getElementById(id);
+            const map={temperature:'tempVal',topP:'topPVal',freqPenalty:'freqVal',presPenalty:'presVal'};
+            if(el) el.addEventListener('input',()=>{document.getElementById(map[id]).textContent=el.value;});
         });
 
-        // Model search
-        const modelSearch = document.getElementById('modelSearch');
-        const modelDropdown = document.getElementById('modelDropdown');
-
-        function renderModelDropdown(filter = '') {
-            modelDropdown.innerHTML = '';
-            const f = filter.toLowerCase();
-            let hasResults = false;
-            for (const [category, models] of Object.entries(ALL_MODELS)) {
-                const filtered = models.filter(m =>
-                    m.id.toLowerCase().includes(f) || m.label.toLowerCase().includes(f) || category.toLowerCase().includes(f)
-                );
-                if (!filtered.length) continue;
-                hasResults = true;
-                const catDiv = document.createElement('div');
-                catDiv.className = 'model-category'; catDiv.textContent = category;
-                modelDropdown.appendChild(catDiv);
-                filtered.forEach(m => {
-                    const opt = document.createElement('div');
-                    opt.className = 'model-option' + (m.id === currentModel ? ' selected' : '');
-                    opt.innerHTML = `<span class="model-name">${m.label}</span>
-                        ${m.badge ? `<span class="model-badge ${m.badge}">${m.badge}</span>` : ''}
-                        <span class="model-provider">${m.id}</span>`;
-                    opt.addEventListener('click', () => selectModel(m.id));
-                    modelDropdown.appendChild(opt);
-                });
+        // Model dropdown
+        const modelSearch=document.getElementById('modelSearch');
+        const modelDropdown=document.getElementById('modelDropdown');
+        function renderDD(f=''){
+            modelDropdown.innerHTML='';const fl=f.toLowerCase();let has=false;
+            for(const[cat,models] of Object.entries(ALL_MODELS)){
+                const fm=models.filter(m=>m.id.toLowerCase().includes(fl)||m.label.toLowerCase().includes(fl)||cat.toLowerCase().includes(fl));
+                if(!fm.length) continue; has=true;
+                const cd=document.createElement('div');cd.className='model-category';cd.textContent=cat;modelDropdown.appendChild(cd);
+                fm.forEach(m=>{const o=document.createElement('div');o.className='model-option'+(m.id===currentModel?' selected':'');o.innerHTML=`<span class="model-name">${m.label}</span>${m.badge?`<span class="model-badge ${m.badge}">${m.badge}</span>`:''}<span class="model-provider">${m.id}</span>`;o.onclick=()=>selectModel(m.id);modelDropdown.appendChild(o);});
             }
-            if (!hasResults) {
-                modelDropdown.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:0.85em">
-                    Не найдено. Введите ID вручную ниже.</div>`;
-            }
+            if(!has) modelDropdown.innerHTML='<div style="padding:20px;text-align:center;color:var(--text-dim)">Не найдено</div>';
         }
+        modelSearch.onfocus=()=>{renderDD(modelSearch.value);modelDropdown.classList.add('open');};
+        modelSearch.oninput=()=>{renderDD(modelSearch.value);modelDropdown.classList.add('open');};
+        document.addEventListener('click',e=>{if(!e.target.closest('.model-search-container'))modelDropdown.classList.remove('open');});
 
-        modelSearch.addEventListener('focus', () => { renderModelDropdown(modelSearch.value); modelDropdown.classList.add('open'); });
-        modelSearch.addEventListener('input', () => { renderModelDropdown(modelSearch.value); modelDropdown.classList.add('open'); });
-        document.addEventListener('click', e => { if (!e.target.closest('.model-search-container')) modelDropdown.classList.remove('open'); });
-
-        function selectModel(modelId) {
-            currentModel = modelId;
-            localStorage.setItem('sf_model', modelId);
-            document.getElementById('currentModelName').textContent = modelId;
-            document.getElementById('activeModelLabel').textContent = modelId;
-            document.getElementById('customModelInput').value = '';
-            modelSearch.value = '';
-            modelDropdown.classList.remove('open');
-            forceLog('success', `Модель: ${modelId}`);
-            showToast(`🤖 Модель: ${modelId}`);
+        function selectModel(id){
+            currentModel=id;localStorage.setItem('sf_model',id);
+            document.getElementById('currentModelName').textContent=id;
+            document.getElementById('activeModelLabel').textContent=id;
+            document.getElementById('customModelInput').value='';
+            modelSearch.value='';modelDropdown.classList.remove('open');
+            forceLog('success',`Модель: ${id}`);showToast(`🤖 ${id}`);
         }
-
-        window.applyCustomModel = function () {
-            const v = document.getElementById('customModelInput').value.trim();
-            if (v) selectModel(v);
+        window.applyCustomModel=function(){const v=document.getElementById('customModelInput').value.trim();if(v)selectModel(v);};
+        window.loadPreset=function(n){
+            const p={creative:{t:1.4,tp:.95,f:.5,pr:.4},precise:{t:.3,tp:.8,f:.1,pr:.1},balanced:{t:.9,tp:.95,f:.3,pr:.2},wild:{t:2,tp:1,f:.7,pr:.6}}[n];if(!p)return;
+            document.getElementById('temperature').value=p.t;document.getElementById('tempVal').textContent=p.t;
+            document.getElementById('topP').value=p.tp;document.getElementById('topPVal').textContent=p.tp;
+            document.getElementById('freqPenalty').value=p.f;document.getElementById('freqVal').textContent=p.f;
+            document.getElementById('presPenalty').value=p.pr;document.getElementById('presVal').textContent=p.pr;
+            showToast(`💎 ${n}`);
         };
 
-        window.loadPreset = function (name) {
-            const presets = {
-                creative: { temp:1.4, topP:0.95, freq:0.5, pres:0.4 },
-                precise: { temp:0.3, topP:0.8, freq:0.1, pres:0.1 },
-                balanced: { temp:0.9, topP:0.95, freq:0.3, pres:0.2 },
-                wild: { temp:2.0, topP:1.0, freq:0.7, pres:0.6 }
-            };
-            const p = presets[name]; if (!p) return;
-            document.getElementById('temperature').value = p.temp; document.getElementById('tempVal').textContent = p.temp;
-            document.getElementById('topP').value = p.topP; document.getElementById('topPVal').textContent = p.topP;
-            document.getElementById('freqPenalty').value = p.freq; document.getElementById('freqVal').textContent = p.freq;
-            document.getElementById('presPenalty').value = p.pres; document.getElementById('presVal').textContent = p.pres;
-            forceLog('info', `Пресет: ${name}`);
-            showToast(`💎 Пресет "${name}"`);
+        function forceLog(type,msg){const log=document.getElementById('consoleLog');const ts=new Date().toLocaleTimeString();const l=document.createElement('div');l.className=`console-line ${type}`;l.innerHTML=`<span class="ts">[${ts}]</span> ${msg}`;log.appendChild(l);log.scrollTop=log.scrollHeight;}
+        window.clearConsole=function(){document.getElementById('consoleLog').innerHTML='';forceLog('info','Очищено');};
+        window.testConnection=async function(){
+            forceLog('info',`Тест: ${currentModel}...`);
+            try{const t=await callAI([{role:'user',content:'Say OK'}],{temperature:0.1});forceLog('success',`✅ "${t.substring(0,80)}"`);showToast('✅ OK!');}
+            catch(e){forceLog('error',`❌ ${e.message}`);showToast('❌ Ошибка');}
         };
-
-        // Console
-        function forceLog(type, msg) {
-            const log = document.getElementById('consoleLog');
-            const ts = new Date().toLocaleTimeString();
-            const line = document.createElement('div');
-            line.className = `console-line ${type}`;
-            line.innerHTML = `<span class="ts">[${ts}]</span> ${msg}`;
-            log.appendChild(line);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        window.clearConsole = function () {
-            document.getElementById('consoleLog').innerHTML = '';
-            forceLog('info', 'Консоль очищена');
-        };
-
-        window.testConnection = async function () {
-            forceLog('info', `Тест: ${currentModel}...`);
-            try {
-                const text = await callAI([{ role: 'user', content: 'Say "OK" in one word.' }], { temperature: 0.1 });
-                forceLog('success', `✅ Ответ: "${text.substring(0, 80)}"`);
-                showToast('✅ API работает!');
-            } catch (e) {
-                forceLog('error', `❌ ${e.message}`);
-                showToast('❌ Ошибка API');
-            }
-        };
-
-        window.clearAllData = function () {
-            if (confirm('Удалить всю историю и настройки?')) {
-                localStorage.clear(); songHistory = []; renderHistory();
-                forceLog('warn', 'Все данные удалены'); showToast('🗑️ Данные очищены');
-            }
-        };
-
-        window.resetSystemPrompt = function () {
-            document.getElementById('systemPrompt').value = DEFAULT_SYSTEM; showToast('🔄 Сброшено');
-        };
-        window.copySystemPrompt = function () {
-            navigator.clipboard.writeText(document.getElementById('systemPrompt').value); showToast('📋 Скопировано');
-        };
+        window.clearAllData=function(){if(confirm('Удалить все?')){localStorage.clear();songHistory=[];renderHistory();forceLog('warn','Удалено');showToast('🗑️');}};
+        window.resetSystemPrompt=function(){document.getElementById('systemPrompt').value=DEFAULT_SYS;showToast('🔄');};
+        window.copySystemPrompt=function(){navigator.clipboard.writeText(document.getElementById('systemPrompt').value);showToast('📋');};
 
         // Voices
-        const synth = window.speechSynthesis;
-        function populateVoices() {
-            const sel = document.getElementById('voiceSelect');
-            const voices = synth.getVoices(); sel.innerHTML = '';
-            const groups = { ru: [], en: [], other: [] };
-            voices.forEach((v, i) => {
-                const key = v.lang.startsWith('ru') ? 'ru' : v.lang.startsWith('en') ? 'en' : 'other';
-                groups[key].push({ v, i });
-            });
-            function addG(arr, label) {
-                if (!arr.length) return;
-                const g = document.createElement('optgroup'); g.label = label;
-                arr.forEach(({ v, i }) => { const o = document.createElement('option'); o.value = i; o.textContent = `${v.name} (${v.lang})`; g.appendChild(o); });
-                sel.appendChild(g);
-            }
-            addG(groups.ru, '🇷🇺 Русский'); addG(groups.en, '🇬🇧 English'); addG(groups.other, '🌍 Other');
-        }
-        synth.onvoiceschanged = populateVoices;
-        populateVoices();
+        const synth=window.speechSynthesis;
+        function popVoices(){const s=document.getElementById('voiceSelect');const v=synth.getVoices();s.innerHTML='';const g={ru:[],en:[],o:[]};v.forEach((vo,i)=>{const k=vo.lang.startsWith('ru')?'ru':vo.lang.startsWith('en')?'en':'o';g[k].push({vo,i});});
+        function ag(a,l){if(!a.length)return;const gr=document.createElement('optgroup');gr.label=l;a.forEach(({vo,i})=>{const o=document.createElement('option');o.value=i;o.textContent=`${vo.name} (${vo.lang})`;gr.appendChild(o);});s.appendChild(gr);}
+        ag(g.ru,'🇷🇺 Русский');ag(g.en,'🇬🇧 English');ag(g.o,'🌍 Other');}
+        synth.onvoiceschanged=popVoices;popVoices();
 
-        // Chip & Mood
-        document.getElementById('genreGrid').addEventListener('click', e => {
-            const c = e.target.closest('.chip'); if (!c) return;
-            document.querySelectorAll('#genreGrid .chip').forEach(x => x.classList.remove('active')); c.classList.add('active');
-        });
-        document.getElementById('moodGrid').addEventListener('click', e => {
-            const b = e.target.closest('.mood-btn'); if (!b) return;
-            document.querySelectorAll('#moodGrid .mood-btn').forEach(x => x.classList.remove('active')); b.classList.add('active');
-        });
+        // Chips
+        document.getElementById('genreGrid').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;document.querySelectorAll('#genreGrid .chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');};
+        document.getElementById('moodGrid').onclick=e=>{const b=e.target.closest('.mood-btn');if(!b)return;document.querySelectorAll('#moodGrid .mood-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');};
 
-        // ══════════════════════════════════
-        //  GENERATE SONG (FIXED!)
-        // ══════════════════════════════════
-        window.generateSong = async function () {
-            const topic = document.getElementById('songTopic').value.trim();
-            const genre = document.querySelector('#genreGrid .chip.active')?.dataset.v || 'Pop';
-            const mood = document.querySelector('#moodGrid .mood-btn.active')?.dataset.v || 'Весёлое';
-            const lang = document.getElementById('songLang').value;
+        // ══════════════════════════════════════════
+        //  GENERATE
+        // ══════════════════════════════════════════
+        window.generateSong=async function(){
+            const topic=document.getElementById('songTopic').value.trim();
+            const genre=document.querySelector('#genreGrid .chip.active')?.dataset.v||'Pop';
+            const mood=document.querySelector('#moodGrid .mood-btn.active')?.dataset.v||'Весёлое';
+            const lang=document.getElementById('songLang').value;
+            if(!topic){showToast('❌ Введите тему!');return;}
 
-            if (!topic) { showToast('❌ Введите тему!'); return; }
+            const btn=document.getElementById('genBtn');btn.disabled=true;btn.textContent='⏳ Генерация...';
+            stopPlay();showLoading();
 
-            const btn = document.getElementById('genBtn');
-            btn.disabled = true; btn.textContent = '⏳ Генерация...';
-            stopPlay(); showLoading();
+            const temp=parseFloat(document.getElementById('temperature').value);
+            const topP=parseFloat(document.getElementById('topP').value);
+            const maxT=parseInt(document.getElementById('maxTokens').value);
+            const freq=parseFloat(document.getElementById('freqPenalty').value);
+            const pres=parseFloat(document.getElementById('presPenalty').value);
+            const sys=document.getElementById('systemPrompt').value.trim();
 
-            const temperature = parseFloat(document.getElementById('temperature').value);
-            const topP = parseFloat(document.getElementById('topP').value);
-            const maxTokens = parseInt(document.getElementById('maxTokens').value);
-            const freqPenalty = parseFloat(document.getElementById('freqPenalty').value);
-            const presPenalty = parseFloat(document.getElementById('presPenalty').value);
-            const sysPrompt = document.getElementById('systemPrompt').value.trim();
-
-            const userPrompt = `Создай полную песню на ${lang} языке.
-
+            const userPrompt=`Создай песню на ${lang} языке.
 Тема: ${topic}
 Жанр: ${genre}
 Настроение: ${mood}
 
-ФОРМАТ (СТРОГО):
+ФОРМАТ:
 TITLE: [Название]
 ---
 [Verse 1]
@@ -1275,313 +735,137 @@ TITLE: [Название]
 [Outro]
 (2-4 строки)
 
-Правила:
-- Поэтичный текст с рифмами
-- Метафоры и образы
-- Запоминающийся припев
-- Стиль: ${genre}, настроение: ${mood}
-- ТОЛЬКО ${lang} язык
-- БЕЗ пояснений, ТОЛЬКО текст песни`;
+Поэтичный текст с рифмами. Стиль: ${genre}. Настроение: ${mood}. ТОЛЬКО ${lang}. БЕЗ пояснений.`;
 
-            const t0 = performance.now();
+            const t0=performance.now();
 
-            try {
-                const messages = [];
-                if (sysPrompt) messages.push({ role: 'system', content: sysPrompt });
-                messages.push({ role: 'user', content: userPrompt });
+            try{
+                const msgs=[];
+                if(sys)msgs.push({role:'system',content:sys});
+                msgs.push({role:'user',content:userPrompt});
 
-                // ═══ USE THE ROBUST callAI FUNCTION ═══
-                const text = await callAI(messages, {
-                    temperature,
-                    top_p: topP,
-                    max_tokens: maxTokens,
-                    frequency_penalty: freqPenalty,
-                    presence_penalty: presPenalty,
-                });
+                const text=await callAI(msgs,{temperature:temp,top_p:topP,max_tokens:maxT,frequency_penalty:freq,presence_penalty:pres});
+                const elapsed=((performance.now()-t0)/1000).toFixed(1);
 
-                const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
-                forceLog('success', `✅ Ответ за ${elapsed}s, ${text.length} символов`);
+                // Raw display
+                const rawEl=document.getElementById('rawResponse');
+                if(document.getElementById('toggleRaw').dataset.on==='true'){rawEl.textContent=text.substring(0,2000);rawEl.classList.add('visible');}else{rawEl.classList.remove('visible');}
 
-                // Show raw response if enabled
-                const rawEl = document.getElementById('rawResponse');
-                if (document.getElementById('toggleRaw').dataset.on === 'true') {
-                    rawEl.textContent = text.substring(0, 1000) + (text.length > 1000 ? '...' : '');
-                    rawEl.classList.add('visible');
-                } else {
-                    rawEl.classList.remove('visible');
+                // Tokens
+                if(document.getElementById('toggleTokens').dataset.on==='true'){
+                    document.getElementById('tokenInfo').style.display='flex';
+                    document.getElementById('promptTokens').textContent=Math.round(userPrompt.length/4);
+                    document.getElementById('responseTokens').textContent=Math.round(text.length/4);
+                    document.getElementById('genTime').textContent=elapsed;
                 }
 
-                // Token info
-                if (document.getElementById('toggleTokens').dataset.on === 'true') {
-                    const ti = document.getElementById('tokenInfo'); ti.style.display = 'flex';
-                    document.getElementById('promptTokens').textContent = Math.round(userPrompt.length / 4);
-                    document.getElementById('responseTokens').textContent = Math.round(text.length / 4);
-                    document.getElementById('genTime').textContent = elapsed;
-                }
-
-                const song = parseSong(text, genre, mood);
-                currentSong = song;
+                const song=parseSong(text,genre,mood);
+                currentSong=song;
                 displaySong(song);
+                if(document.getElementById('toggleAutoSave').dataset.on==='true')saveSong(song);
 
-                if (document.getElementById('toggleAutoSave').dataset.on === 'true') {
-                    saveSong(song);
-                }
-
-            } catch (err) {
-                forceLog('error', `❌ ${err.message}`);
+            }catch(err){
+                forceLog('error',`❌ ${err.message}`);
                 showError(err.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<span class="shim"></span>🎵 Сгенерировать песню';
+            }finally{
+                btn.disabled=false;btn.innerHTML='<span class="shim"></span>🎵 Сгенерировать';
             }
         };
 
-        function parseSong(text, genre, mood) {
-            let title = 'Без названия', lyrics = text;
-
-            // Try multiple title formats
-            const titlePatterns = [
-                /TITLE:\s*(.+)/i,
-                /^#\s*(.+)/m,
-                /^Название:\s*(.+)/im,
-                /^\*\*(.+?)\*\*/m,
-            ];
-
-            for (const pattern of titlePatterns) {
-                const match = text.match(pattern);
-                if (match) {
-                    title = match[1].trim().replace(/[\[\]"*#]/g, '');
-                    break;
-                }
+        function parseSong(text,genre,mood){
+            let title='Без названия',lyrics=text;
+            for(const p of [/TITLE:\s*(.+)/i,/^#\s*(.+)/m,/^Название:\s*(.+)/im,/^\*\*(.+?)\*\*/m]){
+                const m=text.match(p);if(m){title=m[1].trim().replace(/[\[\]"*#]/g,'');break;}
             }
-
-            // Extract lyrics (after --- or after TITLE line)
-            const dashIdx = text.indexOf('---');
-            const titleMatch = text.match(/TITLE:\s*.+/i);
-
-            if (dashIdx > -1) {
-                lyrics = text.substring(dashIdx + 3).trim();
-            } else if (titleMatch) {
-                lyrics = text.substring(titleMatch.index + titleMatch[0].length).trim();
-            }
-
-            // Clean up
-            lyrics = lyrics
-                .replace(/^---\s*/gm, '')
-                .replace(/^\*\*.+\*\*\s*$/gm, '') // remove bold markdown titles
-                .trim();
-
-            // If lyrics is too short, use full text
-            if (lyrics.length < 50) {
-                lyrics = text;
-            }
-
-            return {
-                title, lyrics, genre, mood,
-                model: currentModel,
-                timestamp: Date.now(),
-                cover: genreCovers[genre] || genreCovers['Pop']
-            };
+            const di=text.indexOf('---');const tm=text.match(/TITLE:\s*.+/i);
+            if(di>-1)lyrics=text.substring(di+3).trim();
+            else if(tm)lyrics=text.substring(tm.index+tm[0].length).trim();
+            lyrics=lyrics.replace(/^---\s*/gm,'').replace(/^\*\*.+\*\*\s*$/gm,'').trim();
+            if(lyrics.length<50)lyrics=text;
+            return{title,lyrics,genre,mood,model:currentModel,timestamp:Date.now(),cover:genreCovers[genre]||genreCovers['Pop']};
         }
 
-        function showLoading() {
-            const area = document.getElementById('resultArea');
-            const t = area.querySelector('.card-title'); area.innerHTML = ''; area.appendChild(t);
-            const steps = ['🎼 Подбираю аккорды...','✍️ Пишу текст...','🎵 Ищу рифмы...','🎤 Настраиваю голос...','✨ Финальные штрихи...'];
-            const d = document.createElement('div'); d.className = 'loading-wrap';
-            d.innerHTML = `<div class="loading-bars"><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div></div>
-                <div class="loading-txt">Создаю песню через ${currentModel}...</div>
-                <div class="loading-step" id="lstep">${steps[0]}</div>`;
-            area.appendChild(d);
-            let si = 0;
-            area._si = setInterval(() => { si = (si+1)%steps.length; const el = document.getElementById('lstep'); if(el) el.textContent = steps[si]; else clearInterval(area._si); }, 2500);
+        function showLoading(){
+            const a=document.getElementById('resultArea');const t=a.querySelector('.card-title');a.innerHTML='';a.appendChild(t);
+            const steps=['🎼 Аккорды...','✍️ Текст...','🎵 Рифмы...','🎤 Голос...','✨ Финал...'];
+            const d=document.createElement('div');d.className='loading-wrap';
+            d.innerHTML=`<div class="loading-bars"><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div></div><div class="loading-txt">${currentModel}...</div><div class="loading-step" id="lstep">${steps[0]}</div>`;
+            a.appendChild(d);let si=0;a._si=setInterval(()=>{si=(si+1)%steps.length;const el=document.getElementById('lstep');if(el)el.textContent=steps[si];else clearInterval(a._si);},2500);
         }
 
-        function showError(msg) {
-            const area = document.getElementById('resultArea');
-            if (area._si) clearInterval(area._si);
-            const t = area.querySelector('.card-title'); area.innerHTML = ''; area.appendChild(t);
-            const d = document.createElement('div'); d.className = 'err-box';
-            d.innerHTML = `<div class="ei">😔</div><p>Ошибка генерации</p><p style="font-size:.82em;opacity:.7">${msg}</p>
-                <button class="retry-btn" onclick="generateSong()">🔄 Повторить</button>`;
-            area.appendChild(d);
+        function showError(msg){
+            const a=document.getElementById('resultArea');if(a._si)clearInterval(a._si);const t=a.querySelector('.card-title');a.innerHTML='';a.appendChild(t);
+            const d=document.createElement('div');d.className='err-box';d.innerHTML=`<div class="ei">😔</div><p>Ошибка</p><p style="font-size:.82em;opacity:.7">${msg.substring(0,200)}</p><button class="retry-btn" onclick="generateSong()">🔄 Повтор</button>`;a.appendChild(d);
         }
 
-        function displaySong(song) {
-            const area = document.getElementById('resultArea');
-            if (area._si) clearInterval(area._si);
-            const t = area.querySelector('.card-title'); area.innerHTML = ''; area.appendChild(t);
-
-            const r = document.createElement('div'); r.className = 'song-result';
-            r.innerHTML = `<div class="song-hdr">
-                <div class="song-cover" style="background:${song.cover.bg}">${song.cover.e}</div>
-                <div class="song-info"><h3>${song.title}</h3>
-                <div class="song-meta"><span class="song-tag g">${song.genre}</span><span class="song-tag m">${song.mood}</span><span class="song-tag model">🤖 ${song.model}</span></div></div></div>`;
-
-            const lb = document.createElement('div'); lb.className = 'lyrics-box'; lb.id = 'lyricsBox';
-            song.lyrics.split('\n').forEach(line => {
-                if (line.match(/^\[.+\]$/)) {
-                    const d = document.createElement('div'); d.className = 'lyrics-sec'; d.textContent = line; lb.appendChild(d);
-                } else if (line.trim()) {
-                    const d = document.createElement('div'); d.className = 'lyrics-ln'; d.textContent = line; lb.appendChild(d);
-                }
-            });
+        function displaySong(song){
+            const a=document.getElementById('resultArea');if(a._si)clearInterval(a._si);const t=a.querySelector('.card-title');a.innerHTML='';a.appendChild(t);
+            const r=document.createElement('div');r.className='song-result';
+            r.innerHTML=`<div class="song-hdr"><div class="song-cover" style="background:${song.cover.bg}">${song.cover.e}</div><div class="song-info"><h3>${song.title}</h3><div class="song-meta"><span class="song-tag g">${song.genre}</span><span class="song-tag m">${song.mood}</span><span class="song-tag model">🤖 ${song.model}</span></div></div></div>`;
+            const lb=document.createElement('div');lb.className='lyrics-box';lb.id='lyricsBox';
+            song.lyrics.split('\n').forEach(line=>{if(line.match(/^\[.+\]$/)){const d=document.createElement('div');d.className='lyrics-sec';d.textContent=line;lb.appendChild(d);}else if(line.trim()){const d=document.createElement('div');d.className='lyrics-ln';d.textContent=line;lb.appendChild(d);}});
             r.appendChild(lb);
-
-            const cv = document.createElement('canvas'); cv.className = 'viz-canvas'; cv.id = 'vizCanvas'; r.appendChild(cv);
-
-            const pl = document.createElement('div'); pl.className = 'player-sec';
-            pl.innerHTML = `<div class="prog-bg"><div class="prog-fill" id="progFill"></div></div>
-                <div class="time-labels"><span id="curTime">0:00</span><span id="totTime">0:00</span></div>
-                <div class="p-ctrls"><button class="cbtn" onclick="window.restartSong()">⏮️</button>
-                <button class="cbtn play" id="playBtn" onclick="window.togglePlay()">▶️</button>
-                <button class="cbtn" onclick="window.stopPlay()">⏹️</button></div>
-                <div class="vol-sec"><span>🔈</span><input type="range" class="vol-sl" id="volSl" min="0" max="1" step="0.05" value="0.8"><span>🔊</span></div>
-                <div class="speech-st" id="speechSt"></div>`;
+            const cv=document.createElement('canvas');cv.className='viz-canvas';cv.id='vizCanvas';r.appendChild(cv);
+            const pl=document.createElement('div');pl.className='player-sec';
+            pl.innerHTML=`<div class="prog-bg"><div class="prog-fill" id="progFill"></div></div><div class="time-labels"><span id="curTime">0:00</span><span id="totTime">0:00</span></div><div class="p-ctrls"><button class="cbtn" onclick="window.restartSong()">⏮️</button><button class="cbtn play" id="playBtn" onclick="window.togglePlay()">▶️</button><button class="cbtn" onclick="window.stopPlay()">⏹️</button></div><div class="vol-sec"><span>🔈</span><input type="range" class="vol-sl" id="volSl" min="0" max="1" step="0.05" value="0.8"><span>🔊</span></div><div class="speech-st" id="speechSt"></div>`;
             r.appendChild(pl);
-
-            const ab = document.createElement('div'); ab.className = 'act-btns';
-            ab.innerHTML = `<button class="act-btn" onclick="window.copyLyrics()">📋 Копировать</button>
-                <button class="act-btn" onclick="window.downloadLyrics()">💾 Скачать</button>
-                <button class="act-btn" onclick="window.shareSong()">🔗 Поделиться</button>`;
-            r.appendChild(ab);
-            area.appendChild(r);
-            initViz();
+            const ab=document.createElement('div');ab.className='act-btns';ab.innerHTML=`<button class="act-btn" onclick="window.copyLyrics()">📋 Копировать</button><button class="act-btn" onclick="window.downloadLyrics()">💾 Скачать</button><button class="act-btn" onclick="window.shareSong()">🔗 Поделиться</button>`;
+            r.appendChild(ab);a.appendChild(r);initViz();
         }
 
-        // ══════ PLAYBACK ══════
-        window.togglePlay = function () {
-            if (synth.paused) { synth.resume(); isPlaying = true; updPB(); setSt('🎤 Воспроизведение...'); startVA(); return; }
-            if (isPlaying) { synth.pause(); isPlaying = false; updPB(); setSt('⏸️ Пауза'); stopVA(); return; }
-            playSong();
-        };
-
-        function playSong() {
-            if (!currentSong) return;
-            synth.cancel();
-            const voices = synth.getVoices();
-            const vi = parseInt(document.getElementById('voiceSelect').value);
-            const rate = parseFloat(document.getElementById('speechRate').value);
-            const vol = parseFloat(document.getElementById('volSl')?.value || 0.8);
-
-            const clean = currentSong.lyrics.replace(/\[.+?\]/g, '... ').replace(/\n{2,}/g, '... ').replace(/\n/g, '. ').trim();
-            currentUtterance = new SpeechSynthesisUtterance(clean);
-            if (voices[vi]) currentUtterance.voice = voices[vi];
-            currentUtterance.rate = rate; currentUtterance.pitch = 1.05; currentUtterance.volume = vol;
-
-            const dur = (clean.split(/\s+/).length / 2.5) / rate;
-            const totEl = document.getElementById('totTime'); if (totEl) totEl.textContent = fmtT(dur);
-
-            const t0 = Date.now(); let pi;
-            currentUtterance.onstart = () => {
-                isPlaying = true; updPB(); setSt('🎤 Воспроизведение...'); startVA();
-                pi = setInterval(() => {
-                    const el = (Date.now()-t0)/1000;
-                    const f = document.getElementById('progFill'); if(f) f.style.width = Math.min((el/dur)*100,100)+'%';
-                    const c = document.getElementById('curTime'); if(c) c.textContent = fmtT(el);
-                }, 200);
-            };
-            currentUtterance.onboundary = e => hlLyr(e.charIndex, clean);
-            currentUtterance.onend = () => { isPlaying = false; updPB(); setSt('✅ Завершено'); stopVA(); clearInterval(pi); const f=document.getElementById('progFill'); if(f)f.style.width='100%'; };
-            currentUtterance.onerror = () => { isPlaying = false; updPB(); setSt('❌ Ошибка'); stopVA(); clearInterval(pi); };
+        // ═══ PLAYBACK ═══
+        window.togglePlay=function(){if(synth.paused){synth.resume();isPlaying=true;updPB();setSt('🎤 Играет...');startVA();return;}if(isPlaying){synth.pause();isPlaying=false;updPB();setSt('⏸️ Пауза');stopVA();return;}playSong();};
+        function playSong(){
+            if(!currentSong)return;synth.cancel();
+            const voices=synth.getVoices();const vi=parseInt(document.getElementById('voiceSelect').value);
+            const rate=parseFloat(document.getElementById('speechRate').value);const vol=parseFloat(document.getElementById('volSl')?.value||.8);
+            const clean=currentSong.lyrics.replace(/\[.+?\]/g,'... ').replace(/\n{2,}/g,'... ').replace(/\n/g,'. ').trim();
+            currentUtterance=new SpeechSynthesisUtterance(clean);
+            if(voices[vi])currentUtterance.voice=voices[vi];
+            currentUtterance.rate=rate;currentUtterance.pitch=1.05;currentUtterance.volume=vol;
+            const dur=(clean.split(/\s+/).length/2.5)/rate;
+            const totEl=document.getElementById('totTime');if(totEl)totEl.textContent=fmtT(dur);
+            const t0=Date.now();let pi;
+            currentUtterance.onstart=()=>{isPlaying=true;updPB();setSt('🎤 Играет...');startVA();pi=setInterval(()=>{const el=(Date.now()-t0)/1000;const f=document.getElementById('progFill');if(f)f.style.width=Math.min((el/dur)*100,100)+'%';const c=document.getElementById('curTime');if(c)c.textContent=fmtT(el);},200);};
+            currentUtterance.onboundary=e=>hlLyr(e.charIndex,clean);
+            currentUtterance.onend=()=>{isPlaying=false;updPB();setSt('✅ Готово');stopVA();clearInterval(pi);const f=document.getElementById('progFill');if(f)f.style.width='100%';};
+            currentUtterance.onerror=()=>{isPlaying=false;updPB();setSt('❌ Ошибка');stopVA();clearInterval(pi);};
             synth.speak(currentUtterance);
         }
+        window.stopPlay=function(){stopPlay();};
+        function stopPlay(){synth.cancel();isPlaying=false;updPB();setSt('');stopVA();const f=document.getElementById('progFill');if(f)f.style.width='0%';const c=document.getElementById('curTime');if(c)c.textContent='0:00';document.querySelectorAll('.lyrics-ln.hl').forEach(e=>e.classList.remove('hl'));}
+        window.restartSong=function(){stopPlay();setTimeout(playSong,100);};
+        function updPB(){const b=document.getElementById('playBtn');if(b)b.textContent=isPlaying?'⏸️':'▶️';}
+        function setSt(t){const e=document.getElementById('speechSt');if(e)e.textContent=t;}
+        function fmtT(s){return`${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;}
+        function hlLyr(ci,full){const lines=document.querySelectorAll('.lyrics-ln');if(!lines.length)return;const b=full.substring(0,ci);const sc=(b.match(/\.\s|\.\.\.\s/g)||[]).length;const idx=Math.min(sc,lines.length-1);lines.forEach((l,i)=>{if(i===idx){l.classList.add('hl');l.scrollIntoView({behavior:'smooth',block:'center'});}else l.classList.remove('hl');});}
 
-        window.stopPlay = function () { stopPlay(); };
-        function stopPlay() {
-            synth.cancel(); isPlaying = false; updPB(); setSt(''); stopVA();
-            const f=document.getElementById('progFill'); if(f) f.style.width='0%';
-            const c=document.getElementById('curTime'); if(c) c.textContent='0:00';
-            document.querySelectorAll('.lyrics-ln.hl').forEach(e=>e.classList.remove('hl'));
-        }
-        window.restartSong = function () { stopPlay(); setTimeout(playSong, 100); };
-
-        function updPB() { const b=document.getElementById('playBtn'); if(b) b.textContent = isPlaying?'⏸️':'▶️'; }
-        function setSt(t) { const e=document.getElementById('speechSt'); if(e) e.textContent=t; }
-        function fmtT(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
-
-        function hlLyr(ci, full) {
-            const lines = document.querySelectorAll('.lyrics-ln'); if(!lines.length) return;
-            const before = full.substring(0,ci);
-            const sc = (before.match(/\.\s|\.\.\.\s/g)||[]).length;
-            const idx = Math.min(sc, lines.length-1);
-            lines.forEach((l,i) => { if(i===idx){l.classList.add('hl');l.scrollIntoView({behavior:'smooth',block:'center'});}else l.classList.remove('hl'); });
-        }
-
-        // ══════ VISUALIZER ══════
-        function initViz() {
-            const c=document.getElementById('vizCanvas'); if(!c) return;
-            const ctx=c.getContext('2d'); c.width=c.offsetWidth*2; c.height=c.offsetHeight*2; ctx.scale(2,2);
-            drawIdle(ctx,c);
-        }
-        function drawIdle(ctx,c) {
-            const w=c.width/2,h=c.height/2; ctx.clearRect(0,0,w,h);
-            for(let i=0;i<50;i++){const bh=3+Math.random()*3;ctx.fillStyle=`hsla(${(i/50)*200+240},70%,60%,0.3)`;ctx.fillRect(i*(w/50)+1,h/2-bh/2,w/50-2,bh);}
-        }
-        function startVA() {
-            const c=document.getElementById('vizCanvas'); if(!c) return;
-            const ctx=c.getContext('2d'); const w=c.width/2,h=c.height/2; let ph=0;
-            function draw(){
-                ctx.clearRect(0,0,w,h);ph+=0.05;
-                for(let i=0;i<50;i++){
-                    const v=(Math.sin(ph+i*.3)*.4+Math.sin(ph*1.5+i*.2)*.35+Math.sin(ph*.7+i*.5)*.25+1)/2;
-                    let bh=Math.max(v*h*.8+Math.random()*5,3);const hue=(i/50)*120+240+ph*10;
-                    const g=ctx.createLinearGradient(0,h/2-bh/2,0,h/2+bh/2);g.addColorStop(0,`hsla(${hue},80%,65%,0.9)`);g.addColorStop(1,`hsla(${hue+40},80%,50%,0.6)`);
-                    ctx.fillStyle=g;ctx.beginPath();const bw=w/50;ctx.roundRect(i*bw+1,h/2-bh/2,bw-2,bh,2);ctx.fill();
-                }
-                animFrame=requestAnimationFrame(draw);
-            }
-            draw();
-        }
+        // ═══ VISUALIZER ═══
+        function initViz(){const c=document.getElementById('vizCanvas');if(!c)return;const ctx=c.getContext('2d');c.width=c.offsetWidth*2;c.height=c.offsetHeight*2;ctx.scale(2,2);drawIdle(ctx,c);}
+        function drawIdle(ctx,c){const w=c.width/2,h=c.height/2;ctx.clearRect(0,0,w,h);for(let i=0;i<50;i++){const bh=3+Math.random()*3;ctx.fillStyle=`hsla(${(i/50)*200+240},70%,60%,0.3)`;ctx.fillRect(i*(w/50)+1,h/2-bh/2,w/50-2,bh);}}
+        function startVA(){const c=document.getElementById('vizCanvas');if(!c)return;const ctx=c.getContext('2d');const w=c.width/2,h=c.height/2;let ph=0;function draw(){ctx.clearRect(0,0,w,h);ph+=.05;for(let i=0;i<50;i++){const v=(Math.sin(ph+i*.3)*.4+Math.sin(ph*1.5+i*.2)*.35+Math.sin(ph*.7+i*.5)*.25+1)/2;let bh=Math.max(v*h*.8+Math.random()*5,3);const hue=(i/50)*120+240+ph*10;const g=ctx.createLinearGradient(0,h/2-bh/2,0,h/2+bh/2);g.addColorStop(0,`hsla(${hue},80%,65%,0.9)`);g.addColorStop(1,`hsla(${hue+40},80%,50%,0.6)`);ctx.fillStyle=g;ctx.beginPath();const bw=w/50;ctx.roundRect(i*bw+1,h/2-bh/2,bw-2,bh,2);ctx.fill();}animFrame=requestAnimationFrame(draw);}draw();}
         function stopVA(){if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}const c=document.getElementById('vizCanvas');if(c)drawIdle(c.getContext('2d'),c);}
 
-        // ══════ ACTIONS ══════
-        window.copyLyrics = function () { if(!currentSong) return; navigator.clipboard.writeText(`${currentSong.title}\n\n${currentSong.lyrics}`); showToast('📋 Скопировано!'); };
-        window.downloadLyrics = function () {
-            if(!currentSong) return;
-            const t=`${currentSong.title}\nЖанр: ${currentSong.genre} | Настроение: ${currentSong.mood} | Модель: ${currentSong.model}\n${'='.repeat(40)}\n\n${currentSong.lyrics}`;
-            const b=new Blob([t],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);
-            a.download=`${currentSong.title.replace(/[^a-zA-Zа-яА-Я0-9]/g,'_')}.txt`;a.click();URL.revokeObjectURL(a.href);showToast('💾 Сохранено!');
-        };
-        window.shareSong = function () {
-            if(!currentSong) return;
-            const t=`🎵 ${currentSong.title}\n\n${currentSong.lyrics}\n\n— SongForge AI (${currentSong.model})`;
-            if(navigator.share)navigator.share({title:currentSong.title,text:t}).catch(()=>{});
-            else{navigator.clipboard.writeText(t);showToast('🔗 Скопировано!');}
-        };
+        // ═══ ACTIONS ═══
+        window.copyLyrics=function(){if(!currentSong)return;navigator.clipboard.writeText(`${currentSong.title}\n\n${currentSong.lyrics}`);showToast('📋');};
+        window.downloadLyrics=function(){if(!currentSong)return;const t=`${currentSong.title}\n${currentSong.genre}|${currentSong.mood}|${currentSong.model}\n${'='.repeat(40)}\n\n${currentSong.lyrics}`;const b=new Blob([t],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`${currentSong.title.replace(/[^a-zA-Zа-яА-Я0-9]/g,'_')}.txt`;a.click();URL.revokeObjectURL(a.href);showToast('💾');};
+        window.shareSong=function(){if(!currentSong)return;const t=`🎵 ${currentSong.title}\n\n${currentSong.lyrics}\n\n— SongForge (${currentSong.model})`;if(navigator.share)navigator.share({title:currentSong.title,text:t}).catch(()=>{});else{navigator.clipboard.writeText(t);showToast('🔗');}};
 
-        // ══════ HISTORY ══════
-        function saveSong(song){songHistory.unshift({...song});songHistory=songHistory.slice(0,30);localStorage.setItem('sf_history',JSON.stringify(songHistory));renderHistory();}
-        function renderHistory(){
-            const sec=document.getElementById('histSec'),grid=document.getElementById('histGrid');
-            if(!songHistory.length){sec.style.display='none';return;}
-            sec.style.display='block';grid.innerHTML='';
-            songHistory.forEach((s,i)=>{
-                const c=document.createElement('div');c.className='hist-card';c.onclick=()=>loadHist(i);
-                const d=new Date(s.timestamp).toLocaleDateString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-                const prev=s.lyrics.replace(/\[.+?\]/g,'').replace(/\n+/g,' ').trim().substring(0,100);
-                c.innerHTML=`<div class="hist-hdr"><div class="hist-cover" style="background:${s.cover?.bg||'linear-gradient(135deg,#7c3aed,#ec4899)'}">${s.cover?.e||'🎵'}</div>
-                    <div><h4>${s.title}</h4><span class="hist-genre">${s.genre} • ${s.mood}</span></div></div>
-                    <div class="hist-preview">${prev}...</div><div class="hist-date">${d} <span class="hist-model">| ${s.model||'?'}</span></div>`;
-                grid.appendChild(c);
-            });
-        }
-        function loadHist(i){const s=songHistory[i];if(!s)return;currentSong=s;stopPlay();displaySong(s);document.getElementById('resultArea').scrollIntoView({behavior:'smooth'});showToast('📂 Загружено');}
+        // ═══ HISTORY ═══
+        function saveSong(s){songHistory.unshift({...s});songHistory=songHistory.slice(0,30);localStorage.setItem('sf_history',JSON.stringify(songHistory));renderHistory();}
+        function renderHistory(){const sec=document.getElementById('histSec'),grid=document.getElementById('histGrid');if(!songHistory.length){sec.style.display='none';return;}sec.style.display='block';grid.innerHTML='';songHistory.forEach((s,i)=>{const c=document.createElement('div');c.className='hist-card';c.onclick=()=>loadH(i);const d=new Date(s.timestamp).toLocaleDateString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});const prev=s.lyrics.replace(/\[.+?\]/g,'').replace(/\n+/g,' ').trim().substring(0,100);c.innerHTML=`<div class="hist-hdr"><div class="hist-cover" style="background:${s.cover?.bg||'linear-gradient(135deg,#7c3aed,#ec4899)'}">${s.cover?.e||'🎵'}</div><div><h4>${s.title}</h4><span class="hist-genre">${s.genre}•${s.mood}</span></div></div><div class="hist-preview">${prev}...</div><div class="hist-date">${d} <span class="hist-model">|${s.model||'?'}</span></div>`;grid.appendChild(c);});}
+        function loadH(i){const s=songHistory[i];if(!s)return;currentSong=s;stopPlay();displaySong(s);document.getElementById('resultArea').scrollIntoView({behavior:'smooth'});showToast('📂');}
         renderHistory();
 
-        // ══════ TOAST ══════
         function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
         // Init
-        document.getElementById('currentModelName').textContent = currentModel;
-        document.getElementById('activeModelLabel').textContent = currentModel;
-        forceLog('info', `Модель: ${currentModel}`);
-        forceLog('success', 'Готов к работе! JSON-fallback включён ✅');
+        document.getElementById('currentModelName').textContent=currentModel;
+        document.getElementById('activeModelLabel').textContent=currentModel;
+        forceLog('info',`Модель: ${currentModel}`);
+        forceLog('success','v3.0 — JSON.parse monkey-patch активен ✅');
 
-        // roundRect polyfill
-        if(!CanvasRenderingContext2D.prototype.roundRect){
-            CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){if(w<2*r)r=w/2;if(h<2*r)r=h/2;this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this;};
-        }
+        if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){if(w<2*r)r=w/2;if(h<2*r)r=h/2;this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this;};}
     </script>
 </body>
 </html>
