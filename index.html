@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 AI Song Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #222240;
+            --accent-1: #7c3aed;
+            --accent-2: #ec4899;
+            --accent-3: #06b6d4;
+            --accent-4: #f59e0b;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9ca3af;
+            --text-dim: #6b7280;
+            --border: #2a2a40;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+
+        .bg-orb:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-1);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-orb:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-2);
+            top: 50%;
+            right: -100px;
+            animation-delay: -7s;
+        }
+
+        .bg-orb:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            background: var(--accent-3);
+            bottom: -100px;
+            left: 30%;
+            animation-delay: -14s;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -50px) scale(1.1); }
+            50% { transform: translate(-50px, 100px) scale(0.9); }
+            75% { transform: translate(80px, 50px) scale(1.05); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 0 30px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            animation: pulse-glow 3s ease-in-out infinite;
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(124, 58, 237, 0.3); }
+            50% { box-shadow: 0 0 50px rgba(124, 58, 237, 0.5); }
+        }
+
+        .logo h1 {
+            font-size: 2.5em;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Main layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .card-title .icon {
+            font-size: 1.4em;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.15);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group select option {
+            background: var(--bg-secondary);
+        }
+
+        /* Genre chips */
+        .genre-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .genre-chip {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .genre-chip:hover {
+            border-color: var(--accent-1);
+            color: var(--text-primary);
+        }
+
+        .genre-chip.active {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+
+        /* Mood selector */
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .mood-btn {
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .mood-btn:hover {
+            border-color: var(--accent-3);
+        }
+
+        .mood-btn.active {
+            background: linear-gradient(135deg, var(--accent-3), #0891b2);
+            border-color: transparent;
+            color: white;
+        }
+
+        .mood-btn .mood-emoji {
+            font-size: 1.4em;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Generate button */
+        .btn-generate {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-generate:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-generate .shimmer {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            to { left: 100%; }
+        }
+
+        /* Result area */
+        .result-area {
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .result-placeholder .big-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Loading animation */
+        .loading-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .loading-bars {
+            display: flex;
+            gap: 6px;
+            align-items: end;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .loading-bar {
+            width: 8px;
+            border-radius: 4px;
+            animation: barBounce 1.2s ease-in-out infinite;
+        }
+
+        .loading-bar:nth-child(1) { background: var(--accent-1); animation-delay: 0s; }
+        .loading-bar:nth-child(2) { background: var(--accent-2); animation-delay: 0.1s; }
+        .loading-bar:nth-child(3) { background: var(--accent-3); animation-delay: 0.2s; }
+        .loading-bar:nth-child(4) { background: var(--accent-4); animation-delay: 0.3s; }
+        .loading-bar:nth-child(5) { background: var(--accent-1); animation-delay: 0.4s; }
+        .loading-bar:nth-child(6) { background: var(--accent-2); animation-delay: 0.5s; }
+        .loading-bar:nth-child(7) { background: var(--accent-3); animation-delay: 0.6s; }
+
+        @keyframes barBounce {
+            0%, 100% { height: 10px; }
+            50% { height: 55px; }
+        }
+
+        .loading-text {
+            color: var(--text-secondary);
+            font-size: 1em;
+        }
+
+        .loading-step {
+            color: var(--accent-3);
+            font-size: 0.9em;
+            margin-top: 8px;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Song result */
+        .song-result {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .song-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .song-cover {
+            width: 80px;
+            height: 80px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .song-cover::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+        }
+
+        .song-info h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .song-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .song-tag {
+            font-size: 0.75em;
+            padding: 4px 10px;
+            border-radius: 10px;
+            background: rgba(124, 58, 237, 0.15);
+            color: var(--accent-1);
+            font-weight: 500;
+        }
+
+        .song-tag.mood-tag {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-3);
+        }
+
+        /* Lyrics display */
+        .lyrics-container {
+            flex: 1;
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 15px;
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .lyrics-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .lyrics-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .lyrics-container::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .lyrics-section-tag {
+            color: var(--accent-2);
+            font-weight: 700;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            margin-top: 18px;
+        }
+
+        .lyrics-section-tag:first-child {
+            margin-top: 0;
+        }
+
+        .lyrics-line {
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 0.95em;
+        }
+
+        .lyrics-line.highlight {
+            color: var(--accent-3);
+            font-weight: 500;
+        }
+
+        /* Player controls */
+        .player-section {
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .progress-container {
+            margin-bottom: 12px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s linear;
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -4px;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .progress-bar-bg:hover .progress-bar-fill::after {
+            opacity: 1;
+        }
+
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75em;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .ctrl-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ctrl-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .ctrl-btn.play-btn {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .ctrl-btn.play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 25px rgba(124, 58, 237, 0.4);
+        }
+
+        /* Volume control */
+        .volume-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            justify-content: center;
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            cursor: pointer;
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent-1);
+            color: var(--text-primary);
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        /* History section */
+        .history-section {
+            grid-column: 1 / -1;
+            margin-top: 10px;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .history-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: slideUp 0.4s ease;
+        }
+
+        .history-card:hover {
+            border-color: var(--accent-1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .history-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .history-cover {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .history-card-header h4 {
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+
+        .history-card-header .history-genre {
+            font-size: 0.75em;
+            color: var(--text-dim);
+        }
+
+        .history-lyrics-preview {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .history-card .history-date {
+            font-size: 0.7em;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-1);
+            color: var(--text-primary);
+            font-size: 0.9em;
+            z-index: 1000;
+            transition: transform 0.4s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Error state */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: var(--error);
+        }
+
+        .error-message .error-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .error-message p {
+            margin-bottom: 10px;
+        }
+
+        .retry-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: 1px solid var(--error);
+            background: transparent;
+            color: var(--error);
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        /* Visualizer */
+        .visualizer-canvas {
+            width: 100%;
+            height: 60px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Speech status */
+        .speech-status {
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--accent-3);
+            margin-top: 8px;
+            min-height: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-dim);
+            font-size: 0.8em;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🎵</div>
+                <h1>SongForge AI</h1>
+            </div>
+            <p>Создавайте уникальные песни с текстом и голосом с помощью ИИ</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left: Controls -->
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">✨</span>
+                    Создать песню
+                </div>
+
+                <div class="form-group">
+                    <label>Тема / Описание</label>
+                    <textarea id="songTopic" placeholder="О чём ваша песня? Например: летняя ночь в городе, первая любовь, путешествие к звёздам...">Летняя ночь в большом городе, огни и мечты</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Жанр</label>
+                    <div class="genre-grid" id="genreGrid">
+                        <div class="genre-chip active" data-genre="Pop">🎤 Pop</div>
+                        <div class="genre-chip" data-genre="Rock">🎸 Rock</div>
+                        <div class="genre-chip" data-genre="Hip-Hop">🎧 Hip-Hop</div>
+                        <div class="genre-chip" data-genre="R&B">🎹 R&B</div>
+                        <div class="genre-chip" data-genre="Electronic">⚡ Electronic</div>
+                        <div class="genre-chip" data-genre="Jazz">🎷 Jazz</div>
+                        <div class="genre-chip" data-genre="Country">🤠 Country</div>
+                        <div class="genre-chip" data-genre="Indie">🌿 Indie</div>
+                        <div class="genre-chip" data-genre="Metal">🤘 Metal</div>
+                        <div class="genre-chip" data-genre="Lo-Fi">🌙 Lo-Fi</div>
+                        <div class="genre-chip" data-genre="Classical">🎻 Classical</div>
+                        <div class="genre-chip" data-genre="Reggaeton">💃 Reggaeton</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Настроение</label>
+                    <div class="mood-grid" id="moodGrid">
+                        <div class="mood-btn active" data-mood="Весёлое">
+                            <span class="mood-emoji">😊</span>
+                            Весёлое
+                        </div>
+                        <div class="mood-btn" data-mood="Грустное">
+                            <span class="mood-emoji">😢</span>
+                            Грустное
+                        </div>
+                        <div class="mood-btn" data-mood="Романтичное">
+                            <span class="mood-emoji">❤️</span>
+                            Романтика
+                        </div>
+                        <div class="mood-btn" data-mood="Энергичное">
+                            <span class="mood-emoji">⚡</span>
+                            Энергия
+                        </div>
+                        <div class="mood-btn" data-mood="Мечтательное">
+                            <span class="mood-emoji">✨</span>
+                            Мечты
+                        </div>
+                        <div class="mood-btn" data-mood="Агрессивное">
+                            <span class="mood-emoji">🔥</span>
+                            Агрессия
+                        </div>
+                        <div class="mood-btn" data-mood="Спокойное">
+                            <span class="mood-emoji">🌊</span>
+                            Спокойно
+                        </div>
+                        <div class="mood-btn" data-mood="Ностальгия">
+                            <span class="mood-emoji">🌅</span>
+                            Ностальгия
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Язык</label>
+                    <select id="songLanguage">
+                        <option value="русский">🇷🇺 Русский</option>
+                        <option value="английский">🇬🇧 Английский</option>
+                        <option value="испанский">🇪🇸 Испанский</option>
+                        <option value="французский">🇫🇷 Французский</option>
+                        <option value="японский">🇯🇵 Японский</option>
+                        <option value="корейский">🇰🇷 Корейский</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Голос</label>
+                    <select id="voiceSelect">
+                        <!-- Will be populated dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Темп речи</label>
+                    <select id="speechRate">
+                        <option value="0.7">🐢 Медленно</option>
+                        <option value="0.85">🚶 Чуть медленнее</option>
+                        <option value="1" selected>🏃 Нормально</option>
+                        <option value="1.15">🏎️ Чуть быстрее</option>
+                        <option value="1.3">🚀 Быстро</option>
+                    </select>
+                </div>
+
+                <button class="btn-generate" id="generateBtn" onclick="generateSong()">
+                    <span class="shimmer"></span>
+                    🎵 Сгенерировать песню
+                </button>
+            </div>
+
+            <!-- Right: Result -->
+            <div class="card result-area" id="resultArea">
+                <div class="card-title">
+                    <span class="icon">🎶</span>
+                    Результат
+                </div>
+                <div class="result-placeholder" id="placeholder">
+                    <div class="big-icon">🎵</div>
+                    <p>Настройте параметры и нажмите<br>"Сгенерировать песню"</p>
+                </div>
+            </div>
+
+            <!-- History -->
+            <div class="history-section card" id="historySection" style="display:none">
+                <div class="card-title">
+                    <span class="icon">📚</span>
+                    История песен
+                </div>
+                <div class="history-grid" id="historyGrid"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            SongForge AI — Powered by GPT4Free & Web Speech API
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+        import Client from 'https://g4f.dev/dist/js/client.js';
+
+        const client = new Client();
+
+        // State
+        let currentSong = null;
+        let speechSynth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isPlaying = false;
+        let songHistory = JSON.parse(localStorage.getItem('songHistory') || '[]');
+        let animationFrame = null;
+        let audioContext = null;
+        let analyser = null;
+
+        // Genre covers
+        const genreCovers = {
+            'Pop': { bg: 'linear-gradient(135deg, #ec4899, #f59e0b)', emoji: '🎤' },
+            'Rock': { bg: 'linear-gradient(135deg, #ef4444, #7c3aed)', emoji: '🎸' },
+            'Hip-Hop': { bg: 'linear-gradient(135deg, #f59e0b, #ef4444)', emoji: '🎧' },
+            'R&B': { bg: 'linear-gradient(135deg, #8b5cf6, #ec4899)', emoji: '🎹' },
+            'Electronic': { bg: 'linear-gradient(135deg, #06b6d4, #7c3aed)', emoji: '⚡' },
+            'Jazz': { bg: 'linear-gradient(135deg, #f59e0b, #78350f)', emoji: '🎷' },
+            'Country': { bg: 'linear-gradient(135deg, #d97706, #65a30d)', emoji: '🤠' },
+            'Indie': { bg: 'linear-gradient(135deg, #10b981, #06b6d4)', emoji: '🌿' },
+            'Metal': { bg: 'linear-gradient(135deg, #374151, #ef4444)', emoji: '🤘' },
+            'Lo-Fi': { bg: 'linear-gradient(135deg, #6366f1, #8b5cf6)', emoji: '🌙' },
+            'Classical': { bg: 'linear-gradient(135deg, #c4b5a0, #92400e)', emoji: '🎻' },
+            'Reggaeton': { bg: 'linear-gradient(135deg, #ef4444, #f59e0b)', emoji: '💃' },
+        };
+
+        // Initialize voices
+        function populateVoices() {
+            const voiceSelect = document.getElementById('voiceSelect');
+            const voices = speechSynth.getVoices();
+            voiceSelect.innerHTML = '';
+
+            // Group by language
+            const ruVoices = voices.filter(v => v.lang.startsWith('ru'));
+            const enVoices = voices.filter(v => v.lang.startsWith('en'));
+            const otherVoices = voices.filter(v => !v.lang.startsWith('ru') && !v.lang.startsWith('en'));
+
+            function addVoiceOptions(vList, label) {
+                if (vList.length === 0) return;
+                const group = document.createElement('optgroup');
+                group.label = label;
+                vList.forEach((v, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = voices.indexOf(v);
+                    opt.textContent = `${v.name} (${v.lang})`;
+                    group.appendChild(opt);
+                });
+                voiceSelect.appendChild(group);
+            }
+
+            addVoiceOptions(ruVoices, '🇷🇺 Русский');
+            addVoiceOptions(enVoices, '🇬🇧 English');
+            addVoiceOptions(otherVoices, '🌍 Other');
+
+            if (voices.length === 0) {
+                const opt = document.createElement('option');
+                opt.textContent = 'Загрузка голосов...';
+                voiceSelect.appendChild(opt);
+            }
+        }
+
+        speechSynth.onvoiceschanged = populateVoices;
+        populateVoices();
+
+        // Genre selection
+        document.getElementById('genreGrid').addEventListener('click', (e) => {
+            const chip = e.target.closest('.genre-chip');
+            if (!chip) return;
+            document.querySelectorAll('.genre-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+        });
+
+        // Mood selection
+        document.getElementById('moodGrid').addEventListener('click', (e) => {
+            const btn = e.target.closest('.mood-btn');
+            if (!btn) return;
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+
+        // Generate song
+        window.generateSong = async function () {
+            const topic = document.getElementById('songTopic').value.trim();
+            const genre = document.querySelector('.genre-chip.active')?.dataset.genre || 'Pop';
+            const mood = document.querySelector('.mood-btn.active')?.dataset.mood || 'Весёлое';
+            const language = document.getElementById('songLanguage').value;
+
+            if (!topic) {
+                showToast('❌ Введите тему песни!');
+                return;
+            }
+
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Генерация...';
+
+            stopPlayback();
+            showLoading();
+
+            try {
+                const prompt = `Ты — профессиональный автор песен. Создай полную песню на ${language} языке.
+
+Тема: ${topic}
+Жанр: ${genre}
+Настроение: ${mood}
+
+ФОРМАТ ОТВЕТА (СТРОГО):
+TITLE: [Название песни]
+---
+[Verse 1]
+(4-6 строк текста)
+
+[Chorus]
+(4-6 строк текста)
+
+[Verse 2]
+(4-6 строк текста)
+
+[Chorus]
+(4-6 строк текста)
+
+[Bridge]
+(2-4 строки текста)
+
+[Outro]
+(2-4 строки текста)
+
+Правила:
+- Текст должен быть поэтичным, с рифмами
+- Используй метафоры и образы
+- Припев должен быть запоминающимся
+- Стиль должен соответствовать жанру ${genre}
+- Настроение: ${mood}
+- Пиши ТОЛЬКО на ${language} языке
+- НЕ добавляй пояснений, только текст песни`;
+
+                const result = await client.chat.completions.create({
+                    model: 'gpt-4.1',
+                    messages: [{ role: 'user', content: prompt }]
+                });
+
+                const responseText = result.choices[0].message.content;
+                const song = parseSong(responseText, genre, mood);
+
+                currentSong = song;
+                displaySong(song);
+                saveSongToHistory(song);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="shimmer"></span>🎵 Сгенерировать песню';
+            }
+        };
+
+        function parseSong(text, genre, mood) {
+            let title = 'Без названия';
+            let lyrics = text;
+
+            // Extract title
+            const titleMatch = text.match(/TITLE:\s*(.+)/i);
+            if (titleMatch) {
+                title = titleMatch[1].trim().replace(/[\[\]"]/g, '');
+                lyrics = text.substring(text.indexOf('---') + 3).trim();
+                if (!lyrics || lyrics.length < 10) {
+                    lyrics = text.substring(titleMatch.index + titleMatch[0].length).trim();
+                }
+            }
+
+            // Clean up
+            lyrics = lyrics.replace(/^---\s*/gm, '').trim();
+
+            return {
+                title,
+                lyrics,
+                genre,
+                mood,
+                timestamp: Date.now(),
+                cover: genreCovers[genre] || genreCovers['Pop']
+            };
+        }
+
+        function showLoading() {
+            const area = document.getElementById('resultArea');
+            const titleEl = area.querySelector('.card-title');
+
+            const loadingSteps = [
+                '🎼 Подбираю аккорды...',
+                '✍️ Пишу текст...',
+                '🎵 Ищу рифмы...',
+                '🎤 Настраиваю голос...',
+                '✨ Финальные штрихи...'
+            ];
+
+            area.innerHTML = '';
+            area.appendChild(titleEl);
+
+            const container = document.createElement('div');
+            container.className = 'loading-container';
+            container.innerHTML = `
+                <div class="loading-bars">
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                </div>
+                <div class="loading-text">Создаю вашу песню...</div>
+                <div class="loading-step" id="loadingStep">${loadingSteps[0]}</div>
+            `;
+            area.appendChild(container);
+
+            let stepIndex = 0;
+            const stepInterval = setInterval(() => {
+                stepIndex = (stepIndex + 1) % loadingSteps.length;
+                const stepEl = document.getElementById('loadingStep');
+                if (stepEl) {
+                    stepEl.textContent = loadingSteps[stepIndex];
+                } else {
+                    clearInterval(stepInterval);
+                }
+            }, 2500);
+
+            area._stepInterval = stepInterval;
+        }
+
+        function showError(message) {
+            const area = document.getElementById('resultArea');
+            if (area._stepInterval) clearInterval(area._stepInterval);
+
+            const titleEl = area.querySelector('.card-title');
+            area.innerHTML = '';
+            area.appendChild(titleEl);
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `
+                <div class="error-icon">😔</div>
+                <p>Не удалось сгенерировать песню</p>
+                <p style="font-size:0.85em;opacity:0.7">${message}</p>
+                <button class="retry-btn" onclick="generateSong()">🔄 Попробовать снова</button>
+            `;
+            area.appendChild(errorDiv);
+        }
+
+        function displaySong(song) {
+            const area = document.getElementById('resultArea');
+            if (area._stepInterval) clearInterval(area._stepInterval);
+
+            const titleEl = area.querySelector('.card-title');
+            area.innerHTML = '';
+            area.appendChild(titleEl);
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'song-result';
+
+            // Song header
+            const header = document.createElement('div');
+            header.className = 'song-header';
+            header.innerHTML = `
+                <div class="song-cover" style="background:${song.cover.bg}">
+                    ${song.cover.emoji}
+                </div>
+                <div class="song-info">
+                    <h3>${song.title}</h3>
+                    <div class="song-meta">
+                        <span class="song-tag">${song.genre}</span>
+                        <span class="song-tag mood-tag">${song.mood}</span>
+                    </div>
+                </div>
+            `;
+            resultDiv.appendChild(header);
+
+            // Lyrics
+            const lyricsDiv = document.createElement('div');
+            lyricsDiv.className = 'lyrics-container';
+            lyricsDiv.id = 'lyricsContainer';
+
+            const lines = song.lyrics.split('\n');
+            lines.forEach(line => {
+                if (line.match(/^\[.+\]$/)) {
+                    const tag = document.createElement('div');
+                    tag.className = 'lyrics-section-tag';
+                    tag.textContent = line;
+                    lyricsDiv.appendChild(tag);
+                } else if (line.trim()) {
+                    const lineEl = document.createElement('div');
+                    lineEl.className = 'lyrics-line';
+                    lineEl.textContent = line;
+                    lyricsDiv.appendChild(lineEl);
+                }
+            });
+            resultDiv.appendChild(lyricsDiv);
+
+            // Visualizer
+            const canvas = document.createElement('canvas');
+            canvas.className = 'visualizer-canvas';
+            canvas.id = 'visualizer';
+            resultDiv.appendChild(canvas);
+
+            // Player
+            const playerDiv = document.createElement('div');
+            playerDiv.className = 'player-section';
+            playerDiv.innerHTML = `
+                <div class="progress-container">
+                    <div class="progress-bar-bg" id="progressBar">
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+                    <div class="time-labels">
+                        <span id="currentTime">0:00</span>
+                        <span id="totalTime">0:00</span>
+                    </div>
+                </div>
+                <div class="player-controls">
+                    <button class="ctrl-btn" onclick="window.restartSong()" title="В начало">⏮️</button>
+                    <button class="ctrl-btn play-btn" id="playBtn" onclick="window.togglePlayback()">▶️</button>
+                    <button class="ctrl-btn" onclick="window.stopPlayback()" title="Стоп">⏹️</button>
+                </div>
+                <div class="volume-section">
+                    <span>🔈</span>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05" value="0.8">
+                    <span>🔊</span>
+                </div>
+                <div class="speech-status" id="speechStatus"></div>
+            `;
+            resultDiv.appendChild(playerDiv);
+
+            // Action buttons
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'action-buttons';
+            actionsDiv.innerHTML = `
+                <button class="action-btn" onclick="window.copyLyrics()">📋 Копировать</button>
+                <button class="action-btn" onclick="window.downloadLyrics()">💾 Скачать</button>
+                <button class="action-btn" onclick="window.shareSong()">🔗 Поделиться</button>
+            `;
+            resultDiv.appendChild(actionsDiv);
+
+            area.appendChild(resultDiv);
+
+            // Initialize visualizer
+            initVisualizer();
+        }
+
+        // Playback controls
+        window.togglePlayback = function () {
+            if (isPlaying) {
+                pausePlayback();
+            } else {
+                playSong();
+            }
+        };
+
+        function playSong() {
+            if (!currentSong) return;
+
+            speechSynth.cancel();
+
+            const voices = speechSynth.getVoices();
+            const voiceIndex = parseInt(document.getElementById('voiceSelect').value);
+            const rate = parseFloat(document.getElementById('speechRate').value);
+            const volume = parseFloat(document.getElementById('volumeSlider')?.value || 0.8);
+
+            // Clean lyrics for speech
+            const cleanLyrics = currentSong.lyrics
+                .replace(/\[.+?\]/g, '... ')
+                .replace(/\n{2,}/g, '... ')
+                .replace(/\n/g, '. ')
+                .trim();
+
+            currentUtterance = new SpeechSynthesisUtterance(cleanLyrics);
+
+            if (voices[voiceIndex]) {
+                currentUtterance.voice = voices[voiceIndex];
+            }
+
+            currentUtterance.rate = rate;
+            currentUtterance.pitch = 1.05;
+            currentUtterance.volume = volume;
+
+            // Estimate duration
+            const words = cleanLyrics.split(/\s+/).length;
+            const estimatedDuration = (words / 2.5) / rate; // rough estimate
+
+            const totalTimeEl = document.getElementById('totalTime');
+            if (totalTimeEl) {
+                totalTimeEl.textContent = formatTime(estimatedDuration);
+            }
+
+            const startTime = Date.now();
+            let progressInterval;
+
+            currentUtterance.onstart = () => {
+                isPlaying = true;
+                updatePlayButton();
+                setSpeechStatus('🎤 Воспроизведение...');
+                startVisualizerAnimation();
+
+                progressInterval = setInterval(() => {
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    const progress = Math.min((elapsed / estimatedDuration) * 100, 100);
+                    const fill = document.getElementById('progressFill');
+                    const timeEl = document.getElementById('currentTime');
+                    if (fill) fill.style.width = progress + '%';
+                    if (timeEl) timeEl.textContent = formatTime(elapsed);
+                }, 200);
+            };
+
+            // Highlight lyrics as they're spoken
+            currentUtterance.onboundary = (event) => {
+                highlightLyrics(event.charIndex, cleanLyrics);
+            };
+
+            currentUtterance.onend = () => {
+                isPlaying = false;
+                updatePlayButton();
+                setSpeechStatus('✅ Завершено');
+                stopVisualizerAnimation();
+                clearInterval(progressInterval);
+                const fill = document.getElementById('progressFill');
+                if (fill) fill.style.width = '100%';
+            };
+
+            currentUtterance.onerror = (event) => {
+                isPlaying = false;
+                updatePlayButton();
+                setSpeechStatus('❌ Ошибка воспроизведения');
+                stopVisualizerAnimation();
+                clearInterval(progressInterval);
+            };
+
+            speechSynth.speak(currentUtterance);
+        }
+
+        function pausePlayback() {
+            if (speechSynth.speaking) {
+                speechSynth.pause();
+                isPlaying = false;
+                updatePlayButton();
+                setSpeechStatus('⏸️ Пауза');
+                stopVisualizerAnimation();
+            }
+        }
+
+        window.stopPlayback = function () {
+            stopPlayback();
+        };
+
+        function stopPlayback() {
+            speechSynth.cancel();
+            isPlaying = false;
+            updatePlayButton();
+            setSpeechStatus('');
+            stopVisualizerAnimation();
+            const fill = document.getElementById('progressFill');
+            const timeEl = document.getElementById('currentTime');
+            if (fill) fill.style.width = '0%';
+            if (timeEl) timeEl.textContent = '0:00';
+
+            // Remove all highlights
+            document.querySelectorAll('.lyrics-line.highlight').forEach(el => {
+                el.classList.remove('highlight');
+            });
+        }
+
+        window.restartSong = function () {
+            stopPlayback();
+            setTimeout(() => playSong(), 100);
+        };
+
+        function updatePlayButton() {
+            const btn = document.getElementById('playBtn');
+            if (btn) {
+                if (speechSynth.paused) {
+                    btn.textContent = '▶️';
+                    btn.onclick = () => {
+                        speechSynth.resume();
+                        isPlaying = true;
+                        updatePlayButton();
+                        setSpeechStatus('🎤 Воспроизведение...');
+                        startVisualizerAnimation();
+                    };
+                } else if (isPlaying) {
+                    btn.textContent = '⏸️';
+                    btn.onclick = () => pausePlayback();
+                } else {
+                    btn.textContent = '▶️';
+                    btn.onclick = () => window.togglePlayback();
+                }
+            }
+        }
+
+        function setSpeechStatus(text) {
+            const el = document.getElementById('speechStatus');
+            if (el) el.textContent = text;
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function highlightLyrics(charIndex, fullText) {
+            const lyricsLines = document.querySelectorAll('.lyrics-line');
+            if (!lyricsLines.length) return;
+
+            // Find which line we're on based on character index
+            const beforeText = fullText.substring(0, charIndex);
+            const sentenceCount = (beforeText.match(/\.\s|\.\.\.\s/g) || []).length;
+            const lineIndex = Math.min(sentenceCount, lyricsLines.length - 1);
+
+            lyricsLines.forEach((line, i) => {
+                if (i === lineIndex) {
+                    line.classList.add('highlight');
+                    line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    line.classList.remove('highlight');
+                }
+            });
+        }
+
+        // Volume control
+        document.addEventListener('input', (e) => {
+            if (e.target.id === 'volumeSlider' && currentUtterance) {
+                // Volume can't be changed mid-speech, but we store it
+            }
+        });
+
+        // Visualizer
+        function initVisualizer() {
+            const canvas = document.getElementById('visualizer');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth * 2;
+            canvas.height = canvas.offsetHeight * 2;
+            ctx.scale(2, 2);
+
+            drawIdleVisualizer(ctx, canvas);
+        }
+
+        function drawIdleVisualizer(ctx, canvas) {
+            const w = canvas.width / 2;
+            const h = canvas.height / 2;
+            ctx.clearRect(0, 0, w, h);
+
+            const bars = 50;
+            const barWidth = w / bars;
+
+            for (let i = 0; i < bars; i++) {
+                const barHeight = 3 + Math.random() * 3;
+                const hue = (i / bars) * 200 + 240;
+                ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.3)`;
+                ctx.fillRect(
+                    i * barWidth + 1,
+                    h / 2 - barHeight / 2,
+                    barWidth - 2,
+                    barHeight
+                );
+            }
+        }
+
+        function startVisualizerAnimation() {
+            const canvas = document.getElementById('visualizer');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width / 2;
+            const h = canvas.height / 2;
+            const bars = 50;
+            const barWidth = w / bars;
+
+            let phase = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                phase += 0.05;
+
+                for (let i = 0; i < bars; i++) {
+                    const wave1 = Math.sin(phase + i * 0.3) * 0.5 + 0.5;
+                    const wave2 = Math.sin(phase * 1.5 + i * 0.2) * 0.5 + 0.5;
+                    const wave3 = Math.sin(phase * 0.7 + i * 0.5) * 0.5 + 0.5;
+
+                    let barHeight = (wave1 * 0.4 + wave2 * 0.35 + wave3 * 0.25) * (h * 0.8);
+                    barHeight = Math.max(barHeight, 3);
+
+                    // Add some randomness
+                    barHeight += Math.random() * 5;
+
+                    const hue = (i / bars) * 120 + 240 + phase * 10;
+                    const gradient = ctx.createLinearGradient(0, h / 2 - barHeight / 2, 0, h / 2 + barHeight / 2);
+                    gradient.addColorStop(0, `hsla(${hue}, 80%, 65%, 0.9)`);
+                    gradient.addColorStop(1, `hsla(${hue + 40}, 80%, 50%, 0.6)`);
+
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.roundRect(
+                        i * barWidth + 1,
+                        h / 2 - barHeight / 2,
+                        barWidth - 2,
+                        barHeight,
+                        2
+                    );
+                    ctx.fill();
+                }
+
+                animationFrame = requestAnimationFrame(draw);
+            }
+
+            draw();
+        }
+
+        function stopVisualizerAnimation() {
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+            }
+            const canvas = document.getElementById('visualizer');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                drawIdleVisualizer(ctx, canvas);
+            }
+        }
+
+        // Action buttons
+        window.copyLyrics = function () {
+            if (!currentSong) return;
+            const text = `${currentSong.title}\n\n${currentSong.lyrics}`;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 Текст скопирован!');
+            }).catch(() => {
+                showToast('❌ Не удалось скопировать');
+            });
+        };
+
+        window.downloadLyrics = function () {
+            if (!currentSong) return;
+            const text = `${currentSong.title}\nЖанр: ${currentSong.genre} | Настроение: ${currentSong.mood}\n${'='.repeat(40)}\n\n${currentSong.lyrics}`;
+            const blob = new Blob([text], { type: 'text/plain; charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentSong.title.replace(/[^a-zA-Zа-яА-Я0-9]/g, '_')}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('💾 Текст сохранён!');
+        };
+
+        window.shareSong = function () {
+            if (!currentSong) return;
+            const text = `🎵 ${currentSong.title}\n\n${currentSong.lyrics}\n\n— Создано в SongForge AI`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: currentSong.title,
+                    text: text
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('🔗 Текст скопирован для отправки!');
+                });
+            }
+        };
+
+        // History
+        function saveSongToHistory(song) {
+            songHistory.unshift({
+                title: song.title,
+                genre: song.genre,
+                mood: song.mood,
+                lyrics: song.lyrics,
+                timestamp: song.timestamp,
+                cover: song.cover
+            });
+
+            // Keep only last 20
+            songHistory = songHistory.slice(0, 20);
+            localStorage.setItem('songHistory', JSON.stringify(songHistory));
+
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const section = document.getElementById('historySection');
+            const grid = document.getElementById('historyGrid');
+
+            if (songHistory.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+            grid.innerHTML = '';
+
+            songHistory.forEach((song, index) => {
+                const card = document.createElement('div');
+                card.className = 'history-card';
+                card.onclick = () => loadFromHistory(index);
+
+                const date = new Date(song.timestamp);
+                const dateStr = date.toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const lyricsPreview = song.lyrics
+                    .replace(/\[.+?\]/g, '')
+                    .replace(/\n{2,}/g, ' ')
+                    .replace(/\n/g, ' ')
+                    .trim()
+                    .substring(0, 120);
+
+                card.innerHTML = `
+                    <div class="history-card-header">
+                        <div class="history-cover" style="background:${song.cover?.bg || 'linear-gradient(135deg, #7c3aed, #ec4899)'}">
+                            ${song.cover?.emoji || '🎵'}
+                        </div>
+                        <div>
+                            <h4>${song.title}</h4>
+                            <span class="history-genre">${song.genre} • ${song.mood}</span>
+                        </div>
+                    </div>
+                    <div class="lyrics-preview">${lyricsPreview}...</div>
+                    <div class="history-date">${dateStr}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function loadFromHistory(index) {
+            const song = songHistory[index];
+            if (!song) return;
+
+            currentSong = song;
+            stopPlayback();
+            displaySong(song);
+
+            // Scroll to result
+            document.getElementById('resultArea').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            showToast('📂 Песня загружена из истории');
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Initial render
+        renderHistory();
+
+        // Fix for roundRect polyfill
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+                if (w < 2 * r) r = w / 2;
+                if (h < 2 * r) r = h / 2;
+                this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r);
+                this.arcTo(x, y, x + w, y, r);
+                this.closePath();
+                return this;
+            };
+        }
+    </script>
+</body>
+</html>
