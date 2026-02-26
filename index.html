@@ -3,31 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎵 AI Song Generator</title>
+    <title>🎵 SongForge AI Pro</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #1a1a2e;
-            --bg-card-hover: #222240;
+            --bg-primary: #08080d;
+            --bg-secondary: #0e0e16;
+            --bg-card: #14142a;
+            --bg-card-hover: #1c1c3a;
+            --bg-input: #0c0c18;
             --accent-1: #7c3aed;
             --accent-2: #ec4899;
             --accent-3: #06b6d4;
             --accent-4: #f59e0b;
-            --text-primary: #f0f0f5;
+            --accent-5: #10b981;
+            --text-primary: #eef0f6;
             --text-secondary: #9ca3af;
-            --text-dim: #6b7280;
-            --border: #2a2a40;
+            --text-dim: #5b6178;
+            --border: #222244;
+            --border-hover: #333366;
             --success: #10b981;
             --error: #ef4444;
+            --warning: #f59e0b;
+            --dev-accent: #f97316;
         }
 
         body {
@@ -38,969 +39,1059 @@
             overflow-x: hidden;
         }
 
-        /* Animated background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-            pointer-events: none;
+        .bg-anim {
+            position: fixed; inset: 0; z-index: 0;
+            pointer-events: none; overflow: hidden;
+        }
+        .bg-anim .orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(100px); opacity: 0.2;
+            animation: orbFloat 25s ease-in-out infinite;
+        }
+        .bg-anim .orb:nth-child(1) {
+            width: 500px; height: 500px; background: var(--accent-1);
+            top: -150px; left: -100px;
+        }
+        .bg-anim .orb:nth-child(2) {
+            width: 400px; height: 400px; background: var(--accent-2);
+            top: 40%; right: -120px; animation-delay: -8s;
+        }
+        .bg-anim .orb:nth-child(3) {
+            width: 450px; height: 450px; background: var(--accent-3);
+            bottom: -150px; left: 25%; animation-delay: -16s;
+        }
+        @keyframes orbFloat {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(80px,-60px) scale(1.1); }
+            66% { transform: translate(-60px,80px) scale(0.9); }
         }
 
-        .bg-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.3;
-            animation: floatOrb 20s ease-in-out infinite;
-        }
+        .app { position: relative; z-index: 1; }
 
-        .bg-orb:nth-child(1) {
-            width: 400px;
-            height: 400px;
-            background: var(--accent-1);
-            top: -100px;
-            left: -100px;
-            animation-delay: 0s;
-        }
-
-        .bg-orb:nth-child(2) {
-            width: 300px;
-            height: 300px;
-            background: var(--accent-2);
-            top: 50%;
-            right: -100px;
-            animation-delay: -7s;
-        }
-
-        .bg-orb:nth-child(3) {
-            width: 350px;
-            height: 350px;
-            background: var(--accent-3);
-            bottom: -100px;
-            left: 30%;
-            animation-delay: -14s;
-        }
-
-        @keyframes floatOrb {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(100px, -50px) scale(1.1); }
-            50% { transform: translate(-50px, 100px) scale(0.9); }
-            75% { transform: translate(80px, 50px) scale(1.05); }
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header */
+        /* ── Header ── */
         .header {
-            text-align: center;
-            padding: 40px 0 30px;
+            text-align: center; padding: 30px 20px 20px;
         }
-
         .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            display: inline-flex; align-items: center; gap: 14px; margin-bottom: 10px;
         }
-
         .logo-icon {
-            width: 60px;
-            height: 60px;
+            width: 56px; height: 56px;
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
             border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            animation: pulse-glow 3s ease-in-out infinite;
-            box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 0 40px rgba(124,58,237,0.3);
+            animation: logoPulse 3s ease-in-out infinite;
         }
-
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 30px rgba(124, 58, 237, 0.3); }
-            50% { box-shadow: 0 0 50px rgba(124, 58, 237, 0.5); }
+        @keyframes logoPulse {
+            0%,100% { box-shadow: 0 0 30px rgba(124,58,237,0.3); }
+            50% { box-shadow: 0 0 60px rgba(124,58,237,0.5); }
         }
-
         .logo h1 {
-            font-size: 2.5em;
-            font-weight: 900;
+            font-size: 2.2em; font-weight: 900;
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .header .sub { color: var(--text-secondary); font-size: 1em; }
+
+        /* ── Dev Toggle Button ── */
+        .dev-toggle {
+            position: fixed; top: 16px; right: 16px; z-index: 100;
+            width: 44px; height: 44px; border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-dim); font-size: 1.2em;
+            cursor: pointer; transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .dev-toggle:hover, .dev-toggle.active {
+            border-color: var(--dev-accent);
+            color: var(--dev-accent);
+            box-shadow: 0 0 20px rgba(249,115,22,0.2);
         }
 
-        .header p {
+        /* ── Dev Panel (Slide-in) ── */
+        .dev-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .dev-overlay.open { opacity: 1; pointer-events: auto; }
+
+        .dev-panel {
+            position: fixed; top: 0; right: -520px;
+            width: 500px; max-width: 95vw; height: 100vh;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            z-index: 201;
+            transition: right 0.4s cubic-bezier(0.16,1,0.3,1);
+            overflow-y: auto;
+            box-shadow: -10px 0 60px rgba(0,0,0,0.5);
+        }
+        .dev-panel.open { right: 0; }
+        .dev-panel::-webkit-scrollbar { width: 6px; }
+        .dev-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        .dev-header {
+            padding: 24px; display: flex; align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0;
+            background: var(--bg-secondary); z-index: 10;
+        }
+        .dev-header h2 {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 1.2em; font-weight: 700;
+        }
+        .dev-header h2 .badge {
+            font-size: 0.55em; padding: 3px 8px;
+            border-radius: 6px;
+            background: var(--dev-accent);
+            color: white; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .dev-close {
+            width: 36px; height: 36px; border-radius: 10px;
+            border: 1px solid var(--border);
+            background: transparent; color: var(--text-secondary);
+            cursor: pointer; font-size: 1.1em;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .dev-close:hover { border-color: var(--error); color: var(--error); }
+
+        .dev-body { padding: 20px 24px 40px; }
+
+        .dev-section {
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .dev-section-header {
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 600; font-size: 0.95em;
+            cursor: pointer; user-select: none;
+            transition: background 0.2s;
+        }
+        .dev-section-header:hover { background: rgba(255,255,255,0.04); }
+        .dev-section-header .arrow {
+            margin-left: auto; transition: transform 0.3s;
+            font-size: 0.8em;
+        }
+        .dev-section-header.collapsed .arrow { transform: rotate(-90deg); }
+        .dev-section-body { padding: 16px 18px; }
+        .dev-section-body.collapsed { display: none; }
+
+        .dev-field { margin-bottom: 16px; }
+        .dev-field:last-child { margin-bottom: 0; }
+        .dev-field label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.8em; font-weight: 600;
             color: var(--text-secondary);
-            font-size: 1.1em;
-            max-width: 500px;
-            margin: 0 auto;
+            margin-bottom: 6px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .dev-field label .hint {
+            font-weight: 400; text-transform: none;
+            color: var(--text-dim); font-size: 0.9em;
+            letter-spacing: 0;
         }
 
-        /* Main layout */
+        .dev-field input[type="text"],
+        .dev-field input[type="number"],
+        .dev-field textarea,
+        .dev-field select {
+            width: 100%; padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        .dev-field input:focus,
+        .dev-field textarea:focus,
+        .dev-field select:focus {
+            border-color: var(--dev-accent);
+        }
+        .dev-field textarea {
+            min-height: 120px; resize: vertical;
+            line-height: 1.6;
+        }
+        .dev-field select option { background: var(--bg-secondary); }
+
+        .dev-field .range-row {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .dev-field input[type="range"] {
+            flex: 1; -webkit-appearance: none;
+            height: 4px; border-radius: 2px;
+            background: var(--border); outline: none;
+        }
+        .dev-field input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--dev-accent);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+        }
+        .dev-field .range-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em; color: var(--dev-accent);
+            min-width: 40px; text-align: right;
+        }
+
+        /* Toggle switch */
+        .toggle-row {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+        .toggle-row span { font-size: 0.9em; }
+        .toggle-switch {
+            width: 44px; height: 24px;
+            border-radius: 12px;
+            background: var(--border);
+            position: relative; cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.on { background: var(--dev-accent); }
+        .toggle-switch::after {
+            content: ''; position: absolute;
+            width: 18px; height: 18px;
+            border-radius: 50%; background: white;
+            top: 3px; left: 3px;
+            transition: transform 0.3s;
+        }
+        .toggle-switch.on::after { transform: translateX(20px); }
+
+        /* Model search */
+        .model-search-container { position: relative; }
+        .model-search {
+            width: 100%; padding: 10px 14px 10px 36px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em; outline: none;
+            transition: border-color 0.2s;
+        }
+        .model-search:focus { border-color: var(--dev-accent); }
+        .model-search-icon {
+            position: absolute; left: 12px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9em; color: var(--text-dim);
+        }
+        .model-dropdown {
+            position: absolute; top: calc(100% + 4px);
+            left: 0; right: 0;
+            max-height: 260px; overflow-y: auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            z-index: 50; display: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .model-dropdown.open { display: block; }
+        .model-dropdown::-webkit-scrollbar { width: 5px; }
+        .model-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        .model-category {
+            padding: 8px 14px; font-size: 0.7em;
+            color: var(--dev-accent); font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            position: sticky; top: 0;
+            background: var(--bg-card);
+        }
+        .model-option {
+            padding: 10px 14px;
+            cursor: pointer; transition: background 0.15s;
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+        }
+        .model-option:hover { background: rgba(249,115,22,0.08); }
+        .model-option.selected { background: rgba(249,115,22,0.12); }
+        .model-option .model-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em; font-weight: 500;
+        }
+        .model-option .model-provider {
+            font-size: 0.7em; color: var(--text-dim);
+            margin-left: auto;
+        }
+        .model-option .model-badge {
+            font-size: 0.6em; padding: 2px 6px;
+            border-radius: 4px; font-weight: 600;
+        }
+        .model-badge.free { background: rgba(16,185,129,0.15); color: var(--success); }
+        .model-badge.popular { background: rgba(124,58,237,0.15); color: var(--accent-1); }
+        .model-badge.new { background: rgba(236,72,153,0.15); color: var(--accent-2); }
+
+        .current-model {
+            margin-top: 8px; padding: 8px 12px;
+            background: rgba(249,115,22,0.08);
+            border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8em; color: var(--dev-accent);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .current-model .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 6px var(--success);
+        }
+
+        /* Dev buttons */
+        .dev-btn-row { display: flex; gap: 8px; margin-top: 12px; }
+        .dev-btn {
+            flex: 1; padding: 10px;
+            border-radius: 10px; border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82em; font-weight: 500;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center;
+            justify-content: center; gap: 6px;
+        }
+        .dev-btn:hover {
+            border-color: var(--dev-accent);
+            color: var(--dev-accent);
+            background: rgba(249,115,22,0.05);
+        }
+        .dev-btn.danger:hover {
+            border-color: var(--error); color: var(--error);
+            background: rgba(239,68,68,0.05);
+        }
+
+        /* Console log */
+        .console-log {
+            background: #000;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75em;
+            max-height: 200px;
+            overflow-y: auto;
+            line-height: 1.6;
+            border: 1px solid #222;
+        }
+        .console-log::-webkit-scrollbar { width: 4px; }
+        .console-log::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+        .console-line { padding: 1px 0; }
+        .console-line.info { color: #60a5fa; }
+        .console-line.success { color: #34d399; }
+        .console-line.error { color: #f87171; }
+        .console-line.warn { color: #fbbf24; }
+        .console-line .ts { color: #555; }
+
+        /* ── Main Container ── */
+        .container {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px 40px;
+        }
+
         .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-top: 20px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 24px; margin-top: 20px;
         }
-
         @media (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
+            .main-grid { grid-template-columns: 1fr; }
         }
 
-        /* Cards */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            border-radius: 18px;
+            padding: 26px;
+            backdrop-filter: blur(8px);
+            transition: border-color 0.3s;
         }
-
-        .card:hover {
-            border-color: rgba(124, 58, 237, 0.3);
-        }
+        .card:hover { border-color: var(--border-hover); }
 
         .card-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.3em;
-            font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 1.2em; font-weight: 700;
             margin-bottom: 20px;
         }
 
-        .card-title .icon {
-            font-size: 1.4em;
-        }
-
-        /* Form elements */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
+        .form-group { margin-bottom: 16px; }
         .form-group label {
-            display: block;
-            font-size: 0.9em;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            display: block; font-size: 0.82em; font-weight: 600;
+            color: var(--text-secondary); margin-bottom: 7px;
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 14px 18px;
-            background: var(--bg-secondary);
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 12px 16px;
+            background: var(--bg-input);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 11px;
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
-            font-size: 0.95em;
-            transition: all 0.3s ease;
-            outline: none;
+            font-size: 0.92em;
+            transition: all 0.2s; outline: none;
         }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             border-color: var(--accent-1);
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.15);
+            box-shadow: 0 0 20px rgba(124,58,237,0.12);
         }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-group select option {
-            background: var(--bg-secondary);
-        }
+        .form-group textarea { resize: vertical; min-height: 90px; }
+        .form-group select option { background: var(--bg-secondary); }
 
         /* Genre chips */
-        .genre-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 18px;
-        }
-
-        .genre-chip {
-            padding: 8px 16px;
-            border-radius: 20px;
+        .chip-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+        .chip {
+            padding: 7px 14px; border-radius: 18px;
             border: 1px solid var(--border);
-            background: var(--bg-secondary);
+            background: var(--bg-input);
             color: var(--text-secondary);
-            font-size: 0.85em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 0.82em; font-weight: 500;
+            cursor: pointer; transition: all 0.2s;
             user-select: none;
         }
-
-        .genre-chip:hover {
-            border-color: var(--accent-1);
-            color: var(--text-primary);
-        }
-
-        .genre-chip.active {
+        .chip:hover { border-color: var(--accent-1); color: var(--text-primary); }
+        .chip.active {
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            border-color: transparent;
-            color: white;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            border-color: transparent; color: #fff;
+            box-shadow: 0 4px 14px rgba(124,58,237,0.25);
         }
 
-        /* Mood selector */
-        .mood-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
+        /* Mood grid */
+        .mood-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
         .mood-btn {
-            padding: 10px;
-            border-radius: 12px;
+            padding: 9px 6px; border-radius: 11px;
             border: 1px solid var(--border);
-            background: var(--bg-secondary);
+            background: var(--bg-input);
             color: var(--text-secondary);
-            font-size: 0.8em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
+            font-size: 0.75em; cursor: pointer;
+            transition: all 0.2s; text-align: center;
         }
-
-        .mood-btn:hover {
-            border-color: var(--accent-3);
-        }
-
+        .mood-btn:hover { border-color: var(--accent-3); }
         .mood-btn.active {
             background: linear-gradient(135deg, var(--accent-3), #0891b2);
-            border-color: transparent;
-            color: white;
+            border-color: transparent; color: #fff;
         }
-
-        .mood-btn .mood-emoji {
-            font-size: 1.4em;
-            display: block;
-            margin-bottom: 4px;
-        }
+        .mood-btn .me { font-size: 1.4em; display: block; margin-bottom: 3px; }
 
         /* Generate button */
-        .btn-generate {
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 14px;
+        .btn-gen {
+            width: 100%; padding: 16px;
+            border: none; border-radius: 13px;
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            color: white;
-            font-family: 'Inter', sans-serif;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 10px;
+            color: #fff; font-family: 'Inter', sans-serif;
+            font-size: 1.05em; font-weight: 700;
+            cursor: pointer; transition: all 0.3s;
+            position: relative; overflow: hidden;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-top: 8px;
         }
-
-        .btn-generate:hover:not(:disabled) {
+        .btn-gen:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 10px 40px rgba(124,58,237,0.4);
         }
-
-        .btn-generate:active:not(:disabled) {
-            transform: translateY(0);
+        .btn-gen:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-gen .shim {
+            position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            animation: shimmer 2.5s infinite;
         }
+        @keyframes shimmer { to { left: 100%; } }
 
-        .btn-generate:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
+        /* Active model indicator */
+        .model-indicator {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 14px; margin-bottom: 16px;
+            background: rgba(249,115,22,0.06);
+            border: 1px solid rgba(249,115,22,0.15);
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78em; color: var(--dev-accent);
         }
-
-        .btn-generate .shimmer {
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: shimmer 2s infinite;
+        .model-indicator .dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 6px var(--success);
+            animation: dotBlink 2s infinite;
         }
-
-        @keyframes shimmer {
-            to { left: 100%; }
+        @keyframes dotBlink {
+            0%,100% { opacity: 1; } 50% { opacity: 0.4; }
         }
 
         /* Result area */
-        .result-area {
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-        }
+        .result-area { min-height: 420px; display: flex; flex-direction: column; }
 
-        .result-placeholder {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-dim);
-            text-align: center;
-            padding: 40px;
+        .placeholder {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--text-dim); text-align: center; padding: 40px;
         }
+        .placeholder .big { font-size: 3.5em; margin-bottom: 14px; opacity: 0.5; }
 
-        .result-placeholder .big-icon {
-            font-size: 4em;
-            margin-bottom: 15px;
-            opacity: 0.5;
+        /* Loading */
+        .loading-wrap {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 40px;
         }
-
-        /* Loading animation */
-        .loading-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-        }
-
         .loading-bars {
-            display: flex;
-            gap: 6px;
-            align-items: end;
-            height: 60px;
-            margin-bottom: 20px;
+            display: flex; gap: 5px; align-items: end; height: 55px; margin-bottom: 18px;
         }
-
-        .loading-bar {
-            width: 8px;
-            border-radius: 4px;
-            animation: barBounce 1.2s ease-in-out infinite;
+        .lbar {
+            width: 7px; border-radius: 4px;
+            animation: lbarBounce 1.2s ease-in-out infinite;
         }
-
-        .loading-bar:nth-child(1) { background: var(--accent-1); animation-delay: 0s; }
-        .loading-bar:nth-child(2) { background: var(--accent-2); animation-delay: 0.1s; }
-        .loading-bar:nth-child(3) { background: var(--accent-3); animation-delay: 0.2s; }
-        .loading-bar:nth-child(4) { background: var(--accent-4); animation-delay: 0.3s; }
-        .loading-bar:nth-child(5) { background: var(--accent-1); animation-delay: 0.4s; }
-        .loading-bar:nth-child(6) { background: var(--accent-2); animation-delay: 0.5s; }
-        .loading-bar:nth-child(7) { background: var(--accent-3); animation-delay: 0.6s; }
-
-        @keyframes barBounce {
-            0%, 100% { height: 10px; }
-            50% { height: 55px; }
+        .lbar:nth-child(1) { background: var(--accent-1); animation-delay: 0s; }
+        .lbar:nth-child(2) { background: var(--accent-2); animation-delay: .1s; }
+        .lbar:nth-child(3) { background: var(--accent-3); animation-delay: .2s; }
+        .lbar:nth-child(4) { background: var(--accent-4); animation-delay: .3s; }
+        .lbar:nth-child(5) { background: var(--accent-1); animation-delay: .4s; }
+        .lbar:nth-child(6) { background: var(--accent-2); animation-delay: .5s; }
+        .lbar:nth-child(7) { background: var(--accent-3); animation-delay: .6s; }
+        @keyframes lbarBounce {
+            0%,100% { height: 8px; } 50% { height: 50px; }
         }
-
-        .loading-text {
-            color: var(--text-secondary);
-            font-size: 1em;
-        }
-
+        .loading-txt { color: var(--text-secondary); }
         .loading-step {
-            color: var(--accent-3);
-            font-size: 0.9em;
-            margin-top: 8px;
-            animation: fadeInOut 2s ease-in-out infinite;
+            color: var(--accent-3); font-size: 0.88em; margin-top: 6px;
+            animation: fadeIO 2s ease-in-out infinite;
         }
-
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
+        @keyframes fadeIO { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
 
         /* Song result */
         .song-result {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            animation: slideUp 0.6s ease;
+            flex: 1; display: flex; flex-direction: column;
+            animation: slideUp .5s ease;
         }
-
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(18px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .song-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
+        .song-hdr {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 18px; padding-bottom: 18px;
             border-bottom: 1px solid var(--border);
         }
-
         .song-cover {
-            width: 80px;
-            height: 80px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5em;
-            flex-shrink: 0;
-            position: relative;
-            overflow: hidden;
+            width: 72px; height: 72px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2em; flex-shrink: 0;
         }
-
-        .song-cover::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 14px;
-        }
-
-        .song-info h3 {
-            font-size: 1.2em;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .song-meta {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
+        .song-info h3 { font-size: 1.15em; font-weight: 700; margin-bottom: 5px; }
+        .song-meta { display: flex; gap: 8px; flex-wrap: wrap; }
         .song-tag {
-            font-size: 0.75em;
-            padding: 4px 10px;
-            border-radius: 10px;
-            background: rgba(124, 58, 237, 0.15);
-            color: var(--accent-1);
+            font-size: 0.72em; padding: 3px 9px; border-radius: 8px;
             font-weight: 500;
         }
-
-        .song-tag.mood-tag {
-            background: rgba(6, 182, 212, 0.15);
-            color: var(--accent-3);
+        .song-tag.g { background: rgba(124,58,237,.12); color: var(--accent-1); }
+        .song-tag.m { background: rgba(6,182,212,.12); color: var(--accent-3); }
+        .song-tag.model {
+            background: rgba(249,115,22,.12); color: var(--dev-accent);
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Lyrics display */
-        .lyrics-container {
-            flex: 1;
-            background: var(--bg-secondary);
-            border-radius: 14px;
-            padding: 20px;
-            margin-bottom: 15px;
-            max-height: 350px;
-            overflow-y: auto;
+        .lyrics-box {
+            flex: 1; background: var(--bg-input);
+            border-radius: 12px; padding: 18px;
+            max-height: 300px; overflow-y: auto;
             border: 1px solid var(--border);
+            margin-bottom: 14px;
         }
-
-        .lyrics-container::-webkit-scrollbar {
-            width: 6px;
+        .lyrics-box::-webkit-scrollbar { width: 5px; }
+        .lyrics-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .lyrics-sec {
+            color: var(--accent-2); font-weight: 700;
+            font-size: 0.82em; text-transform: uppercase;
+            letter-spacing: .5px; margin: 16px 0 6px;
         }
-
-        .lyrics-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .lyrics-container::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 3px;
-        }
-
-        .lyrics-section-tag {
-            color: var(--accent-2);
-            font-weight: 700;
-            font-size: 0.85em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            margin-top: 18px;
-        }
-
-        .lyrics-section-tag:first-child {
-            margin-top: 0;
-        }
-
-        .lyrics-line {
-            color: var(--text-primary);
-            line-height: 1.8;
-            font-size: 0.95em;
-        }
-
-        .lyrics-line.highlight {
-            color: var(--accent-3);
-            font-weight: 500;
-        }
-
-        /* Player controls */
-        .player-section {
-            background: var(--bg-secondary);
-            border-radius: 14px;
-            padding: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .progress-container {
-            margin-bottom: 12px;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 6px;
-            background: var(--border);
-            border-radius: 3px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
-            border-radius: 3px;
-            width: 0%;
-            transition: width 0.3s linear;
-            position: relative;
-        }
-
-        .progress-bar-fill::after {
-            content: '';
-            position: absolute;
-            right: -5px;
-            top: -4px;
-            width: 14px;
-            height: 14px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .progress-bar-bg:hover .progress-bar-fill::after {
-            opacity: 1;
-        }
-
-        .time-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75em;
-            color: var(--text-dim);
-            margin-top: 6px;
-        }
-
-        .player-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .ctrl-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 1.2em;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .ctrl-btn:hover {
-            color: var(--text-primary);
-            background: rgba(255,255,255,0.05);
-        }
-
-        .ctrl-btn.play-btn {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            color: white;
-            font-size: 1.5em;
-        }
-
-        .ctrl-btn.play-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 5px 25px rgba(124, 58, 237, 0.4);
-        }
-
-        /* Volume control */
-        .volume-section {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px;
-            justify-content: center;
-        }
-
-        .volume-slider {
-            -webkit-appearance: none;
-            width: 100px;
-            height: 4px;
-            border-radius: 2px;
-            background: var(--border);
-            outline: none;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--accent-1);
-            cursor: pointer;
-        }
-
-        /* Action buttons */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: var(--bg-secondary);
-            color: var(--text-secondary);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .action-btn:hover {
-            border-color: var(--accent-1);
-            color: var(--text-primary);
-            background: rgba(124, 58, 237, 0.1);
-        }
-
-        /* History section */
-        .history-section {
-            grid-column: 1 / -1;
-            margin-top: 10px;
-        }
-
-        .history-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .history-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            animation: slideUp 0.4s ease;
-        }
-
-        .history-card:hover {
-            border-color: var(--accent-1);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .history-card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .history-cover {
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-            flex-shrink: 0;
-        }
-
-        .history-card-header h4 {
-            font-size: 0.95em;
-            font-weight: 600;
-        }
-
-        .history-card-header .history-genre {
-            font-size: 0.75em;
-            color: var(--text-dim);
-        }
-
-        .history-lyrics-preview {
-            font-size: 0.8em;
-            color: var(--text-secondary);
-            line-height: 1.5;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .history-card .history-date {
-            font-size: 0.7em;
-            color: var(--text-dim);
-            margin-top: 8px;
-        }
-
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            padding: 14px 28px;
-            border-radius: 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--accent-1);
-            color: var(--text-primary);
-            font-size: 0.9em;
-            z-index: 1000;
-            transition: transform 0.4s ease;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* Error state */
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            color: var(--error);
-        }
-
-        .error-message .error-icon {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .error-message p {
-            margin-bottom: 10px;
-        }
-
-        .retry-btn {
-            padding: 10px 24px;
-            border-radius: 8px;
-            border: 1px solid var(--error);
-            background: transparent;
-            color: var(--error);
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .retry-btn:hover {
-            background: var(--error);
-            color: white;
-        }
+        .lyrics-sec:first-child { margin-top: 0; }
+        .lyrics-ln { line-height: 1.8; font-size: 0.92em; }
+        .lyrics-ln.hl { color: var(--accent-3); font-weight: 500; }
 
         /* Visualizer */
-        .visualizer-canvas {
-            width: 100%;
-            height: 60px;
-            border-radius: 10px;
-            margin-bottom: 10px;
+        .viz-canvas { width: 100%; height: 55px; border-radius: 10px; margin-bottom: 10px; }
+
+        /* Player */
+        .player-sec {
+            background: var(--bg-input);
+            border-radius: 12px; padding: 18px;
+            border: 1px solid var(--border);
+        }
+        .prog-bg {
+            width: 100%; height: 5px; background: var(--border);
+            border-radius: 3px; cursor: pointer; position: relative;
+        }
+        .prog-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            border-radius: 3px; width: 0%; transition: width .3s linear;
+        }
+        .time-labels {
+            display: flex; justify-content: space-between;
+            font-size: .72em; color: var(--text-dim); margin-top: 5px;
+        }
+        .p-ctrls {
+            display: flex; align-items: center;
+            justify-content: center; gap: 14px; margin-top: 12px;
+        }
+        .cbtn {
+            width: 42px; height: 42px; border-radius: 50%;
+            border: none; background: transparent;
+            color: var(--text-secondary); font-size: 1.1em;
+            cursor: pointer; transition: all .2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .cbtn:hover { color: var(--text-primary); background: rgba(255,255,255,.04); }
+        .cbtn.play {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: #fff; font-size: 1.3em;
+        }
+        .cbtn.play:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 25px rgba(124,58,237,.4);
+        }
+        .vol-sec {
+            display: flex; align-items: center; gap: 8px;
+            justify-content: center; margin-top: 10px;
+        }
+        .vol-sl {
+            -webkit-appearance: none; width: 100px; height: 4px;
+            border-radius: 2px; background: var(--border); outline: none;
+        }
+        .vol-sl::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px;
+            border-radius: 50%; background: var(--accent-1); cursor: pointer;
+        }
+        .speech-st {
+            text-align: center; font-size: .78em;
+            color: var(--accent-3); margin-top: 6px; min-height: 18px;
         }
 
-        /* Speech status */
-        .speech-status {
-            text-align: center;
-            font-size: 0.8em;
-            color: var(--accent-3);
-            margin-top: 8px;
-            min-height: 20px;
+        /* Action btns */
+        .act-btns { display: flex; gap: 8px; margin-top: 12px; }
+        .act-btn {
+            flex: 1; padding: 10px; border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-size: .82em; font-weight: 500;
+            cursor: pointer; transition: all .2s;
+            display: flex; align-items: center;
+            justify-content: center; gap: 5px;
+        }
+        .act-btn:hover {
+            border-color: var(--accent-1);
+            color: var(--text-primary);
         }
 
-        /* Footer */
+        /* History */
+        .hist-sec { grid-column: 1/-1; margin-top: 10px; }
+        .hist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 12px; margin-top: 14px;
+        }
+        .hist-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 13px; padding: 16px;
+            cursor: pointer; transition: all .3s;
+            animation: slideUp .4s ease;
+        }
+        .hist-card:hover {
+            border-color: var(--accent-1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,.3);
+        }
+        .hist-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .hist-cover {
+            width: 42px; height: 42px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4em; flex-shrink: 0;
+        }
+        .hist-hdr h4 { font-size: .9em; }
+        .hist-hdr .hist-genre { font-size: .72em; color: var(--text-dim); }
+        .hist-preview {
+            font-size: .78em; color: var(--text-secondary);
+            line-height: 1.5; display: -webkit-box;
+            -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .hist-date { font-size: .68em; color: var(--text-dim); margin-top: 6px; }
+        .hist-model {
+            font-size: .65em; color: var(--dev-accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Error */
+        .err-box {
+            background: rgba(239,68,68,.08);
+            border: 1px solid rgba(239,68,68,.25);
+            border-radius: 12px; padding: 20px;
+            text-align: center; color: var(--error);
+        }
+        .err-box .ei { font-size: 2em; margin-bottom: 8px; }
+        .retry-btn {
+            margin-top: 10px; padding: 8px 22px;
+            border-radius: 8px; border: 1px solid var(--error);
+            background: transparent; color: var(--error);
+            font-family: 'Inter', sans-serif; cursor: pointer;
+            transition: all .2s;
+        }
+        .retry-btn:hover { background: var(--error); color: #fff; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 28px; left: 50%;
+            transform: translateX(-50%) translateY(90px);
+            padding: 12px 24px; border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-1);
+            color: var(--text-primary); font-size: .88em;
+            z-index: 300; transition: transform .4s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,.5);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
         .footer {
-            text-align: center;
-            padding: 40px 0;
-            color: var(--text-dim);
-            font-size: 0.8em;
-            grid-column: 1 / -1;
+            text-align: center; padding: 30px 0;
+            color: var(--text-dim); font-size: .78em;
+            grid-column: 1/-1;
         }
+
+        /* Token counter */
+        .token-info {
+            display: flex; gap: 12px; margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .token-pill {
+            padding: 4px 10px; border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72em;
+            background: rgba(255,255,255,.03);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+        .token-pill .val { color: var(--accent-3); font-weight: 600; }
     </style>
 </head>
 <body>
-    <div class="bg-animation">
-        <div class="bg-orb"></div>
-        <div class="bg-orb"></div>
-        <div class="bg-orb"></div>
+    <div class="bg-anim">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
     </div>
 
-    <div class="container">
-        <header class="header">
-            <div class="logo">
-                <div class="logo-icon">🎵</div>
-                <h1>SongForge AI</h1>
-            </div>
-            <p>Создавайте уникальные песни с текстом и голосом с помощью ИИ</p>
-        </header>
+    <!-- Dev Toggle -->
+    <button class="dev-toggle" id="devToggle" title="Настройки разработчика">⚙️</button>
 
-        <div class="main-grid">
-            <!-- Left: Controls -->
-            <div class="card">
-                <div class="card-title">
-                    <span class="icon">✨</span>
-                    Создать песню
-                </div>
+    <!-- Dev Overlay -->
+    <div class="dev-overlay" id="devOverlay"></div>
 
-                <div class="form-group">
-                    <label>Тема / Описание</label>
-                    <textarea id="songTopic" placeholder="О чём ваша песня? Например: летняя ночь в городе, первая любовь, путешествие к звёздам...">Летняя ночь в большом городе, огни и мечты</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Жанр</label>
-                    <div class="genre-grid" id="genreGrid">
-                        <div class="genre-chip active" data-genre="Pop">🎤 Pop</div>
-                        <div class="genre-chip" data-genre="Rock">🎸 Rock</div>
-                        <div class="genre-chip" data-genre="Hip-Hop">🎧 Hip-Hop</div>
-                        <div class="genre-chip" data-genre="R&B">🎹 R&B</div>
-                        <div class="genre-chip" data-genre="Electronic">⚡ Electronic</div>
-                        <div class="genre-chip" data-genre="Jazz">🎷 Jazz</div>
-                        <div class="genre-chip" data-genre="Country">🤠 Country</div>
-                        <div class="genre-chip" data-genre="Indie">🌿 Indie</div>
-                        <div class="genre-chip" data-genre="Metal">🤘 Metal</div>
-                        <div class="genre-chip" data-genre="Lo-Fi">🌙 Lo-Fi</div>
-                        <div class="genre-chip" data-genre="Classical">🎻 Classical</div>
-                        <div class="genre-chip" data-genre="Reggaeton">💃 Reggaeton</div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Настроение</label>
-                    <div class="mood-grid" id="moodGrid">
-                        <div class="mood-btn active" data-mood="Весёлое">
-                            <span class="mood-emoji">😊</span>
-                            Весёлое
-                        </div>
-                        <div class="mood-btn" data-mood="Грустное">
-                            <span class="mood-emoji">😢</span>
-                            Грустное
-                        </div>
-                        <div class="mood-btn" data-mood="Романтичное">
-                            <span class="mood-emoji">❤️</span>
-                            Романтика
-                        </div>
-                        <div class="mood-btn" data-mood="Энергичное">
-                            <span class="mood-emoji">⚡</span>
-                            Энергия
-                        </div>
-                        <div class="mood-btn" data-mood="Мечтательное">
-                            <span class="mood-emoji">✨</span>
-                            Мечты
-                        </div>
-                        <div class="mood-btn" data-mood="Агрессивное">
-                            <span class="mood-emoji">🔥</span>
-                            Агрессия
-                        </div>
-                        <div class="mood-btn" data-mood="Спокойное">
-                            <span class="mood-emoji">🌊</span>
-                            Спокойно
-                        </div>
-                        <div class="mood-btn" data-mood="Ностальгия">
-                            <span class="mood-emoji">🌅</span>
-                            Ностальгия
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Язык</label>
-                    <select id="songLanguage">
-                        <option value="русский">🇷🇺 Русский</option>
-                        <option value="английский">🇬🇧 Английский</option>
-                        <option value="испанский">🇪🇸 Испанский</option>
-                        <option value="французский">🇫🇷 Французский</option>
-                        <option value="японский">🇯🇵 Японский</option>
-                        <option value="корейский">🇰🇷 Корейский</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Голос</label>
-                    <select id="voiceSelect">
-                        <!-- Will be populated dynamically -->
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Темп речи</label>
-                    <select id="speechRate">
-                        <option value="0.7">🐢 Медленно</option>
-                        <option value="0.85">🚶 Чуть медленнее</option>
-                        <option value="1" selected>🏃 Нормально</option>
-                        <option value="1.15">🏎️ Чуть быстрее</option>
-                        <option value="1.3">🚀 Быстро</option>
-                    </select>
-                </div>
-
-                <button class="btn-generate" id="generateBtn" onclick="generateSong()">
-                    <span class="shimmer"></span>
-                    🎵 Сгенерировать песню
-                </button>
-            </div>
-
-            <!-- Right: Result -->
-            <div class="card result-area" id="resultArea">
-                <div class="card-title">
-                    <span class="icon">🎶</span>
-                    Результат
-                </div>
-                <div class="result-placeholder" id="placeholder">
-                    <div class="big-icon">🎵</div>
-                    <p>Настройте параметры и нажмите<br>"Сгенерировать песню"</p>
-                </div>
-            </div>
-
-            <!-- History -->
-            <div class="history-section card" id="historySection" style="display:none">
-                <div class="card-title">
-                    <span class="icon">📚</span>
-                    История песен
-                </div>
-                <div class="history-grid" id="historyGrid"></div>
-            </div>
+    <!-- Dev Panel -->
+    <div class="dev-panel" id="devPanel">
+        <div class="dev-header">
+            <h2>⚙️ Developer Settings <span class="badge">DEV</span></h2>
+            <button class="dev-close" id="devClose">✕</button>
         </div>
+        <div class="dev-body">
 
-        <div class="footer">
-            SongForge AI — Powered by GPT4Free & Web Speech API
+            <!-- Model Selection -->
+            <div class="dev-section">
+                <div class="dev-section-header" data-section="model">
+                    🤖 Модель ИИ
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dev-section-body" data-section="model">
+                    <div class="dev-field">
+                        <label>Поиск и выбор модели</label>
+                        <div class="model-search-container">
+                            <span class="model-search-icon">🔍</span>
+                            <input type="text" class="model-search" id="modelSearch"
+                                   placeholder="Поиск модели..." autocomplete="off">
+                            <div class="model-dropdown" id="modelDropdown"></div>
+                        </div>
+                        <div class="current-model" id="currentModelDisplay">
+                            <span class="dot"></span>
+                            <span id="currentModelName">gpt-4.1</span>
+                        </div>
+                    </div>
+                    <div class="dev-field">
+                        <label>Или введите вручную</label>
+                        <input type="text" id="customModelInput" placeholder="e.g. gpt-4o-mini"
+                               value="">
+                    </div>
+                    <div class="dev-btn-row">
+                        <button class="dev-btn" onclick="applyCustomModel()">
+                            ✅ Применить
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generation Parameters -->
+            <div class="dev-section">
+                <div class="dev-section-header" data-section="params">
+                    🎛️ Параметры генерации
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dev-section-body" data-section="params">
+                    <div class="dev-field">
+                        <label>Temperature <span class="hint">(креативность)</span></label>
+                        <div class="range-row">
+                            <input type="range" id="temperature" min="0" max="2" step="0.05" value="0.9">
+                            <span class="range-val" id="tempVal">0.9</span>
+                        </div>
+                    </div>
+                    <div class="dev-field">
+                        <label>Top P <span class="hint">(nucleus sampling)</span></label>
+                        <div class="range-row">
+                            <input type="range" id="topP" min="0" max="1" step="0.05" value="0.95">
+                            <span class="range-val" id="topPVal">0.95</span>
+                        </div>
+                    </div>
+                    <div class="dev-field">
+                        <label>Max Tokens</label>
+                        <input type="number" id="maxTokens" value="2048" min="256" max="16384" step="256">
+                    </div>
+                    <div class="dev-field">
+                        <label>Frequency Penalty</label>
+                        <div class="range-row">
+                            <input type="range" id="freqPenalty" min="0" max="2" step="0.1" value="0.3">
+                            <span class="range-val" id="freqVal">0.3</span>
+                        </div>
+                    </div>
+                    <div class="dev-field">
+                        <label>Presence Penalty</label>
+                        <div class="range-row">
+                            <input type="range" id="presPenalty" min="0" max="2" step="0.1" value="0.2">
+                            <span class="range-val" id="presVal">0.2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Prompt -->
+            <div class="dev-section">
+                <div class="dev-section-header" data-section="prompt">
+                    📝 System Prompt
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dev-section-body" data-section="prompt">
+                    <div class="dev-field">
+                        <label>Системный промпт <span class="hint">(предустановка)</span></label>
+                        <textarea id="systemPrompt">Ты — профессиональный автор песен мирового уровня. Ты создаёшь уникальные, поэтичные тексты песен с рифмами, метафорами и эмоциональной глубиной. Всегда следуй заданному формату.</textarea>
+                    </div>
+                    <div class="dev-btn-row">
+                        <button class="dev-btn" onclick="resetSystemPrompt()">🔄 Сбросить</button>
+                        <button class="dev-btn" onclick="copySystemPrompt()">📋 Копировать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced -->
+            <div class="dev-section">
+                <div class="dev-section-header" data-section="advanced">
+                    🔬 Расширенные
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dev-section-body" data-section="advanced">
+                    <div class="toggle-row">
+                        <span>🔄 Streaming режим</span>
+                        <div class="toggle-switch" id="toggleStream" data-on="false"></div>
+                    </div>
+                    <div class="toggle-row">
+                        <span>📊 Показывать токены</span>
+                        <div class="toggle-switch on" id="toggleTokens" data-on="true"></div>
+                    </div>
+                    <div class="toggle-row">
+                        <span>🪲 Debug логи</span>
+                        <div class="toggle-switch" id="toggleDebug" data-on="false"></div>
+                    </div>
+                    <div class="toggle-row">
+                        <span>💾 Авто-сохранение</span>
+                        <div class="toggle-switch on" id="toggleAutoSave" data-on="true"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Console -->
+            <div class="dev-section">
+                <div class="dev-section-header" data-section="console">
+                    🖥️ Консоль
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dev-section-body" data-section="console">
+                    <div class="console-log" id="consoleLog">
+                        <div class="console-line info"><span class="ts">[init]</span> SongForge AI Pro загружен</div>
+                        <div class="console-line info"><span class="ts">[init]</span> Модель: gpt-4.1</div>
+                    </div>
+                    <div class="dev-btn-row">
+                        <button class="dev-btn" onclick="clearConsole()">🧹 Очистить</button>
+                        <button class="dev-btn" onclick="testConnection()">🔌 Тест API</button>
+                        <button class="dev-btn danger" onclick="clearAllData()">🗑️ Сброс</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Presets -->
+            <div class="dev-section">
+                <div class="dev-section-header" data-section="presets">
+                    💎 Пресеты
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dev-section-body" data-section="presets">
+                    <div class="dev-btn-row" style="flex-wrap:wrap">
+                        <button class="dev-btn" onclick="loadPreset('creative')" style="flex:1 1 45%">
+                            🎨 Креативный
+                        </button>
+                        <button class="dev-btn" onclick="loadPreset('precise')" style="flex:1 1 45%">
+                            🎯 Точный
+                        </button>
+                        <button class="dev-btn" onclick="loadPreset('balanced')" style="flex:1 1 45%">
+                            ⚖️ Баланс
+                        </button>
+                        <button class="dev-btn" onclick="loadPreset('wild')" style="flex:1 1 45%">
+                            🌪️ Безумный
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app">
+        <div class="container">
+            <header class="header">
+                <div class="logo">
+                    <div class="logo-icon">🎵</div>
+                    <h1>SongForge AI</h1>
+                </div>
+                <p class="sub">Создавай песни с ИИ — текст, голос, визуализация</p>
+            </header>
+
+            <div class="main-grid">
+                <!-- Left -->
+                <div class="card">
+                    <div class="card-title">✨ Создать песню</div>
+
+                    <!-- Model indicator -->
+                    <div class="model-indicator" id="modelIndicator">
+                        <span class="dot"></span>
+                        Модель: <strong id="activeModelLabel">gpt-4.1</strong>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Тема / Описание</label>
+                        <textarea id="songTopic" placeholder="О чём ваша песня?...">Летняя ночь в большом городе, огни и мечты</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Жанр</label>
+                        <div class="chip-grid" id="genreGrid">
+                            <div class="chip active" data-v="Pop">🎤 Pop</div>
+                            <div class="chip" data-v="Rock">🎸 Rock</div>
+                            <div class="chip" data-v="Hip-Hop">🎧 Hip-Hop</div>
+                            <div class="chip" data-v="R&B">🎹 R&B</div>
+                            <div class="chip" data-v="Electronic">⚡ Electronic</div>
+                            <div class="chip" data-v="Jazz">🎷 Jazz</div>
+                            <div class="chip" data-v="Country">🤠 Country</div>
+                            <div class="chip" data-v="Indie">🌿 Indie</div>
+                            <div class="chip" data-v="Metal">🤘 Metal</div>
+                            <div class="chip" data-v="Lo-Fi">🌙 Lo-Fi</div>
+                            <div class="chip" data-v="Reggaeton">💃 Reggaeton</div>
+                            <div class="chip" data-v="K-Pop">🇰🇷 K-Pop</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Настроение</label>
+                        <div class="mood-grid" id="moodGrid">
+                            <div class="mood-btn active" data-v="Весёлое"><span class="me">😊</span>Весёлое</div>
+                            <div class="mood-btn" data-v="Грустное"><span class="me">😢</span>Грустное</div>
+                            <div class="mood-btn" data-v="Романтичное"><span class="me">❤️</span>Романтика</div>
+                            <div class="mood-btn" data-v="Энергичное"><span class="me">⚡</span>Энергия</div>
+                            <div class="mood-btn" data-v="Мечтательное"><span class="me">✨</span>Мечты</div>
+                            <div class="mood-btn" data-v="Агрессивное"><span class="me">🔥</span>Агрессия</div>
+                            <div class="mood-btn" data-v="Спокойное"><span class="me">🌊</span>Спокойно</div>
+                            <div class="mood-btn" data-v="Ностальгия"><span class="me">🌅</span>Ностальгия</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Язык</label>
+                        <select id="songLang">
+                            <option value="русский">🇷🇺 Русский</option>
+                            <option value="английский">🇬🇧 Английский</option>
+                            <option value="испанский">🇪🇸 Испанский</option>
+                            <option value="французский">🇫🇷 Французский</option>
+                            <option value="японский">🇯🇵 Японский</option>
+                            <option value="корейский">🇰🇷 Корейский</option>
+                            <option value="немецкий">🇩🇪 Немецкий</option>
+                            <option value="итальянский">🇮🇹 Итальянский</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Голос</label>
+                        <select id="voiceSelect"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Темп речи</label>
+                        <select id="speechRate">
+                            <option value="0.6">🐢 Очень медленно</option>
+                            <option value="0.8">🚶 Медленно</option>
+                            <option value="1" selected>🏃 Нормально</option>
+                            <option value="1.2">🏎️ Быстро</option>
+                            <option value="1.5">🚀 Очень быстро</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-gen" id="genBtn" onclick="generateSong()">
+                        <span class="shim"></span>
+                        🎵 Сгенерировать песню
+                    </button>
+
+                    <div class="token-info" id="tokenInfo" style="display:none">
+                        <div class="token-pill">Промпт: <span class="val" id="promptTokens">0</span> tok</div>
+                        <div class="token-pill">Ответ: <span class="val" id="responseTokens">0</span> tok</div>
+                        <div class="token-pill">Время: <span class="val" id="genTime">0</span>s</div>
+                    </div>
+                </div>
+
+                <!-- Right -->
+                <div class="card result-area" id="resultArea">
+                    <div class="card-title">🎶 Результат</div>
+                    <div class="placeholder" id="ph">
+                        <div class="big">🎵</div>
+                        <p>Настройте параметры и нажмите «Сгенерировать»</p>
+                    </div>
+                </div>
+
+                <!-- History -->
+                <div class="card hist-sec" id="histSec" style="display:none">
+                    <div class="card-title">📚 История песен</div>
+                    <div class="hist-grid" id="histGrid"></div>
+                </div>
+            </div>
+
+            <div class="footer">SongForge AI Pro — GPT4Free + Web Speech API</div>
         </div>
     </div>
 
@@ -1011,185 +1102,502 @@
 
         const client = new Client();
 
-        // State
-        let currentSong = null;
-        let speechSynth = window.speechSynthesis;
-        let currentUtterance = null;
-        let isPlaying = false;
-        let songHistory = JSON.parse(localStorage.getItem('songHistory') || '[]');
-        let animationFrame = null;
-        let audioContext = null;
-        let analyser = null;
-
-        // Genre covers
-        const genreCovers = {
-            'Pop': { bg: 'linear-gradient(135deg, #ec4899, #f59e0b)', emoji: '🎤' },
-            'Rock': { bg: 'linear-gradient(135deg, #ef4444, #7c3aed)', emoji: '🎸' },
-            'Hip-Hop': { bg: 'linear-gradient(135deg, #f59e0b, #ef4444)', emoji: '🎧' },
-            'R&B': { bg: 'linear-gradient(135deg, #8b5cf6, #ec4899)', emoji: '🎹' },
-            'Electronic': { bg: 'linear-gradient(135deg, #06b6d4, #7c3aed)', emoji: '⚡' },
-            'Jazz': { bg: 'linear-gradient(135deg, #f59e0b, #78350f)', emoji: '🎷' },
-            'Country': { bg: 'linear-gradient(135deg, #d97706, #65a30d)', emoji: '🤠' },
-            'Indie': { bg: 'linear-gradient(135deg, #10b981, #06b6d4)', emoji: '🌿' },
-            'Metal': { bg: 'linear-gradient(135deg, #374151, #ef4444)', emoji: '🤘' },
-            'Lo-Fi': { bg: 'linear-gradient(135deg, #6366f1, #8b5cf6)', emoji: '🌙' },
-            'Classical': { bg: 'linear-gradient(135deg, #c4b5a0, #92400e)', emoji: '🎻' },
-            'Reggaeton': { bg: 'linear-gradient(135deg, #ef4444, #f59e0b)', emoji: '💃' },
+        // ═══════════════════════════════════
+        //  ALL AVAILABLE MODELS
+        // ═══════════════════════════════════
+        const ALL_MODELS = {
+            'OpenAI': [
+                { id: 'gpt-4.1', badge: 'popular', label: 'GPT-4.1' },
+                { id: 'gpt-4.1-mini', badge: 'new', label: 'GPT-4.1 Mini' },
+                { id: 'gpt-4.1-nano', badge: 'new', label: 'GPT-4.1 Nano' },
+                { id: 'gpt-4', badge: '', label: 'GPT-4' },
+                { id: 'gpt-4o', badge: 'popular', label: 'GPT-4o' },
+                { id: 'gpt-4o-mini', badge: 'free', label: 'GPT-4o Mini' },
+                { id: 'gpt-4-turbo', badge: '', label: 'GPT-4 Turbo' },
+                { id: 'gpt-3.5-turbo', badge: 'free', label: 'GPT-3.5 Turbo' },
+                { id: 'o1', badge: '', label: 'O1' },
+                { id: 'o1-mini', badge: '', label: 'O1 Mini' },
+                { id: 'o1-preview', badge: '', label: 'O1 Preview' },
+                { id: 'o3-mini', badge: 'new', label: 'O3 Mini' },
+                { id: 'o4-mini', badge: 'new', label: 'O4 Mini' },
+            ],
+            'Meta Llama': [
+                { id: 'llama-3.3-70b', badge: 'popular', label: 'Llama 3.3 70B' },
+                { id: 'llama-3.2-90b', badge: '', label: 'Llama 3.2 90B' },
+                { id: 'llama-3.2-11b', badge: 'free', label: 'Llama 3.2 11B' },
+                { id: 'llama-3.1-405b', badge: '', label: 'Llama 3.1 405B' },
+                { id: 'llama-3.1-70b', badge: 'free', label: 'Llama 3.1 70B' },
+                { id: 'llama-3.1-8b', badge: 'free', label: 'Llama 3.1 8B' },
+                { id: 'llama-4-scout', badge: 'new', label: 'Llama 4 Scout' },
+                { id: 'llama-4-maverick', badge: 'new', label: 'Llama 4 Maverick' },
+            ],
+            'DeepSeek': [
+                { id: 'deepseek-v3', badge: 'popular', label: 'DeepSeek V3' },
+                { id: 'deepseek-r1', badge: 'popular', label: 'DeepSeek R1' },
+                { id: 'deepseek-chat', badge: 'free', label: 'DeepSeek Chat' },
+                { id: 'deepseek-r1-distill-llama-70b', badge: '', label: 'R1 Distill Llama 70B' },
+            ],
+            'Google': [
+                { id: 'gemini-2.5-pro', badge: 'new', label: 'Gemini 2.5 Pro' },
+                { id: 'gemini-2.5-flash', badge: 'new', label: 'Gemini 2.5 Flash' },
+                { id: 'gemini-2.0-flash', badge: 'popular', label: 'Gemini 2.0 Flash' },
+                { id: 'gemini-pro', badge: 'free', label: 'Gemini Pro' },
+                { id: 'gemma-2-27b', badge: 'free', label: 'Gemma 2 27B' },
+                { id: 'gemma-3', badge: 'new', label: 'Gemma 3' },
+            ],
+            'Anthropic': [
+                { id: 'claude-3.7-sonnet', badge: 'new', label: 'Claude 3.7 Sonnet' },
+                { id: 'claude-3.5-sonnet', badge: 'popular', label: 'Claude 3.5 Sonnet' },
+                { id: 'claude-3-opus', badge: '', label: 'Claude 3 Opus' },
+                { id: 'claude-3-sonnet', badge: '', label: 'Claude 3 Sonnet' },
+                { id: 'claude-3-haiku', badge: 'free', label: 'Claude 3 Haiku' },
+                { id: 'claude-sonnet-4', badge: 'new', label: 'Claude Sonnet 4' },
+            ],
+            'Qwen': [
+                { id: 'qwen-2.5-72b', badge: 'popular', label: 'Qwen 2.5 72B' },
+                { id: 'qwen-2.5-coder-32b', badge: '', label: 'Qwen 2.5 Coder 32B' },
+                { id: 'qwen-qwq-32b', badge: '', label: 'Qwen QwQ 32B' },
+                { id: 'qwen-turbo', badge: 'free', label: 'Qwen Turbo' },
+                { id: 'qwen3-235b', badge: 'new', label: 'Qwen3 235B' },
+                { id: 'qwen3-32b', badge: 'new', label: 'Qwen3 32B' },
+                { id: 'qwen3-30b', badge: 'new', label: 'Qwen3 30B' },
+                { id: 'qwq-32b', badge: 'popular', label: 'QwQ 32B' },
+            ],
+            'Mistral': [
+                { id: 'mistral-large', badge: 'popular', label: 'Mistral Large' },
+                { id: 'mistral-small', badge: 'free', label: 'Mistral Small' },
+                { id: 'mixtral-8x7b', badge: 'free', label: 'Mixtral 8x7B' },
+                { id: 'mistral-nemo', badge: '', label: 'Mistral Nemo' },
+            ],
+            'Microsoft': [
+                { id: 'phi-4', badge: 'new', label: 'Phi-4' },
+                { id: 'phi-3.5-mini', badge: 'free', label: 'Phi 3.5 Mini' },
+                { id: 'mai-ds-r1', badge: 'new', label: 'MAI DS R1' },
+            ],
+            'xAI': [
+                { id: 'grok-3', badge: 'new', label: 'Grok 3' },
+                { id: 'grok-3-mini', badge: 'new', label: 'Grok 3 Mini' },
+                { id: 'grok-2', badge: 'popular', label: 'Grok 2' },
+                { id: 'grok-beta', badge: '', label: 'Grok Beta' },
+            ],
+            'Nvidia': [
+                { id: 'nemotron-70b', badge: '', label: 'Nemotron 70B' },
+                { id: 'llama-3.1-nemotron-70b', badge: '', label: 'Llama 3.1 Nemotron 70B' },
+            ],
+            'Other': [
+                { id: 'command-r-plus', badge: '', label: 'Command R+' },
+                { id: 'command-r', badge: 'free', label: 'Command R' },
+                { id: 'dbrx-instruct', badge: '', label: 'DBRX Instruct' },
+                { id: 'sparkdesk-v5.5', badge: '', label: 'SparkDesk V5.5' },
+                { id: 'yi-34b', badge: 'free', label: 'Yi 34B' },
+                { id: 'sonar-pro', badge: 'new', label: 'Sonar Pro' },
+                { id: 'sonar', badge: '', label: 'Sonar' },
+                { id: 'glm-4', badge: '', label: 'GLM-4' },
+            ]
         };
 
-        // Initialize voices
-        function populateVoices() {
-            const voiceSelect = document.getElementById('voiceSelect');
-            const voices = speechSynth.getVoices();
-            voiceSelect.innerHTML = '';
+        // State
+        let currentModel = localStorage.getItem('sf_model') || 'gpt-4.1';
+        let currentSong = null;
+        let songHistory = JSON.parse(localStorage.getItem('sf_history') || '[]');
+        let isPlaying = false;
+        let currentUtterance = null;
+        let animFrame = null;
 
-            // Group by language
-            const ruVoices = voices.filter(v => v.lang.startsWith('ru'));
-            const enVoices = voices.filter(v => v.lang.startsWith('en'));
-            const otherVoices = voices.filter(v => !v.lang.startsWith('ru') && !v.lang.startsWith('en'));
+        const DEFAULT_SYSTEM = `Ты — профессиональный автор песен мирового уровня. Ты создаёшь уникальные, поэтичные тексты песен с рифмами, метафорами и эмоциональной глубиной. Всегда следуй заданному формату.`;
 
-            function addVoiceOptions(vList, label) {
-                if (vList.length === 0) return;
-                const group = document.createElement('optgroup');
-                group.label = label;
-                vList.forEach((v, i) => {
-                    const opt = document.createElement('option');
-                    opt.value = voices.indexOf(v);
-                    opt.textContent = `${v.name} (${v.lang})`;
-                    group.appendChild(opt);
+        const genreCovers = {
+            'Pop': { bg: 'linear-gradient(135deg,#ec4899,#f59e0b)', e: '🎤' },
+            'Rock': { bg: 'linear-gradient(135deg,#ef4444,#7c3aed)', e: '🎸' },
+            'Hip-Hop': { bg: 'linear-gradient(135deg,#f59e0b,#ef4444)', e: '🎧' },
+            'R&B': { bg: 'linear-gradient(135deg,#8b5cf6,#ec4899)', e: '🎹' },
+            'Electronic': { bg: 'linear-gradient(135deg,#06b6d4,#7c3aed)', e: '⚡' },
+            'Jazz': { bg: 'linear-gradient(135deg,#f59e0b,#78350f)', e: '🎷' },
+            'Country': { bg: 'linear-gradient(135deg,#d97706,#65a30d)', e: '🤠' },
+            'Indie': { bg: 'linear-gradient(135deg,#10b981,#06b6d4)', e: '🌿' },
+            'Metal': { bg: 'linear-gradient(135deg,#374151,#ef4444)', e: '🤘' },
+            'Lo-Fi': { bg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', e: '🌙' },
+            'Reggaeton': { bg: 'linear-gradient(135deg,#ef4444,#f59e0b)', e: '💃' },
+            'K-Pop': { bg: 'linear-gradient(135deg,#ec4899,#06b6d4)', e: '🇰🇷' },
+        };
+
+        // ═══ DEV PANEL LOGIC ═══
+        const devToggle = document.getElementById('devToggle');
+        const devPanel = document.getElementById('devPanel');
+        const devOverlay = document.getElementById('devOverlay');
+        const devClose = document.getElementById('devClose');
+
+        function openDev() {
+            devPanel.classList.add('open');
+            devOverlay.classList.add('open');
+            devToggle.classList.add('active');
+        }
+        function closeDev() {
+            devPanel.classList.remove('open');
+            devOverlay.classList.remove('open');
+            devToggle.classList.remove('active');
+        }
+        devToggle.onclick = () => devPanel.classList.contains('open') ? closeDev() : openDev();
+        devClose.onclick = closeDev;
+        devOverlay.onclick = closeDev;
+
+        // Section collapse
+        document.querySelectorAll('.dev-section-header').forEach(h => {
+            h.addEventListener('click', () => {
+                const sec = h.dataset.section;
+                const body = document.querySelector(`.dev-section-body[data-section="${sec}"]`);
+                h.classList.toggle('collapsed');
+                body.classList.toggle('collapsed');
+            });
+        });
+
+        // Toggle switches
+        document.querySelectorAll('.toggle-switch').forEach(sw => {
+            sw.addEventListener('click', () => {
+                const isOn = sw.dataset.on === 'true';
+                sw.dataset.on = (!isOn).toString();
+                sw.classList.toggle('on', !isOn);
+                devLog('info', `${sw.id}: ${!isOn}`);
+            });
+        });
+
+        // Range sliders
+        ['temperature', 'topP', 'freqPenalty', 'presPenalty'].forEach(id => {
+            const el = document.getElementById(id);
+            const valMap = { temperature: 'tempVal', topP: 'topPVal', freqPenalty: 'freqVal', presPenalty: 'presVal' };
+            if (el) {
+                el.addEventListener('input', () => {
+                    document.getElementById(valMap[id]).textContent = el.value;
                 });
-                voiceSelect.appendChild(group);
+            }
+        });
+
+        // ═══ MODEL SEARCH & SELECT ═══
+        const modelSearch = document.getElementById('modelSearch');
+        const modelDropdown = document.getElementById('modelDropdown');
+
+        function renderModelDropdown(filter = '') {
+            modelDropdown.innerHTML = '';
+            const f = filter.toLowerCase();
+            let hasResults = false;
+
+            for (const [category, models] of Object.entries(ALL_MODELS)) {
+                const filtered = models.filter(m =>
+                    m.id.toLowerCase().includes(f) ||
+                    m.label.toLowerCase().includes(f) ||
+                    category.toLowerCase().includes(f)
+                );
+                if (filtered.length === 0) continue;
+                hasResults = true;
+
+                const catDiv = document.createElement('div');
+                catDiv.className = 'model-category';
+                catDiv.textContent = category;
+                modelDropdown.appendChild(catDiv);
+
+                filtered.forEach(m => {
+                    const opt = document.createElement('div');
+                    opt.className = 'model-option' + (m.id === currentModel ? ' selected' : '');
+                    opt.innerHTML = `
+                        <span class="model-name">${m.label}</span>
+                        ${m.badge ? `<span class="model-badge ${m.badge}">${m.badge}</span>` : ''}
+                        <span class="model-provider">${m.id}</span>
+                    `;
+                    opt.addEventListener('click', () => selectModel(m.id));
+                    modelDropdown.appendChild(opt);
+                });
             }
 
-            addVoiceOptions(ruVoices, '🇷🇺 Русский');
-            addVoiceOptions(enVoices, '🇬🇧 English');
-            addVoiceOptions(otherVoices, '🌍 Other');
-
-            if (voices.length === 0) {
-                const opt = document.createElement('option');
-                opt.textContent = 'Загрузка голосов...';
-                voiceSelect.appendChild(opt);
+            if (!hasResults) {
+                modelDropdown.innerHTML = `
+                    <div style="padding:20px;text-align:center;color:var(--text-dim);font-size:0.85em">
+                        Модель не найдена. Введите ID вручную ниже.
+                    </div>
+                `;
             }
         }
 
-        speechSynth.onvoiceschanged = populateVoices;
+        modelSearch.addEventListener('focus', () => {
+            renderModelDropdown(modelSearch.value);
+            modelDropdown.classList.add('open');
+        });
+        modelSearch.addEventListener('input', () => {
+            renderModelDropdown(modelSearch.value);
+            modelDropdown.classList.add('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.model-search-container')) {
+                modelDropdown.classList.remove('open');
+            }
+        });
+
+        function selectModel(modelId) {
+            currentModel = modelId;
+            localStorage.setItem('sf_model', modelId);
+            document.getElementById('currentModelName').textContent = modelId;
+            document.getElementById('activeModelLabel').textContent = modelId;
+            document.getElementById('customModelInput').value = '';
+            modelSearch.value = '';
+            modelDropdown.classList.remove('open');
+            devLog('success', `Модель: ${modelId}`);
+            showToast(`🤖 Модель: ${modelId}`);
+        }
+
+        window.applyCustomModel = function () {
+            const v = document.getElementById('customModelInput').value.trim();
+            if (v) {
+                selectModel(v);
+            }
+        };
+
+        // ═══ PRESETS ═══
+        window.loadPreset = function (name) {
+            const presets = {
+                creative: { temp: 1.4, topP: 0.95, freq: 0.5, pres: 0.4 },
+                precise: { temp: 0.3, topP: 0.8, freq: 0.1, pres: 0.1 },
+                balanced: { temp: 0.9, topP: 0.95, freq: 0.3, pres: 0.2 },
+                wild: { temp: 2.0, topP: 1.0, freq: 0.7, pres: 0.6 }
+            };
+            const p = presets[name];
+            if (!p) return;
+            document.getElementById('temperature').value = p.temp;
+            document.getElementById('tempVal').textContent = p.temp;
+            document.getElementById('topP').value = p.topP;
+            document.getElementById('topPVal').textContent = p.topP;
+            document.getElementById('freqPenalty').value = p.freq;
+            document.getElementById('freqVal').textContent = p.freq;
+            document.getElementById('presPenalty').value = p.pres;
+            document.getElementById('presVal').textContent = p.pres;
+            devLog('info', `Пресет: ${name}`);
+            showToast(`💎 Пресет "${name}" применён`);
+        };
+
+        // ═══ CONSOLE ═══
+        function devLog(type, msg) {
+            if (document.getElementById('toggleDebug').dataset.on === 'false' && type !== 'success' && type !== 'error') return;
+            const log = document.getElementById('consoleLog');
+            const ts = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = `console-line ${type}`;
+            line.innerHTML = `<span class="ts">[${ts}]</span> ${msg}`;
+            log.appendChild(line);
+            log.scrollTop = log.scrollHeight;
+        }
+        // Always log important
+        function forceLog(type, msg) {
+            const log = document.getElementById('consoleLog');
+            const ts = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = `console-line ${type}`;
+            line.innerHTML = `<span class="ts">[${ts}]</span> ${msg}`;
+            log.appendChild(line);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        window.clearConsole = function () {
+            document.getElementById('consoleLog').innerHTML = '';
+            forceLog('info', 'Консоль очищена');
+        };
+
+        window.testConnection = async function () {
+            forceLog('info', `Тест: ${currentModel}...`);
+            try {
+                const r = await client.chat.completions.create({
+                    model: currentModel,
+                    messages: [{ role: 'user', content: 'Say "OK" in one word.' }]
+                });
+                const resp = r.choices?.[0]?.message?.content || 'empty';
+                forceLog('success', `✅ Ответ: "${resp.substring(0, 50)}"`);
+                showToast('✅ API работает!');
+            } catch (e) {
+                forceLog('error', `❌ ${e.message}`);
+                showToast('❌ Ошибка API');
+            }
+        };
+
+        window.clearAllData = function () {
+            if (confirm('Удалить всю историю и настройки?')) {
+                localStorage.clear();
+                songHistory = [];
+                renderHistory();
+                forceLog('warn', 'Все данные удалены');
+                showToast('🗑️ Данные очищены');
+            }
+        };
+
+        window.resetSystemPrompt = function () {
+            document.getElementById('systemPrompt').value = DEFAULT_SYSTEM;
+            showToast('🔄 Промпт сброшен');
+        };
+        window.copySystemPrompt = function () {
+            navigator.clipboard.writeText(document.getElementById('systemPrompt').value);
+            showToast('📋 Скопировано');
+        };
+
+        // ═══ VOICES ═══
+        const synth = window.speechSynthesis;
+        function populateVoices() {
+            const sel = document.getElementById('voiceSelect');
+            const voices = synth.getVoices();
+            sel.innerHTML = '';
+            const groups = { ru: [], en: [], other: [] };
+            voices.forEach((v, i) => {
+                const key = v.lang.startsWith('ru') ? 'ru' : v.lang.startsWith('en') ? 'en' : 'other';
+                groups[key].push({ v, i });
+            });
+            function addGroup(arr, label) {
+                if (!arr.length) return;
+                const g = document.createElement('optgroup');
+                g.label = label;
+                arr.forEach(({ v, i }) => {
+                    const o = document.createElement('option');
+                    o.value = i; o.textContent = `${v.name} (${v.lang})`;
+                    g.appendChild(o);
+                });
+                sel.appendChild(g);
+            }
+            addGroup(groups.ru, '🇷🇺 Русский');
+            addGroup(groups.en, '🇬🇧 English');
+            addGroup(groups.other, '🌍 Other');
+        }
+        synth.onvoiceschanged = populateVoices;
         populateVoices();
 
-        // Genre selection
-        document.getElementById('genreGrid').addEventListener('click', (e) => {
-            const chip = e.target.closest('.genre-chip');
-            if (!chip) return;
-            document.querySelectorAll('.genre-chip').forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
+        // ═══ CHIP & MOOD SELECTION ═══
+        document.getElementById('genreGrid').addEventListener('click', e => {
+            const c = e.target.closest('.chip');
+            if (!c) return;
+            document.querySelectorAll('#genreGrid .chip').forEach(x => x.classList.remove('active'));
+            c.classList.add('active');
+        });
+        document.getElementById('moodGrid').addEventListener('click', e => {
+            const b = e.target.closest('.mood-btn');
+            if (!b) return;
+            document.querySelectorAll('#moodGrid .mood-btn').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
         });
 
-        // Mood selection
-        document.getElementById('moodGrid').addEventListener('click', (e) => {
-            const btn = e.target.closest('.mood-btn');
-            if (!btn) return;
-            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        });
-
-        // Generate song
+        // ═══ GENERATE SONG ═══
         window.generateSong = async function () {
             const topic = document.getElementById('songTopic').value.trim();
-            const genre = document.querySelector('.genre-chip.active')?.dataset.genre || 'Pop';
-            const mood = document.querySelector('.mood-btn.active')?.dataset.mood || 'Весёлое';
-            const language = document.getElementById('songLanguage').value;
+            const genre = document.querySelector('#genreGrid .chip.active')?.dataset.v || 'Pop';
+            const mood = document.querySelector('#moodGrid .mood-btn.active')?.dataset.v || 'Весёлое';
+            const lang = document.getElementById('songLang').value;
 
-            if (!topic) {
-                showToast('❌ Введите тему песни!');
-                return;
-            }
+            if (!topic) { showToast('❌ Введите тему!'); return; }
 
-            const btn = document.getElementById('generateBtn');
+            const btn = document.getElementById('genBtn');
             btn.disabled = true;
-            btn.innerHTML = '⏳ Генерация...';
-
-            stopPlayback();
+            btn.textContent = '⏳ Генерация...';
+            stopPlay();
             showLoading();
 
-            try {
-                const prompt = `Ты — профессиональный автор песен. Создай полную песню на ${language} языке.
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            const topP = parseFloat(document.getElementById('topP').value);
+            const maxTokens = parseInt(document.getElementById('maxTokens').value);
+            const freqPenalty = parseFloat(document.getElementById('freqPenalty').value);
+            const presPenalty = parseFloat(document.getElementById('presPenalty').value);
+            const sysPrompt = document.getElementById('systemPrompt').value.trim();
+
+            const userPrompt = `Создай полную песню на ${lang} языке.
 
 Тема: ${topic}
 Жанр: ${genre}
 Настроение: ${mood}
 
-ФОРМАТ ОТВЕТА (СТРОГО):
-TITLE: [Название песни]
+ФОРМАТ (СТРОГО):
+TITLE: [Название]
 ---
 [Verse 1]
-(4-6 строк текста)
+(4-6 строк)
 
 [Chorus]
-(4-6 строк текста)
+(4-6 строк)
 
 [Verse 2]
-(4-6 строк текста)
+(4-6 строк)
 
 [Chorus]
-(4-6 строк текста)
+(повтор)
 
 [Bridge]
-(2-4 строки текста)
+(2-4 строки)
 
 [Outro]
-(2-4 строки текста)
+(2-4 строки)
 
 Правила:
-- Текст должен быть поэтичным, с рифмами
-- Используй метафоры и образы
-- Припев должен быть запоминающимся
-- Стиль должен соответствовать жанру ${genre}
-- Настроение: ${mood}
-- Пиши ТОЛЬКО на ${language} языке
-- НЕ добавляй пояснений, только текст песни`;
+- Поэтичный текст с рифмами
+- Метафоры и образы
+- Запоминающийся припев
+- Стиль: ${genre}, настроение: ${mood}
+- ТОЛЬКО ${lang} язык
+- БЕЗ пояснений`;
 
-                const result = await client.chat.completions.create({
-                    model: 'gpt-4.1',
-                    messages: [{ role: 'user', content: prompt }]
-                });
+            forceLog('info', `Генерация: model=${currentModel}, temp=${temperature}, topP=${topP}`);
+            const t0 = performance.now();
 
-                const responseText = result.choices[0].message.content;
-                const song = parseSong(responseText, genre, mood);
+            try {
+                const messages = [];
+                if (sysPrompt) messages.push({ role: 'system', content: sysPrompt });
+                messages.push({ role: 'user', content: userPrompt });
 
+                const params = {
+                    model: currentModel,
+                    messages,
+                    temperature,
+                    top_p: topP,
+                    max_tokens: maxTokens,
+                    frequency_penalty: freqPenalty,
+                    presence_penalty: presPenalty,
+                };
+
+                forceLog('info', `Запрос к ${currentModel}...`);
+
+                const result = await client.chat.completions.create(params);
+                const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
+                const text = result.choices[0].message.content;
+
+                forceLog('success', `✅ Ответ за ${elapsed}s, ~${text.length} символов`);
+
+                // Token info
+                if (document.getElementById('toggleTokens').dataset.on === 'true') {
+                    const ti = document.getElementById('tokenInfo');
+                    ti.style.display = 'flex';
+                    document.getElementById('promptTokens').textContent = Math.round(userPrompt.length / 4);
+                    document.getElementById('responseTokens').textContent = Math.round(text.length / 4);
+                    document.getElementById('genTime').textContent = elapsed;
+                }
+
+                const song = parseSong(text, genre, mood);
                 currentSong = song;
                 displaySong(song);
-                saveSongToHistory(song);
 
-            } catch (error) {
-                console.error('Error:', error);
-                showError(error.message);
+                if (document.getElementById('toggleAutoSave').dataset.on === 'true') {
+                    saveSong(song);
+                }
+
+            } catch (err) {
+                forceLog('error', `❌ ${err.message}`);
+                showError(err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="shimmer"></span>🎵 Сгенерировать песню';
+                btn.innerHTML = '<span class="shim"></span>🎵 Сгенерировать песню';
             }
         };
 
         function parseSong(text, genre, mood) {
-            let title = 'Без названия';
-            let lyrics = text;
-
-            // Extract title
-            const titleMatch = text.match(/TITLE:\s*(.+)/i);
-            if (titleMatch) {
-                title = titleMatch[1].trim().replace(/[\[\]"]/g, '');
-                lyrics = text.substring(text.indexOf('---') + 3).trim();
-                if (!lyrics || lyrics.length < 10) {
-                    lyrics = text.substring(titleMatch.index + titleMatch[0].length).trim();
-                }
+            let title = 'Без названия', lyrics = text;
+            const tm = text.match(/TITLE:\s*(.+)/i);
+            if (tm) {
+                title = tm[1].trim().replace(/[\[\]"*]/g, '');
+                const idx = text.indexOf('---');
+                lyrics = idx > -1 ? text.substring(idx + 3).trim() : text.substring(tm.index + tm[0].length).trim();
             }
-
-            // Clean up
             lyrics = lyrics.replace(/^---\s*/gm, '').trim();
-
             return {
-                title,
-                lyrics,
-                genre,
-                mood,
+                title, lyrics, genre, mood,
+                model: currentModel,
                 timestamp: Date.now(),
                 cover: genreCovers[genre] || genreCovers['Pop']
             };
@@ -1197,595 +1605,321 @@ TITLE: [Название песни]
 
         function showLoading() {
             const area = document.getElementById('resultArea');
-            const titleEl = area.querySelector('.card-title');
-
-            const loadingSteps = [
-                '🎼 Подбираю аккорды...',
-                '✍️ Пишу текст...',
-                '🎵 Ищу рифмы...',
-                '🎤 Настраиваю голос...',
-                '✨ Финальные штрихи...'
-            ];
-
-            area.innerHTML = '';
-            area.appendChild(titleEl);
-
-            const container = document.createElement('div');
-            container.className = 'loading-container';
-            container.innerHTML = `
-                <div class="loading-bars">
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
-                </div>
-                <div class="loading-text">Создаю вашу песню...</div>
-                <div class="loading-step" id="loadingStep">${loadingSteps[0]}</div>
-            `;
-            area.appendChild(container);
-
-            let stepIndex = 0;
-            const stepInterval = setInterval(() => {
-                stepIndex = (stepIndex + 1) % loadingSteps.length;
-                const stepEl = document.getElementById('loadingStep');
-                if (stepEl) {
-                    stepEl.textContent = loadingSteps[stepIndex];
-                } else {
-                    clearInterval(stepInterval);
-                }
+            const t = area.querySelector('.card-title');
+            area.innerHTML = ''; area.appendChild(t);
+            const steps = ['🎼 Подбираю аккорды...', '✍️ Пишу текст...', '🎵 Ищу рифмы...', '🎤 Настраиваю голос...', '✨ Финальные штрихи...'];
+            const d = document.createElement('div');
+            d.className = 'loading-wrap';
+            d.innerHTML = `
+                <div class="loading-bars"><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div><div class="lbar"></div></div>
+                <div class="loading-txt">Создаю песню через ${currentModel}...</div>
+                <div class="loading-step" id="lstep">${steps[0]}</div>`;
+            area.appendChild(d);
+            let si = 0;
+            area._si = setInterval(() => {
+                si = (si + 1) % steps.length;
+                const el = document.getElementById('lstep');
+                if (el) el.textContent = steps[si]; else clearInterval(area._si);
             }, 2500);
-
-            area._stepInterval = stepInterval;
         }
 
-        function showError(message) {
+        function showError(msg) {
             const area = document.getElementById('resultArea');
-            if (area._stepInterval) clearInterval(area._stepInterval);
-
-            const titleEl = area.querySelector('.card-title');
-            area.innerHTML = '';
-            area.appendChild(titleEl);
-
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.innerHTML = `
-                <div class="error-icon">😔</div>
-                <p>Не удалось сгенерировать песню</p>
-                <p style="font-size:0.85em;opacity:0.7">${message}</p>
-                <button class="retry-btn" onclick="generateSong()">🔄 Попробовать снова</button>
-            `;
-            area.appendChild(errorDiv);
+            if (area._si) clearInterval(area._si);
+            const t = area.querySelector('.card-title');
+            area.innerHTML = ''; area.appendChild(t);
+            const d = document.createElement('div');
+            d.className = 'err-box';
+            d.innerHTML = `<div class="ei">😔</div><p>Ошибка генерации</p><p style="font-size:.82em;opacity:.7">${msg}</p>
+            <button class="retry-btn" onclick="generateSong()">🔄 Повторить</button>`;
+            area.appendChild(d);
         }
 
         function displaySong(song) {
             const area = document.getElementById('resultArea');
-            if (area._stepInterval) clearInterval(area._stepInterval);
+            if (area._si) clearInterval(area._si);
+            const t = area.querySelector('.card-title');
+            area.innerHTML = ''; area.appendChild(t);
 
-            const titleEl = area.querySelector('.card-title');
-            area.innerHTML = '';
-            area.appendChild(titleEl);
+            const r = document.createElement('div');
+            r.className = 'song-result';
 
-            const resultDiv = document.createElement('div');
-            resultDiv.className = 'song-result';
-
-            // Song header
-            const header = document.createElement('div');
-            header.className = 'song-header';
-            header.innerHTML = `
-                <div class="song-cover" style="background:${song.cover.bg}">
-                    ${song.cover.emoji}
-                </div>
+            // Header
+            r.innerHTML = `
+            <div class="song-hdr">
+                <div class="song-cover" style="background:${song.cover.bg}">${song.cover.e}</div>
                 <div class="song-info">
                     <h3>${song.title}</h3>
                     <div class="song-meta">
-                        <span class="song-tag">${song.genre}</span>
-                        <span class="song-tag mood-tag">${song.mood}</span>
+                        <span class="song-tag g">${song.genre}</span>
+                        <span class="song-tag m">${song.mood}</span>
+                        <span class="song-tag model">🤖 ${song.model}</span>
                     </div>
                 </div>
-            `;
-            resultDiv.appendChild(header);
+            </div>`;
 
             // Lyrics
-            const lyricsDiv = document.createElement('div');
-            lyricsDiv.className = 'lyrics-container';
-            lyricsDiv.id = 'lyricsContainer';
-
-            const lines = song.lyrics.split('\n');
-            lines.forEach(line => {
+            const lb = document.createElement('div');
+            lb.className = 'lyrics-box'; lb.id = 'lyricsBox';
+            song.lyrics.split('\n').forEach(line => {
                 if (line.match(/^\[.+\]$/)) {
-                    const tag = document.createElement('div');
-                    tag.className = 'lyrics-section-tag';
-                    tag.textContent = line;
-                    lyricsDiv.appendChild(tag);
+                    const d = document.createElement('div');
+                    d.className = 'lyrics-sec'; d.textContent = line; lb.appendChild(d);
                 } else if (line.trim()) {
-                    const lineEl = document.createElement('div');
-                    lineEl.className = 'lyrics-line';
-                    lineEl.textContent = line;
-                    lyricsDiv.appendChild(lineEl);
+                    const d = document.createElement('div');
+                    d.className = 'lyrics-ln'; d.textContent = line; lb.appendChild(d);
                 }
             });
-            resultDiv.appendChild(lyricsDiv);
+            r.appendChild(lb);
 
             // Visualizer
-            const canvas = document.createElement('canvas');
-            canvas.className = 'visualizer-canvas';
-            canvas.id = 'visualizer';
-            resultDiv.appendChild(canvas);
+            const cv = document.createElement('canvas');
+            cv.className = 'viz-canvas'; cv.id = 'vizCanvas';
+            r.appendChild(cv);
 
             // Player
-            const playerDiv = document.createElement('div');
-            playerDiv.className = 'player-section';
-            playerDiv.innerHTML = `
-                <div class="progress-container">
-                    <div class="progress-bar-bg" id="progressBar">
-                        <div class="progress-bar-fill" id="progressFill"></div>
-                    </div>
-                    <div class="time-labels">
-                        <span id="currentTime">0:00</span>
-                        <span id="totalTime">0:00</span>
-                    </div>
+            const pl = document.createElement('div');
+            pl.className = 'player-sec';
+            pl.innerHTML = `
+                <div class="prog-bg" id="progBar"><div class="prog-fill" id="progFill"></div></div>
+                <div class="time-labels"><span id="curTime">0:00</span><span id="totTime">0:00</span></div>
+                <div class="p-ctrls">
+                    <button class="cbtn" onclick="window.restartSong()">⏮️</button>
+                    <button class="cbtn play" id="playBtn" onclick="window.togglePlay()">▶️</button>
+                    <button class="cbtn" onclick="window.stopPlay()">⏹️</button>
                 </div>
-                <div class="player-controls">
-                    <button class="ctrl-btn" onclick="window.restartSong()" title="В начало">⏮️</button>
-                    <button class="ctrl-btn play-btn" id="playBtn" onclick="window.togglePlayback()">▶️</button>
-                    <button class="ctrl-btn" onclick="window.stopPlayback()" title="Стоп">⏹️</button>
-                </div>
-                <div class="volume-section">
+                <div class="vol-sec">
                     <span>🔈</span>
-                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05" value="0.8">
+                    <input type="range" class="vol-sl" id="volSl" min="0" max="1" step="0.05" value="0.8">
                     <span>🔊</span>
                 </div>
-                <div class="speech-status" id="speechStatus"></div>
-            `;
-            resultDiv.appendChild(playerDiv);
+                <div class="speech-st" id="speechSt"></div>`;
+            r.appendChild(pl);
 
-            // Action buttons
-            const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'action-buttons';
-            actionsDiv.innerHTML = `
-                <button class="action-btn" onclick="window.copyLyrics()">📋 Копировать</button>
-                <button class="action-btn" onclick="window.downloadLyrics()">💾 Скачать</button>
-                <button class="action-btn" onclick="window.shareSong()">🔗 Поделиться</button>
-            `;
-            resultDiv.appendChild(actionsDiv);
-
-            area.appendChild(resultDiv);
-
-            // Initialize visualizer
-            initVisualizer();
+            // Actions
+            const ab = document.createElement('div');
+            ab.className = 'act-btns';
+            ab.innerHTML = `
+                <button class="act-btn" onclick="window.copyLyrics()">📋 Копировать</button>
+                <button class="act-btn" onclick="window.downloadLyrics()">💾 Скачать</button>
+                <button class="act-btn" onclick="window.shareSong()">🔗 Поделиться</button>`;
+            r.appendChild(ab);
+            area.appendChild(r);
+            initViz();
         }
 
-        // Playback controls
-        window.togglePlayback = function () {
-            if (isPlaying) {
-                pausePlayback();
-            } else {
-                playSong();
-            }
+        // ═══ PLAYBACK ═══
+        window.togglePlay = function () {
+            if (synth.paused) { synth.resume(); isPlaying = true; updPlayBtn(); setSt('🎤 Воспроизведение...'); startVizAnim(); return; }
+            if (isPlaying) { synth.pause(); isPlaying = false; updPlayBtn(); setSt('⏸️ Пауза'); stopVizAnim(); return; }
+            playSong();
         };
 
         function playSong() {
             if (!currentSong) return;
-
-            speechSynth.cancel();
-
-            const voices = speechSynth.getVoices();
-            const voiceIndex = parseInt(document.getElementById('voiceSelect').value);
+            synth.cancel();
+            const voices = synth.getVoices();
+            const vi = parseInt(document.getElementById('voiceSelect').value);
             const rate = parseFloat(document.getElementById('speechRate').value);
-            const volume = parseFloat(document.getElementById('volumeSlider')?.value || 0.8);
+            const vol = parseFloat(document.getElementById('volSl')?.value || 0.8);
 
-            // Clean lyrics for speech
-            const cleanLyrics = currentSong.lyrics
-                .replace(/\[.+?\]/g, '... ')
-                .replace(/\n{2,}/g, '... ')
-                .replace(/\n/g, '. ')
-                .trim();
+            const clean = currentSong.lyrics.replace(/\[.+?\]/g, '... ').replace(/\n{2,}/g, '... ').replace(/\n/g, '. ').trim();
 
-            currentUtterance = new SpeechSynthesisUtterance(cleanLyrics);
-
-            if (voices[voiceIndex]) {
-                currentUtterance.voice = voices[voiceIndex];
-            }
-
+            currentUtterance = new SpeechSynthesisUtterance(clean);
+            if (voices[vi]) currentUtterance.voice = voices[vi];
             currentUtterance.rate = rate;
             currentUtterance.pitch = 1.05;
-            currentUtterance.volume = volume;
+            currentUtterance.volume = vol;
 
-            // Estimate duration
-            const words = cleanLyrics.split(/\s+/).length;
-            const estimatedDuration = (words / 2.5) / rate; // rough estimate
+            const words = clean.split(/\s+/).length;
+            const dur = (words / 2.5) / rate;
+            const totEl = document.getElementById('totTime');
+            if (totEl) totEl.textContent = fmtTime(dur);
 
-            const totalTimeEl = document.getElementById('totalTime');
-            if (totalTimeEl) {
-                totalTimeEl.textContent = formatTime(estimatedDuration);
-            }
-
-            const startTime = Date.now();
-            let progressInterval;
+            const t0 = Date.now();
+            let pi;
 
             currentUtterance.onstart = () => {
-                isPlaying = true;
-                updatePlayButton();
-                setSpeechStatus('🎤 Воспроизведение...');
-                startVisualizerAnimation();
-
-                progressInterval = setInterval(() => {
-                    const elapsed = (Date.now() - startTime) / 1000;
-                    const progress = Math.min((elapsed / estimatedDuration) * 100, 100);
-                    const fill = document.getElementById('progressFill');
-                    const timeEl = document.getElementById('currentTime');
-                    if (fill) fill.style.width = progress + '%';
-                    if (timeEl) timeEl.textContent = formatTime(elapsed);
+                isPlaying = true; updPlayBtn(); setSt('🎤 Воспроизведение...'); startVizAnim();
+                pi = setInterval(() => {
+                    const el = (Date.now() - t0) / 1000;
+                    const pct = Math.min((el / dur) * 100, 100);
+                    const f = document.getElementById('progFill');
+                    const c = document.getElementById('curTime');
+                    if (f) f.style.width = pct + '%';
+                    if (c) c.textContent = fmtTime(el);
                 }, 200);
             };
-
-            // Highlight lyrics as they're spoken
-            currentUtterance.onboundary = (event) => {
-                highlightLyrics(event.charIndex, cleanLyrics);
-            };
-
+            currentUtterance.onboundary = (e) => hlLyrics(e.charIndex, clean);
             currentUtterance.onend = () => {
-                isPlaying = false;
-                updatePlayButton();
-                setSpeechStatus('✅ Завершено');
-                stopVisualizerAnimation();
-                clearInterval(progressInterval);
-                const fill = document.getElementById('progressFill');
-                if (fill) fill.style.width = '100%';
+                isPlaying = false; updPlayBtn(); setSt('✅ Завершено'); stopVizAnim(); clearInterval(pi);
+                const f = document.getElementById('progFill'); if (f) f.style.width = '100%';
             };
-
-            currentUtterance.onerror = (event) => {
-                isPlaying = false;
-                updatePlayButton();
-                setSpeechStatus('❌ Ошибка воспроизведения');
-                stopVisualizerAnimation();
-                clearInterval(progressInterval);
+            currentUtterance.onerror = () => {
+                isPlaying = false; updPlayBtn(); setSt('❌ Ошибка'); stopVizAnim(); clearInterval(pi);
             };
-
-            speechSynth.speak(currentUtterance);
+            synth.speak(currentUtterance);
         }
 
-        function pausePlayback() {
-            if (speechSynth.speaking) {
-                speechSynth.pause();
-                isPlaying = false;
-                updatePlayButton();
-                setSpeechStatus('⏸️ Пауза');
-                stopVisualizerAnimation();
-            }
+        window.stopPlay = function () { stopPlay(); };
+        function stopPlay() {
+            synth.cancel(); isPlaying = false; updPlayBtn(); setSt(''); stopVizAnim();
+            const f = document.getElementById('progFill'); if (f) f.style.width = '0%';
+            const c = document.getElementById('curTime'); if (c) c.textContent = '0:00';
+            document.querySelectorAll('.lyrics-ln.hl').forEach(e => e.classList.remove('hl'));
         }
+        window.restartSong = function () { stopPlay(); setTimeout(playSong, 100); };
 
-        window.stopPlayback = function () {
-            stopPlayback();
-        };
+        function updPlayBtn() {
+            const b = document.getElementById('playBtn');
+            if (b) b.textContent = isPlaying ? '⏸️' : '▶️';
+        }
+        function setSt(t) { const e = document.getElementById('speechSt'); if (e) e.textContent = t; }
+        function fmtTime(s) { return `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`; }
 
-        function stopPlayback() {
-            speechSynth.cancel();
-            isPlaying = false;
-            updatePlayButton();
-            setSpeechStatus('');
-            stopVisualizerAnimation();
-            const fill = document.getElementById('progressFill');
-            const timeEl = document.getElementById('currentTime');
-            if (fill) fill.style.width = '0%';
-            if (timeEl) timeEl.textContent = '0:00';
-
-            // Remove all highlights
-            document.querySelectorAll('.lyrics-line.highlight').forEach(el => {
-                el.classList.remove('highlight');
+        function hlLyrics(ci, full) {
+            const lines = document.querySelectorAll('.lyrics-ln');
+            if (!lines.length) return;
+            const before = full.substring(0, ci);
+            const sc = (before.match(/\.\s|\.\.\.\s/g) || []).length;
+            const idx = Math.min(sc, lines.length - 1);
+            lines.forEach((l, i) => {
+                if (i === idx) { l.classList.add('hl'); l.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+                else l.classList.remove('hl');
             });
         }
 
-        window.restartSong = function () {
-            stopPlayback();
-            setTimeout(() => playSong(), 100);
-        };
-
-        function updatePlayButton() {
-            const btn = document.getElementById('playBtn');
-            if (btn) {
-                if (speechSynth.paused) {
-                    btn.textContent = '▶️';
-                    btn.onclick = () => {
-                        speechSynth.resume();
-                        isPlaying = true;
-                        updatePlayButton();
-                        setSpeechStatus('🎤 Воспроизведение...');
-                        startVisualizerAnimation();
-                    };
-                } else if (isPlaying) {
-                    btn.textContent = '⏸️';
-                    btn.onclick = () => pausePlayback();
-                } else {
-                    btn.textContent = '▶️';
-                    btn.onclick = () => window.togglePlayback();
-                }
-            }
-        }
-
-        function setSpeechStatus(text) {
-            const el = document.getElementById('speechStatus');
-            if (el) el.textContent = text;
-        }
-
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function highlightLyrics(charIndex, fullText) {
-            const lyricsLines = document.querySelectorAll('.lyrics-line');
-            if (!lyricsLines.length) return;
-
-            // Find which line we're on based on character index
-            const beforeText = fullText.substring(0, charIndex);
-            const sentenceCount = (beforeText.match(/\.\s|\.\.\.\s/g) || []).length;
-            const lineIndex = Math.min(sentenceCount, lyricsLines.length - 1);
-
-            lyricsLines.forEach((line, i) => {
-                if (i === lineIndex) {
-                    line.classList.add('highlight');
-                    line.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    line.classList.remove('highlight');
-                }
-            });
-        }
-
-        // Volume control
-        document.addEventListener('input', (e) => {
-            if (e.target.id === 'volumeSlider' && currentUtterance) {
-                // Volume can't be changed mid-speech, but we store it
-            }
-        });
-
-        // Visualizer
-        function initVisualizer() {
-            const canvas = document.getElementById('visualizer');
-            if (!canvas) return;
-
-            const ctx = canvas.getContext('2d');
-            canvas.width = canvas.offsetWidth * 2;
-            canvas.height = canvas.offsetHeight * 2;
+        // ═══ VISUALIZER ═══
+        function initViz() {
+            const c = document.getElementById('vizCanvas');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            c.width = c.offsetWidth * 2; c.height = c.offsetHeight * 2;
             ctx.scale(2, 2);
-
-            drawIdleVisualizer(ctx, canvas);
+            drawIdle(ctx, c);
         }
-
-        function drawIdleVisualizer(ctx, canvas) {
-            const w = canvas.width / 2;
-            const h = canvas.height / 2;
+        function drawIdle(ctx, c) {
+            const w = c.width / 2, h = c.height / 2;
             ctx.clearRect(0, 0, w, h);
-
-            const bars = 50;
-            const barWidth = w / bars;
-
-            for (let i = 0; i < bars; i++) {
-                const barHeight = 3 + Math.random() * 3;
-                const hue = (i / bars) * 200 + 240;
-                ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.3)`;
-                ctx.fillRect(
-                    i * barWidth + 1,
-                    h / 2 - barHeight / 2,
-                    barWidth - 2,
-                    barHeight
-                );
+            for (let i = 0; i < 50; i++) {
+                const bh = 3 + Math.random() * 3;
+                ctx.fillStyle = `hsla(${(i / 50) * 200 + 240},70%,60%,0.3)`;
+                ctx.fillRect(i * (w / 50) + 1, h / 2 - bh / 2, w / 50 - 2, bh);
             }
         }
-
-        function startVisualizerAnimation() {
-            const canvas = document.getElementById('visualizer');
-            if (!canvas) return;
-
-            const ctx = canvas.getContext('2d');
-            const w = canvas.width / 2;
-            const h = canvas.height / 2;
-            const bars = 50;
-            const barWidth = w / bars;
-
-            let phase = 0;
-
+        function startVizAnim() {
+            const c = document.getElementById('vizCanvas');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            const w = c.width / 2, h = c.height / 2;
+            let ph = 0;
             function draw() {
-                ctx.clearRect(0, 0, w, h);
-                phase += 0.05;
-
-                for (let i = 0; i < bars; i++) {
-                    const wave1 = Math.sin(phase + i * 0.3) * 0.5 + 0.5;
-                    const wave2 = Math.sin(phase * 1.5 + i * 0.2) * 0.5 + 0.5;
-                    const wave3 = Math.sin(phase * 0.7 + i * 0.5) * 0.5 + 0.5;
-
-                    let barHeight = (wave1 * 0.4 + wave2 * 0.35 + wave3 * 0.25) * (h * 0.8);
-                    barHeight = Math.max(barHeight, 3);
-
-                    // Add some randomness
-                    barHeight += Math.random() * 5;
-
-                    const hue = (i / bars) * 120 + 240 + phase * 10;
-                    const gradient = ctx.createLinearGradient(0, h / 2 - barHeight / 2, 0, h / 2 + barHeight / 2);
-                    gradient.addColorStop(0, `hsla(${hue}, 80%, 65%, 0.9)`);
-                    gradient.addColorStop(1, `hsla(${hue + 40}, 80%, 50%, 0.6)`);
-
-                    ctx.fillStyle = gradient;
+                ctx.clearRect(0, 0, w, h); ph += 0.05;
+                for (let i = 0; i < 50; i++) {
+                    const v = (Math.sin(ph + i * .3) * .4 + Math.sin(ph * 1.5 + i * .2) * .35 + Math.sin(ph * .7 + i * .5) * .25 + 1) / 2;
+                    let bh = Math.max(v * h * .8 + Math.random() * 5, 3);
+                    const hue = (i / 50) * 120 + 240 + ph * 10;
+                    const g = ctx.createLinearGradient(0, h / 2 - bh / 2, 0, h / 2 + bh / 2);
+                    g.addColorStop(0, `hsla(${hue},80%,65%,0.9)`);
+                    g.addColorStop(1, `hsla(${hue + 40},80%,50%,0.6)`);
+                    ctx.fillStyle = g;
                     ctx.beginPath();
-                    ctx.roundRect(
-                        i * barWidth + 1,
-                        h / 2 - barHeight / 2,
-                        barWidth - 2,
-                        barHeight,
-                        2
-                    );
+                    const bw = w / 50;
+                    ctx.roundRect(i * bw + 1, h / 2 - bh / 2, bw - 2, bh, 2);
                     ctx.fill();
                 }
-
-                animationFrame = requestAnimationFrame(draw);
+                animFrame = requestAnimationFrame(draw);
             }
-
             draw();
         }
-
-        function stopVisualizerAnimation() {
-            if (animationFrame) {
-                cancelAnimationFrame(animationFrame);
-                animationFrame = null;
-            }
-            const canvas = document.getElementById('visualizer');
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                drawIdleVisualizer(ctx, canvas);
-            }
+        function stopVizAnim() {
+            if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+            const c = document.getElementById('vizCanvas');
+            if (c) drawIdle(c.getContext('2d'), c);
         }
 
-        // Action buttons
+        // ═══ ACTIONS ═══
         window.copyLyrics = function () {
             if (!currentSong) return;
-            const text = `${currentSong.title}\n\n${currentSong.lyrics}`;
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('📋 Текст скопирован!');
-            }).catch(() => {
-                showToast('❌ Не удалось скопировать');
-            });
+            navigator.clipboard.writeText(`${currentSong.title}\n\n${currentSong.lyrics}`);
+            showToast('📋 Скопировано!');
         };
-
         window.downloadLyrics = function () {
             if (!currentSong) return;
-            const text = `${currentSong.title}\nЖанр: ${currentSong.genre} | Настроение: ${currentSong.mood}\n${'='.repeat(40)}\n\n${currentSong.lyrics}`;
-            const blob = new Blob([text], { type: 'text/plain; charset=utf-8' });
-            const url = URL.createObjectURL(blob);
+            const t = `${currentSong.title}\nЖанр: ${currentSong.genre} | Настроение: ${currentSong.mood} | Модель: ${currentSong.model}\n${'='.repeat(40)}\n\n${currentSong.lyrics}`;
+            const b = new Blob([t], { type: 'text/plain;charset=utf-8' });
             const a = document.createElement('a');
-            a.href = url;
+            a.href = URL.createObjectURL(b);
             a.download = `${currentSong.title.replace(/[^a-zA-Zа-яА-Я0-9]/g, '_')}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('💾 Текст сохранён!');
+            a.click(); URL.revokeObjectURL(a.href);
+            showToast('💾 Сохранено!');
         };
-
         window.shareSong = function () {
             if (!currentSong) return;
-            const text = `🎵 ${currentSong.title}\n\n${currentSong.lyrics}\n\n— Создано в SongForge AI`;
-
-            if (navigator.share) {
-                navigator.share({
-                    title: currentSong.title,
-                    text: text
-                }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast('🔗 Текст скопирован для отправки!');
-                });
-            }
+            const t = `🎵 ${currentSong.title}\n\n${currentSong.lyrics}\n\n— SongForge AI (${currentSong.model})`;
+            if (navigator.share) navigator.share({ title: currentSong.title, text: t }).catch(() => { });
+            else { navigator.clipboard.writeText(t); showToast('🔗 Скопировано!'); }
         };
 
-        // History
-        function saveSongToHistory(song) {
-            songHistory.unshift({
-                title: song.title,
-                genre: song.genre,
-                mood: song.mood,
-                lyrics: song.lyrics,
-                timestamp: song.timestamp,
-                cover: song.cover
-            });
-
-            // Keep only last 20
-            songHistory = songHistory.slice(0, 20);
-            localStorage.setItem('songHistory', JSON.stringify(songHistory));
-
+        // ═══ HISTORY ═══
+        function saveSong(song) {
+            songHistory.unshift({ ...song });
+            songHistory = songHistory.slice(0, 30);
+            localStorage.setItem('sf_history', JSON.stringify(songHistory));
             renderHistory();
         }
-
         function renderHistory() {
-            const section = document.getElementById('historySection');
-            const grid = document.getElementById('historyGrid');
-
-            if (songHistory.length === 0) {
-                section.style.display = 'none';
-                return;
-            }
-
-            section.style.display = 'block';
+            const sec = document.getElementById('histSec');
+            const grid = document.getElementById('histGrid');
+            if (!songHistory.length) { sec.style.display = 'none'; return; }
+            sec.style.display = 'block';
             grid.innerHTML = '';
-
-            songHistory.forEach((song, index) => {
-                const card = document.createElement('div');
-                card.className = 'history-card';
-                card.onclick = () => loadFromHistory(index);
-
-                const date = new Date(song.timestamp);
-                const dateStr = date.toLocaleDateString('ru-RU', {
-                    day: 'numeric',
-                    month: 'short',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-
-                const lyricsPreview = song.lyrics
-                    .replace(/\[.+?\]/g, '')
-                    .replace(/\n{2,}/g, ' ')
-                    .replace(/\n/g, ' ')
-                    .trim()
-                    .substring(0, 120);
-
-                card.innerHTML = `
-                    <div class="history-card-header">
-                        <div class="history-cover" style="background:${song.cover?.bg || 'linear-gradient(135deg, #7c3aed, #ec4899)'}">
-                            ${song.cover?.emoji || '🎵'}
-                        </div>
-                        <div>
-                            <h4>${song.title}</h4>
-                            <span class="history-genre">${song.genre} • ${song.mood}</span>
-                        </div>
+            songHistory.forEach((s, i) => {
+                const c = document.createElement('div');
+                c.className = 'hist-card';
+                c.onclick = () => loadHist(i);
+                const d = new Date(s.timestamp).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+                const prev = s.lyrics.replace(/\[.+?\]/g, '').replace(/\n+/g, ' ').trim().substring(0, 100);
+                c.innerHTML = `
+                    <div class="hist-hdr">
+                        <div class="hist-cover" style="background:${s.cover?.bg || 'linear-gradient(135deg,#7c3aed,#ec4899)'}">${s.cover?.e || '🎵'}</div>
+                        <div><h4>${s.title}</h4><span class="hist-genre">${s.genre} • ${s.mood}</span></div>
                     </div>
-                    <div class="lyrics-preview">${lyricsPreview}...</div>
-                    <div class="history-date">${dateStr}</div>
-                `;
-                grid.appendChild(card);
+                    <div class="hist-preview">${prev}...</div>
+                    <div class="hist-date">${d} <span class="hist-model">| ${s.model || '?'}</span></div>`;
+                grid.appendChild(c);
             });
         }
-
-        function loadFromHistory(index) {
-            const song = songHistory[index];
-            if (!song) return;
-
-            currentSong = song;
-            stopPlayback();
-            displaySong(song);
-
-            // Scroll to result
-            document.getElementById('resultArea').scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-
-            showToast('📂 Песня загружена из истории');
+        function loadHist(i) {
+            const s = songHistory[i]; if (!s) return;
+            currentSong = s; stopPlay(); displaySong(s);
+            document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+            showToast('📂 Загружено из истории');
         }
-
-        // Toast
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // Initial render
         renderHistory();
 
-        // Fix for roundRect polyfill
+        // ═══ TOAST ═══
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.textContent = m; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // ═══ INIT ═══
+        document.getElementById('currentModelName').textContent = currentModel;
+        document.getElementById('activeModelLabel').textContent = currentModel;
+        forceLog('info', `Модель: ${currentModel}`);
+
+        // roundRect polyfill
         if (!CanvasRenderingContext2D.prototype.roundRect) {
             CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-                if (w < 2 * r) r = w / 2;
-                if (h < 2 * r) r = h / 2;
+                if (w < 2 * r) r = w / 2; if (h < 2 * r) r = h / 2;
                 this.moveTo(x + r, y);
                 this.arcTo(x + w, y, x + w, y + h, r);
                 this.arcTo(x + w, y + h, x, y + h, r);
                 this.arcTo(x, y + h, x, y, r);
                 this.arcTo(x, y, x + w, y, r);
-                this.closePath();
-                return this;
+                this.closePath(); return this;
             };
         }
     </script>
